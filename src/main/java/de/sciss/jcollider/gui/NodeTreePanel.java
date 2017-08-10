@@ -1,14 +1,10 @@
 /*
- *  NodeTreePanel.java
- *  (JCollider)
- *
- *  Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
- *
- *  This software is published under the GNU Lesser General Public License v2.1+
- *
- *
- *  For further information, please contact Hanns Holger Rutz at
- *  contact@sciss.de
+ * NodeTreePanel.java
+ * (JCollider)
+ * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
+ * This software is published under the GNU Lesser General Public License v2.1+
+ * For further information, please contact Hanns Holger Rutz at
+ * contact@sciss.de
  */
 
 package de.sciss.jcollider.gui;
@@ -52,436 +48,394 @@ import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCMessage;
 
 /**
- *	A panel that contains a tree view of the nodes as
- *	monitored by a <code>NodeWatcher</code>.
+ * A panel that contains a tree view of the nodes as
+ * monitored by a <code>NodeWatcher</code>.
  *
- *  @author		Hanns Holger Rutz
- *  @version	0.31, 08-Oct-07
+ * @author Hanns Holger Rutz
+ * @version 0.31, 08-Oct-07
  *
- *  @see		de.sciss.jcollider.gui.NodeTreeManager
+ * @see de.sciss.jcollider.gui.NodeTreeManager
  */
-public class NodeTreePanel
-extends JPanel
-implements TreeSelectionListener, TreeModelListener
-{
+public class NodeTreePanel extends JPanel implements TreeSelectionListener, TreeModelListener {
 	/**
-	 *	Flag for the constructor: create a button
-	 *	bar to message the nodes.
+	 * Flag for the constructor: create a button
+	 * bar to message the nodes.
 	 */
-	public static final int	BUTTONS	= 0x01;
+	public static final int BUTTONS = 0x01;
 
-	private final NodeTreeManager	ntm;
-	private final JTree				ggTree;
-	private final Node				rootNode;
-	
-	protected boolean				selectionContainsSynths		= false;
-	protected boolean				selectionContainsGroups		= false;
-	protected boolean				selectionContainsPlaying	= false;
-	protected boolean				selectionContainsPausing	= false;
-	protected final List			collSelectedNodes			= new ArrayList();
-	
-	private ActionPauseResume	actionPauseResume			= null;
-	private ActionFree			actionFree					= null;
-	private ActionFreeAll		actionFreeAll				= null;
-	private ActionDeepFree		actionDeepFree				= null;
-	private ActionTrace		actionTrace					= null;
+	private final NodeTreeManager ntm;
+	private final JTree ggTree;
+	private final Node rootNode;
+
+	protected boolean selectionContainsSynths = false;
+	protected boolean selectionContainsGroups = false;
+	protected boolean selectionContainsPlaying = false;
+	protected boolean selectionContainsPausing = false;
+	protected final List collSelectedNodes = new ArrayList();
+
+	private ActionPauseResume actionPauseResume = null;
+	private ActionFree actionFree = null;
+	private ActionFreeAll actionFreeAll = null;
+	private ActionDeepFree actionDeepFree = null;
+	private ActionTrace actionTrace = null;
 
 	/**
-	 *	Creates a new <code>NodeTreePanel</code> for a given node watcher
-	 *	and root element. See the <code>NodeTreeManager</code> constructor
-	 *	for details. Don't forget to call the <code>dispose</code> method
-	 *	when the component is not needed any more.
+	 * Creates a new <code>NodeTreePanel</code> for a given node watcher
+	 * and root element. See the <code>NodeTreeManager</code> constructor
+	 * for details. Don't forget to call the <code>dispose</code> method
+	 * when the component is not needed any more.
 	 *
-	 *	@param	nw			the node watcher to use for monitoring
-	 *	@param	rootNode	the root element to display in the tree
-	 *	@param	flags		flags that control what kind of gadgets are created
-	 *						(e.g. <code>BUTTONS</code>).
+	 * @param nw the node watcher to use for monitoring
+	 * @param rootNode the root element to display in the tree
+	 * @param flags flags that control what kind of gadgets are created
+	 *        (e.g. <code>BUTTONS</code>).
 	 *
-	 *	@see	NodeTreeManager#NodeTreeManager( NodeWatcher, Node )
+	 * @see NodeTreeManager#NodeTreeManager( NodeWatcher, Node )
 	 */
-	public NodeTreePanel( NodeWatcher nw, Node rootNode, int flags )
-	{
-		super( new BorderLayout() );
-		
-		this.rootNode	= rootNode;
-		ntm				= new NodeTreeManager( nw, rootNode );
-		ggTree			= new JTree( ntm.getModel() );
-		ggTree.setShowsRootHandles( true );
-		ggTree.setCellRenderer( new TreeNodeRenderer() );
+	public NodeTreePanel(NodeWatcher nw, Node rootNode, int flags) {
+		super(new BorderLayout());
+
+		this.rootNode = rootNode;
+		ntm = new NodeTreeManager(nw, rootNode);
+		ggTree = new JTree(ntm.getModel());
+		ggTree.setShowsRootHandles(true);
+		ggTree.setCellRenderer(new TreeNodeRenderer());
 //		ggTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
-		ggTree.addTreeSelectionListener( this );
-		ntm.getModel().addTreeModelListener( this );
-						
-		final JScrollPane ggScroll = new JScrollPane( ggTree,
-					ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER );
+		ggTree.addTreeSelectionListener(this);
+		ntm.getModel().addTreeModelListener(this);
 
-		add( ggScroll, BorderLayout.CENTER );
-		if( (flags & BUTTONS) != 0 ) {
-			add( createButtons( flags ), BorderLayout.SOUTH );
+		final JScrollPane ggScroll = new JScrollPane(ggTree, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+		add(ggScroll, BorderLayout.CENTER);
+		if ((flags & BUTTONS) != 0) {
+			add(createButtons(flags), BorderLayout.SOUTH);
 		}
 	}
-	
+
 	/**
-	 *	Creates a panel with default gadgets.
+	 * Creates a panel with default gadgets.
 	 */
-	public NodeTreePanel( NodeWatcher nw, Node rootNode )
-	{
-		this( nw, rootNode, BUTTONS );
+	public NodeTreePanel(NodeWatcher nw, Node rootNode) {
+		this(nw, rootNode, BUTTONS);
 	}
-	
-	public NodeTreeManager getManager()
-	{
+
+	public NodeTreeManager getManager() {
 		return ntm;
 	}
 
-	private JComponent createButtons( int flags )
-	{
-		final JToolBar	tb	= new JToolBar();
-		AbstractButton	but;
-	
-		tb.setFloatable( false );
-		actionPauseResume	= new ActionPauseResume();
-		but					= new JButton( actionPauseResume );
+	private JComponent createButtons(int flags) {
+		final JToolBar tb = new JToolBar();
+		AbstractButton but;
+
+		tb.setFloatable(false);
+		actionPauseResume = new ActionPauseResume();
+		but = new JButton(actionPauseResume);
 //		but.setFont( fntGUI );
-		tb.add( but );
-		actionFree			= new ActionFree();
-		but					= new JButton( actionFree );
+		tb.add(but);
+		actionFree = new ActionFree();
+		but = new JButton(actionFree);
 //		but.setFont( fntGUI );
-		tb.add( but );
-		actionFreeAll		= new ActionFreeAll();
-		but					= new JButton( actionFreeAll );
+		tb.add(but);
+		actionFreeAll = new ActionFreeAll();
+		but = new JButton(actionFreeAll);
 //		but.setFont( fntGUI );
-		tb.add( but );
-		actionDeepFree		= new ActionDeepFree();
-		but					= new JButton( actionDeepFree );
+		tb.add(but);
+		actionDeepFree = new ActionDeepFree();
+		but = new JButton(actionDeepFree);
 //		but.setFont( fntGUI );
-		tb.add( but );
-		actionTrace			= new ActionTrace();
-		but					= new JButton( actionTrace );
+		tb.add(but);
+		actionTrace = new ActionTrace();
+		but = new JButton(actionTrace);
 //		but.setFont( fntGUI );
-		tb.add( but );
+		tb.add(but);
 
 		return tb;
 	}
 
 	/**
-	 *	Frees resources when the component is
-	 *	not used any more. This will dispose
-	 *	the internal <code>NodeTreeManager</code>.
+	 * Frees resources when the component is
+	 * not used any more. This will dispose
+	 * the internal <code>NodeTreeManager</code>.
 	 */
-	public void dispose()
-	{
-		ggTree.removeTreeSelectionListener( this );
-		ntm.getModel().removeTreeModelListener( this );
+	public void dispose() {
+		ggTree.removeTreeSelectionListener(this);
+		ntm.getModel().removeTreeModelListener(this);
 		ntm.dispose();
 	}
 
 	/**
-	 *	Creates a window containing this panel.
-	 *	Do not try to create more than one window
-	 *	for one panel or to attach the panel to
-	 *	more than one container. The returned
-	 *	frame will be visible and brought to the
-	 *	front. The frame's default close operation
-	 *	is <code>JFrame.DO_NOTHING_ON_CLOSE</code>,
-	 *	so you will have to install a <code>WindowListener</code>
-	 *	if the user shall be able to close the window.
+	 * Creates a window containing this panel.
+	 * Do not try to create more than one window
+	 * for one panel or to attach the panel to
+	 * more than one container. The returned
+	 * frame will be visible and brought to the
+	 * front. The frame's default close operation
+	 * is <code>JFrame.DO_NOTHING_ON_CLOSE</code>,
+	 * so you will have to install a <code>WindowListener</code>
+	 * if the user shall be able to close the window.
 	 */
-	public JFrame makeWindow()
-	{
-		final JFrame		f	= new JFrame( "[" + rootNode.getServer().getName() + "] tree for " +
-											  rootNode.toString() );
-		final Container		cp	= f.getContentPane();
-		
-		f.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
-		f.addWindowListener( new WindowAdapter() {
-			public void windowClosed( WindowEvent e )
-			{
+	public JFrame makeWindow() {
+		final JFrame f = new JFrame("[" + rootNode.getServer().getName() + "] tree for " + rootNode.toString());
+		final Container cp = f.getContentPane();
+
+		f.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		f.addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent e) {
 				dispose();
 			}
 		});
-		cp.setLayout( new BorderLayout() );
-		cp.add( this, BorderLayout.CENTER );
+		cp.setLayout(new BorderLayout());
+		cp.add(this, BorderLayout.CENTER);
 		f.pack();
-		f.setVisible( true );
+		f.setVisible(true);
 		f.toFront();
-		
+
 		return f;
 	}
 
-	private void updateActions()
-	{
+	private void updateActions() {
 		final TreePath[] sel = ggTree.getSelectionPaths();
-	
-		selectionContainsSynths		= false;
-		selectionContainsGroups		= false;
-		selectionContainsPlaying	= false;
-		selectionContainsPausing	= false;
+
+		selectionContainsSynths = false;
+		selectionContainsGroups = false;
+		selectionContainsPlaying = false;
+		selectionContainsPausing = false;
 		collSelectedNodes.clear();
-		
-		if( sel != null ) {
+
+		if (sel != null) {
 			Node node;
-			for( int i = 0; i < sel.length; i++ ) {
-				node = (Node) sel[ i ].getLastPathComponent();
-				collSelectedNodes.add( node );
-				if( !selectionContainsSynths  && (node instanceof Synth) ) selectionContainsSynths  = true;
-				if( !selectionContainsGroups  && (node instanceof Group) ) selectionContainsGroups  = true;
-				if( !selectionContainsPlaying && node.isPlaying() )		   selectionContainsPlaying = true;
-				if( !selectionContainsPausing && !node.isPlaying() )	   selectionContainsPausing = true;
+			for (int i = 0; i < sel.length; i++) {
+				node = (Node) sel[i].getLastPathComponent();
+				collSelectedNodes.add(node);
+				if (!selectionContainsSynths && (node instanceof Synth))
+					selectionContainsSynths = true;
+				if (!selectionContainsGroups && (node instanceof Group))
+					selectionContainsGroups = true;
+				if (!selectionContainsPlaying && node.isPlaying())
+					selectionContainsPlaying = true;
+				if (!selectionContainsPausing && !node.isPlaying())
+					selectionContainsPausing = true;
 			}
 		}
-		if( actionPauseResume != null )	actionPauseResume.update();
-		if( actionFree != null )		actionFree.update();
-		if( actionFreeAll != null )		actionFreeAll.update();
-		if( actionDeepFree != null )	actionDeepFree.update();
-		if( actionTrace != null )		actionTrace.update();
+		if (actionPauseResume != null)
+			actionPauseResume.update();
+		if (actionFree != null)
+			actionFree.update();
+		if (actionFreeAll != null)
+			actionFreeAll.update();
+		if (actionDeepFree != null)
+			actionDeepFree.update();
+		if (actionTrace != null)
+			actionTrace.update();
 	}
 
 // --------------- TreeSelectionListener interface ---------------
 
 	/**
-	 *	This method is part of the <code>TreeSelectionListener</code> interface.
-	 *	Do not call this method.
+	 * This method is part of the <code>TreeSelectionListener</code> interface.
+	 * Do not call this method.
 	 */
-	public void valueChanged( TreeSelectionEvent e )
-	{
+	public void valueChanged(TreeSelectionEvent e) {
 		updateActions();
 	}
-	
+
 // --------------- TreeModelListener interface ---------------
 
 	/**
-	 *	This method is part of the <code>TreeModelListener</code> interface.
-	 *	Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface.
+	 * Do not call this method.
 	 */
-	public void treeNodesChanged( TreeModelEvent e )
-	{
-		updateActions();	// some actions change behaviour when nodes are paused/ resumed
+	public void treeNodesChanged(TreeModelEvent e) {
+		updateActions(); // some actions change behaviour when nodes are paused/ resumed
 	}
 
 	/**
-	 *	This method is part of the <code>TreeModelListener</code> interface.
-	 *	Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface.
+	 * Do not call this method.
 	 */
-	public void treeNodesInserted( TreeModelEvent e )
-	{
+	public void treeNodesInserted(TreeModelEvent e) {
 		// updateActions();	// not necessary i think XXX
 	}
 
 	/**
-	 *	This method is part of the <code>TreeModelListener</code> interface.
-	 *	Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface.
+	 * Do not call this method.
 	 */
-	public void treeNodesRemoved(TreeModelEvent e)
-	{
-		updateActions();	// because corresponding deselections are not fired
+	public void treeNodesRemoved(TreeModelEvent e) {
+		updateActions(); // because corresponding deselections are not fired
 	}
 
 	/**
-	 *	This method is part of the <code>TreeModelListener</code> interface.
-	 *	Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface.
+	 * Do not call this method.
 	 */
-	public void treeStructureChanged(TreeModelEvent e)
-	{
-		updateActions();	// necessary? XXX
+	public void treeStructureChanged(TreeModelEvent e) {
+		updateActions(); // necessary? XXX
 	}
-	
+
 // --------------- internal classes ---------------
 
-	private abstract class NodeAction
-	extends AbstractAction
-	{
-		protected NodeAction( String name )
-		{
-			super( name );
+	private abstract class NodeAction extends AbstractAction {
+		protected NodeAction(String name) {
+			super(name);
 		}
-	
+
 		// bisschen aufwendig, aber evtl. wird es
 		// NodeWatcher geben, die mehrere Server abhoeren
-		public void actionPerformed( ActionEvent e )
-		{
-			final HashMap	mapServersToBundles	= new HashMap();
-			OSCBundle		bndl;
-			OSCMessage		msg;
-			Server			server;
-			Node			node;
-		
-			for( int i = 0; i < collSelectedNodes.size(); i++ ) {
-				node		= (Node) collSelectedNodes.get( i );
-				msg			= createMessage( node );
-				if( msg == null ) continue;
-				server		= node.getServer();
-				bndl		= (OSCBundle) mapServersToBundles.get( server );
-				if( bndl == null ) {
-					bndl	= new OSCBundle();
-					mapServersToBundles.put( server, bndl );
+		public void actionPerformed(ActionEvent e) {
+			final HashMap mapServersToBundles = new HashMap();
+			OSCBundle bndl;
+			OSCMessage msg;
+			Server server;
+			Node node;
+
+			for (int i = 0; i < collSelectedNodes.size(); i++) {
+				node = (Node) collSelectedNodes.get(i);
+				msg = createMessage(node);
+				if (msg == null)
+					continue;
+				server = node.getServer();
+				bndl = (OSCBundle) mapServersToBundles.get(server);
+				if (bndl == null) {
+					bndl = new OSCBundle();
+					mapServersToBundles.put(server, bndl);
 				}
-				bndl.addPacket( msg );
+				bndl.addPacket(msg);
 			}
-			
-			for( Iterator iter = mapServersToBundles.keySet().iterator(); iter.hasNext(); ) {
+
+			for (Iterator iter = mapServersToBundles.keySet().iterator(); iter.hasNext();) {
 				server = (Server) iter.next();
 				try {
-					server.sendBundle( (OSCBundle) mapServersToBundles.get( server ));
-				}
-				catch( IOException e1 ) {
-					System.err.println( e1.getClass().getName() + " : " + e1.getLocalizedMessage() );
+					server.sendBundle((OSCBundle) mapServersToBundles.get(server));
+				} catch (IOException e1) {
+					System.err.println(e1.getClass().getName() + " : " + e1.getLocalizedMessage());
 				}
 			}
 		}
-		
-		protected abstract OSCMessage createMessage( Node node );
-		
+
+		protected abstract OSCMessage createMessage(Node node);
+
 		protected abstract void update();
 	}
 
-	private class ActionPauseResume
-	extends NodeAction
-	{
-		private static final String	NAME_PAUSE	= "Pause";
-		private static final String	NAME_RESUME	= "Resume";
-	
-		private boolean runFlag	= false;
-	
-		protected ActionPauseResume()
-		{
-			super( NAME_PAUSE );
-			setEnabled( false );
+	private class ActionPauseResume extends NodeAction {
+		private static final String NAME_PAUSE = "Pause";
+		private static final String NAME_RESUME = "Resume";
+
+		private boolean runFlag = false;
+
+		protected ActionPauseResume() {
+			super(NAME_PAUSE);
+			setEnabled(false);
 		}
-		
-		protected OSCMessage createMessage( Node node )
-		{
-			return node.runMsg( runFlag );
+
+		protected OSCMessage createMessage(Node node) {
+			return node.runMsg(runFlag);
 		}
-		
-		protected void update()
-		{
-			runFlag	= selectionContainsPausing;
-			setEnabled( (selectionContainsSynths  || selectionContainsGroups) &&
-						(selectionContainsPlaying != selectionContainsPausing) );
-			putValue( NAME, runFlag ? NAME_RESUME : NAME_PAUSE );
+
+		protected void update() {
+			runFlag = selectionContainsPausing;
+			setEnabled((selectionContainsSynths || selectionContainsGroups)
+					&& (selectionContainsPlaying != selectionContainsPausing));
+			putValue(NAME, runFlag ? NAME_RESUME : NAME_PAUSE);
 		}
 	}
 
-	private class ActionFree
-	extends NodeAction
-	{
-		protected ActionFree()
-		{
-			super( "Free" );
-			setEnabled( false );
+	private class ActionFree extends NodeAction {
+		protected ActionFree() {
+			super("Free");
+			setEnabled(false);
 		}
-		
-		protected OSCMessage createMessage( Node node )
-		{
+
+		protected OSCMessage createMessage(Node node) {
 			return node.freeMsg();
 		}
-		
-		protected void update()
-		{
-			setEnabled( selectionContainsSynths || selectionContainsGroups );
+
+		protected void update() {
+			setEnabled(selectionContainsSynths || selectionContainsGroups);
 		}
 	}
 
-	private class ActionFreeAll
-	extends NodeAction
-	{
-		protected ActionFreeAll()
-		{
-			super( "Free All" );
-			setEnabled( false );
+	private class ActionFreeAll extends NodeAction {
+		protected ActionFreeAll() {
+			super("Free All");
+			setEnabled(false);
 		}
-		
-		protected OSCMessage createMessage( Node node )
-		{
-			if( node instanceof Group ) {
+
+		protected OSCMessage createMessage(Node node) {
+			if (node instanceof Group) {
 				return ((Group) node).freeAllMsg();
 			} else {
 				return null;
 			}
 		}
-		
-		protected void update()
-		{
-			setEnabled( !selectionContainsSynths && selectionContainsGroups );
+
+		protected void update() {
+			setEnabled(!selectionContainsSynths && selectionContainsGroups);
 		}
 	}
 
-	private class ActionDeepFree
-	extends NodeAction
-	{
-		protected ActionDeepFree()
-		{
-			super( "Deep Free" );
-			setEnabled( false );
+	private class ActionDeepFree extends NodeAction {
+		protected ActionDeepFree() {
+			super("Deep Free");
+			setEnabled(false);
 		}
-		
-		protected OSCMessage createMessage( Node node )
-		{
-			if( node instanceof Group ) {
+
+		protected OSCMessage createMessage(Node node) {
+			if (node instanceof Group) {
 				return ((Group) node).deepFreeMsg();
 			} else {
 				return null;
 			}
 		}
-		
-		protected void update()
-		{
-			setEnabled( !selectionContainsSynths && selectionContainsGroups );
+
+		protected void update() {
+			setEnabled(!selectionContainsSynths && selectionContainsGroups);
 		}
 	}
 
-	private class ActionTrace
-	extends NodeAction
-	{
-		protected ActionTrace()
-		{
-			super( "Trace" );
-			setEnabled( false );
+	private class ActionTrace extends NodeAction {
+		protected ActionTrace() {
+			super("Trace");
+			setEnabled(false);
 		}
-		
-		protected OSCMessage createMessage( Node node )
-		{
+
+		protected OSCMessage createMessage(Node node) {
 			return node.traceMsg();
 		}
-		
-		protected void update()
-		{
-			setEnabled( selectionContainsSynths || selectionContainsGroups );
+
+		protected void update() {
+			setEnabled(selectionContainsSynths || selectionContainsGroups);
 		}
 	}
 
-	private static class TreeNodeRenderer
-	extends DefaultTreeCellRenderer
-	{
+	private static class TreeNodeRenderer extends DefaultTreeCellRenderer {
 // doch 'n bisschen krass
 //		private static final Color	colrPlaying	= new Color( 0x00, 0x50, 0x30 );
-		private static final Color	colrPlaying	= Color.black;
-		private static final Color	colrPausing	= new Color( 0x90, 0x90, 0x90 );
-		private static final Color	colrDied	= new Color( 0x90, 0x00, 0x30 );
-	
-		protected TreeNodeRenderer()
-		{
+		private static final Color colrPlaying = Color.black;
+		private static final Color colrPausing = new Color(0x90, 0x90, 0x90);
+		private static final Color colrDied = new Color(0x90, 0x00, 0x30);
+
+		protected TreeNodeRenderer() {
 			super();
 		}
 
-		public Component getTreeCellRendererComponent( JTree tree, Object value, boolean sel, boolean expanded,
-													   boolean leaf, int row, boolean hasFocus )
-		{
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+				boolean leaf, int row, boolean hasFocus) {
 			// DefaultTreeCellRenderer will set up the JLabel properties
-			super.getTreeCellRendererComponent( tree, value, sel, expanded, leaf, row, hasFocus );
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
 			final Node node = (Node) value;
-			
-			if( node.isRunning() ) {
-				if( node.isPlaying() ) {
-					this.setForeground( colrPlaying );
+
+			if (node.isRunning()) {
+				if (node.isPlaying()) {
+					this.setForeground(colrPlaying);
 				} else {
-					this.setForeground( colrPausing );
+					this.setForeground(colrPausing);
 				}
 			} else {
-				this.setForeground( colrDied );
+				this.setForeground(colrDied);
 			}
 
 			return this;
