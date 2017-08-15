@@ -10,9 +10,8 @@
 package de.sciss.jcollider;
 
 /**
- * Objects which wish to be informed about server status
- * changes must implement this interface and register using
- * <code>Server.addListener</code>.
+ * Objects which wish to be informed about server status changes must implement
+ * this interface and register using <code>Server.addListener</code>.
  *
  * @author Hanns Holger Rutz
  * @version 0.23, 02-Oct-05
@@ -23,11 +22,11 @@ public interface ServerListener {
 	/**
 	 * Called when the server status changed.
 	 *
-	 * @param e the event describing what <strong>REALLY</strong> happened
+	 * @param e
+	 *            the event describing what <strong>REALLY</strong> happened
 	 *
-	 * @synchronization this method is invoked
-	 *                  in the java VM event queue thread. it is
-	 *                  therefore safe to call swing methods, for example
+	 * @synchronization this method is invoked in the java VM event queue thread. it
+	 *                  is therefore safe to call swing methods, for example
 	 */
 	public void serverAction(ServerEvent e);
 }

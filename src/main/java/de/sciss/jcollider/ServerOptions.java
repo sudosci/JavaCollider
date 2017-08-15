@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class full of getter/setter methods
- * to describe the options to boot a local scsynth server.
+ * A class full of getter/setter methods to describe the options to boot a local
+ * scsynth server.
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 11-Feb-08
@@ -71,18 +71,18 @@ public class ServerOptions {
 	private String outputStreamsEnabled = DEFAULT_OUTPUTSTREAMSENABLED;
 	private String device = DEFAULT_DEVICE;
 	private BlockAllocator.Factory blockAlloc = new PowerOfTwoAllocator.Factory();
-//	private Map						envVars							= new HashMap();
+	// private Map envVars = new HashMap();
 	private int verbosity = DEFAULT_VERBOSITY;
 	private boolean rendezvous = DEFAULT_RENDEZVOUS;
 
 	/**
-	 * Creates a list of all the server options,
-	 * omitting those whose value equals the default value.
+	 * Creates a list of all the server options, omitting those whose value equals
+	 * the default value.
 	 *
-	 * @param port the port number to use for the <code>-u</code> option
+	 * @param port
+	 *            the port number to use for the <code>-u</code> option
 	 *
-	 * @return a list containing <code>String</code>
-	 *         elements of the server options
+	 * @return a list containing <code>String</code> elements of the server options
 	 */
 	public java.util.List toOptionList(int port) {
 		return toOptionList(port, false);
@@ -91,13 +91,14 @@ public class ServerOptions {
 	/**
 	 * Creates a list of all the server options.
 	 *
-	 * @param port the port number to use for the <code>-u</code> option
-	 * @param verbose if <code>true</code>, elements for all parameters are
-	 *        generated, otherwise only elements for parameters that
-	 *        are different from scsynth's defaults are generated
+	 * @param port
+	 *            the port number to use for the <code>-u</code> option
+	 * @param verbose
+	 *            if <code>true</code>, elements for all parameters are generated,
+	 *            otherwise only elements for parameters that are different from
+	 *            scsynth's defaults are generated
 	 *
-	 * @return a list containing <code>String</code>
-	 *         elements of the server options
+	 * @return a list containing <code>String</code> elements of the server options
 	 */
 	public List toOptionList(int port, boolean verbose) {
 		final List coll = new ArrayList();
@@ -259,8 +260,8 @@ public class ServerOptions {
 	}
 
 	/**
-	 * @throws IllegalArgumentException if <code>protocol</code> is not
-	 *         <code>UDP</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>protocol</code> is not <code>UDP</code>
 	 */
 	public void setProtocol(String protocol) {
 		if (!protocol.equals(UDP) && !protocol.equals(TCP)) {
@@ -374,42 +375,39 @@ public class ServerOptions {
 		this.rendezvous = rendezvous;
 	}
 
-//	public void setEnv( String key, String value )
-//	{
-//		envVars.put( key, value );
-//	}
-//	
-//	public String getEnv( String key )
-//	{
-//		return envVars.get( key ).toString();
-//	}
-//	
-//	public Map getEnvMap()
-//	{
-//		return Collections.unmodifiableMap( envVars );
-//	}
+	// public void setEnv( String key, String value )
+	// {
+	// envVars.put( key, value );
+	// }
+	//
+	// public String getEnv( String key )
+	// {
+	// return envVars.get( key ).toString();
+	// }
+	//
+	// public Map getEnvMap()
+	// {
+	// return Collections.unmodifiableMap( envVars );
+	// }
 
 	/**
-	 * Utility method to return the audio bus offset
-	 * for the first bus which is not connected to
-	 * audio hardware interface channels. This value
-	 * is only valid, if the server was booted with
-	 * this options
+	 * Utility method to return the audio bus offset for the first bus which is not
+	 * connected to audio hardware interface channels. This value is only valid, if
+	 * the server was booted with this options
 	 *
-	 * @return the index of the first audio bus not
-	 *         connected to audio hardware
+	 * @return the index of the first audio bus not connected to audio hardware
 	 */
 	public int getFirstPrivateBus() {
 		return (getNumOutputBusChannels() + getNumInputBusChannels());
 	}
 
 	/**
-	 * Converts a list of string elements to one
-	 * an array of strings
+	 * Converts a list of string elements to one an array of strings
 	 *
-	 * @param list a list whose elements are <code>String</code>s
-	 * @return array of those elements in the same order as they appeared
-	 *         in the list
+	 * @param list
+	 *            a list whose elements are <code>String</code>s
+	 * @return array of those elements in the same order as they appeared in the
+	 *         list
 	 */
 	public static String[] optionListToStringArray(List list) {
 		final String[] array = new String[list.size()];
@@ -422,13 +420,12 @@ public class ServerOptions {
 	}
 
 	/**
-	 * Converts an array of strings to a string
-	 * which can be used in a Un*x console. This
-	 * assembles all elements with space characters between
-	 * them. If an element contains a space character, it
-	 * will be put in quotes.
+	 * Converts an array of strings to a string which can be used in a Un*x console.
+	 * This assembles all elements with space characters between them. If an element
+	 * contains a space character, it will be put in quotes.
 	 *
-	 * @param array parameters to a un*x process
+	 * @param array
+	 *            parameters to a un*x process
 	 * @return concatenated command string
 	 */
 	public static String stringArrayToConsoleString(String[] array) {

@@ -13,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Quite a 1:1 translation from SClang, this
- * is used as the default bus allocator by the server.
+ * Quite a 1:1 translation from SClang, this is used as the default bus
+ * allocator by the server.
  * 
- * @todo unlike the node allocator, this cannot
- *       handle different client IDs. have to find
- *       out how different clients can peacefully
- *       coexist on the same server.
+ * @todo unlike the node allocator, this cannot handle different client IDs.
+ *       have to find out how different clients can peacefully coexist on the
+ *       same server.
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08

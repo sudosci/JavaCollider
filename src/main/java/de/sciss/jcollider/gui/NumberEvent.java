@@ -13,9 +13,8 @@ package de.sciss.jcollider.gui;
 import de.sciss.app.BasicEvent;
 
 /**
- * This kind of event is fired
- * from a <code>NumberField</code> gadget when
- * the user modified its contents.
+ * This kind of event is fired from a <code>NumberField</code> gadget when the
+ * user modified its contents.
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 19-Mar-08
@@ -25,7 +24,7 @@ import de.sciss.app.BasicEvent;
  * @see java.lang.Number
  */
 public class NumberEvent extends BasicEvent {
-// --- ID values ---
+	// --- ID values ---
 	/**
 	 * returned by getID() : the number changed
 	 */
@@ -37,10 +36,14 @@ public class NumberEvent extends BasicEvent {
 	/**
 	 * Constructs a new <code>NumberEvent</code>
 	 *
-	 * @param source who originated the action
-	 * @param ID <code>CHANGED</code>
-	 * @param when system time when the event occured
-	 * @param number the new number
+	 * @param source
+	 *            who originated the action
+	 * @param ID
+	 *            <code>CHANGED</code>
+	 * @param when
+	 *            system time when the event occured
+	 * @param number
+	 *            the new number
 	 */
 	public NumberEvent(Object source, int ID, long when, Number number, boolean adjusting) {
 		super(source, ID, when);
@@ -56,11 +59,9 @@ public class NumberEvent extends BasicEvent {
 	/**
 	 * Queries the new number
 	 *
-	 * @return the new <code>Number</code> of the
-	 *         <code>NumberField</code>. This is either
-	 *         an <code>Long</code> or a <code>Double</code>
-	 *         depening of the <code>NumberField</code>'s
-	 *         <code>NumberSpace</code>.
+	 * @return the new <code>Number</code> of the <code>NumberField</code>. This is
+	 *         either an <code>Long</code> or a <code>Double</code> depening of the
+	 *         <code>NumberField</code>'s <code>NumberSpace</code>.
 	 *
 	 * @see de.sciss.jcollider.gui.NumberSpace#isInteger()
 	 */

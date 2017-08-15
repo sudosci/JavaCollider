@@ -10,12 +10,9 @@
 package de.sciss.jcollider;
 
 /**
- * Class for the TrigControl UGen.
- * This class is recognized by SynthDef
- * in the building process.
- * For the sake of clarity, trigger control
- * names should begin with a small 't'
- * letter, though this is not obligatory.
+ * Class for the TrigControl UGen. This class is recognized by SynthDef in the
+ * building process. For the sake of clarity, trigger control names should begin
+ * with a small 't' letter, though this is not obligatory.
  * <p>
  * For details, refer to the <code>Control</code> class.
  *

@@ -17,8 +17,8 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
@@ -34,65 +34,60 @@ import java.util.Set;
 import de.sciss.net.OSCMessage;
 
 /**
- * This is the representation of a UGen graph, a prototype
- * for a synth node. While it was created to mimic most of the
- * behaviour of the SClang counterpart, a lot of the internals
- * are slightly different, including the whole idea of how
- * a UGen graph is represented.
+ * This is the representation of a UGen graph, a prototype for a synth node.
+ * While it was created to mimic most of the behaviour of the SClang
+ * counterpart, a lot of the internals are slightly different, including the
+ * whole idea of how a UGen graph is represented.
  * <p>
- * While in SClang as an interpreter
- * language the graph is represented as a function, this is
- * not appropriate for java as a (semi)compiled language. Therefore,
- * you do not pass a graph function to the constructor, but rather
- * a collection of graph elements (UGens and Constants) which have
- * already been put together.
+ * While in SClang as an interpreter language the graph is represented as a
+ * function, this is not appropriate for java as a (semi)compiled language.
+ * Therefore, you do not pass a graph function to the constructor, but rather a
+ * collection of graph elements (UGens and Constants) which have already been
+ * put together.
  * <p>
- * This also implies that there is no
- * function header which can be read by <code>SynthDef</code> to
- * automatically construct <code>Control</code> UGens from the
- * function's arguments. You therefore have to create <code>Control</code>
- * UGens explicitly yourself. <code>SynthDef</code> will find them
- * and construct the synth def binary object accordingly.
+ * This also implies that there is no function header which can be read by
+ * <code>SynthDef</code> to automatically construct <code>Control</code> UGens
+ * from the function's arguments. You therefore have to create
+ * <code>Control</code> UGens explicitly yourself. <code>SynthDef</code> will
+ * find them and construct the synth def binary object accordingly.
  * <p>
- * Note that this class includes the functionality found separately
- * in SClang's SynthDesc class, that is methods for reading and formatting
- * a synth def. Unlike SClang, when a synth def is read, UGens are
- * created as instances of the <code>UGen</code> class. In an earlier
- * version, <code>java.lang.reflect</code> was used to dynamically load
- * UGen subclasses. This concept was dropped because it would imply
+ * Note that this class includes the functionality found separately in SClang's
+ * SynthDesc class, that is methods for reading and formatting a synth def.
+ * Unlike SClang, when a synth def is read, UGens are created as instances of
+ * the <code>UGen</code> class. In an earlier version,
+ * <code>java.lang.reflect</code> was used to dynamically load UGen subclasses.
+ * This concept was dropped because it would imply
  * <UL>
- * <LI>that the JCollider java source is modified whenever new UGens
- * are introduced to supercollider</LI>
- * <LI>a tree of some hundred classes would have to be created with all
- * the memory requirements and time consumption when the VM loads
- * the JCollider package</LI>
- * <LI>having to deal with all the smalltalk idiosyncratic stuff
- * in the UGen representations which often are different from
- * the actual UGens objects as known by the server</LI>
+ * <LI>that the JCollider java source is modified whenever new UGens are
+ * introduced to supercollider</LI>
+ * <LI>a tree of some hundred classes would have to be created with all the
+ * memory requirements and time consumption when the VM loads the JCollider
+ * package</LI>
+ * <LI>having to deal with all the smalltalk idiosyncratic stuff in the UGen
+ * representations which often are different from the actual UGens objects as
+ * known by the server</LI>
  * </UL>
  * <P>
- * So instead, there is one clumsy <code>UGen</code> class which
- * carries all the information about inlets and outlets. A synth def
- * file is sufficient to recreate the graph tree using this class.
- * On the other side, when you yourself create a UGen tree, another
- * objects comes in, the <code>UGenInfo</code> which acts as a lookup
- * table for installed UGen clases.
+ * So instead, there is one clumsy <code>UGen</code> class which carries all the
+ * information about inlets and outlets. A synth def file is sufficient to
+ * recreate the graph tree using this class. On the other side, when you
+ * yourself create a UGen tree, another objects comes in, the
+ * <code>UGenInfo</code> which acts as a lookup table for installed UGen clases.
  * <p>
- * This class is somewhat more simple than the SClang counterpart.
- * For example, input rate consistency is not checked.
- * Tree optimization is still inferior because of the non-existing
- * UGen subclasses (like <code>BinaryOpUGen</code>) that could handle
- * context-sensitive optimization. Control-lags and Trigger-controls
- * are not supported. For the sake of cleanness, all the strange
- * interpenetration of SynthDef and UGen in the building process as
- * exhibited by SClang was dropped, where the def would go and write
- * things into the UGen and vice versa, setting up temporary fields
- * like the building-def and so on. So this implementation is more
- * stripped down but way cleaner and less spaghetti.
+ * This class is somewhat more simple than the SClang counterpart. For example,
+ * input rate consistency is not checked. Tree optimization is still inferior
+ * because of the non-existing UGen subclasses (like <code>BinaryOpUGen</code>)
+ * that could handle context-sensitive optimization. Control-lags and
+ * Trigger-controls are not supported. For the sake of cleanness, all the
+ * strange interpenetration of SynthDef and UGen in the building process as
+ * exhibited by SClang was dropped, where the def would go and write things into
+ * the UGen and vice versa, setting up temporary fields like the building-def
+ * and so on. So this implementation is more stripped down but way cleaner and
+ * less spaghetti.
  * <p>
- * There seemed to be a non-finished project in SClang's SynthDef
- * called &quot;variants&quot;. i don't know what this was, it
- * has was just been dropped.
+ * There seemed to be a non-finished project in SClang's SynthDef called
+ * &quot;variants&quot;. i don't know what this was, it has was just been
+ * dropped.
  * <p>
  * Here is an example of building a SynthDef (comments are below):
  * 
@@ -140,36 +135,33 @@ import de.sciss.net.OSCMessage;
  * }
  * </pre>
  *
- * Yes, it's true, the code is at least three times as big as
- * would be the SClang counter part, but we're definitely focussing
- * on an application different from jit developing synthesizers.
+ * Yes, it's true, the code is at least three times as big as would be the
+ * SClang counter part, but we're definitely focussing on an application
+ * different from jit developing synthesizers.
  * <p>
- * So some remarks on the example (the sound isn't particularly
- * interesting though ;-) : generally it improves readability if
- * me create piece of the graph in more than one line. While the
- * loop body is difficult to read, the statement that adds clipping
- * and resonance is easy. Since we have only one dead end for the
- * graph (Out.ar), we simply pass the result of <code>UGen.ar( &quot;Out&quot; ... )</code>
- * to the synth def constructor. to overwrite the resonance control default
- * value of 0.5 (as specified in the <code>Control</code> constructor),
- * we add control name and value parameters to the <code>synth.newMsg</code>
- * call. the result of this call is an <code>OSCMessage</code> (whereas
- * <code>new Synth( ... )</code> would have sent that message immediately),
- * this is passed to the synth def constructor as the completion message.
- * the rest shows you how to send bundles to set the resonance value
- * of the synth at certain times.
+ * So some remarks on the example (the sound isn't particularly interesting
+ * though ;-) : generally it improves readability if me create piece of the
+ * graph in more than one line. While the loop body is difficult to read, the
+ * statement that adds clipping and resonance is easy. Since we have only one
+ * dead end for the graph (Out.ar), we simply pass the result of
+ * <code>UGen.ar( &quot;Out&quot; ... )</code> to the synth def constructor. to
+ * overwrite the resonance control default value of 0.5 (as specified in the
+ * <code>Control</code> constructor), we add control name and value parameters
+ * to the <code>synth.newMsg</code> call. the result of this call is an
+ * <code>OSCMessage</code> (whereas <code>new Synth( ... )</code> would have
+ * sent that message immediately), this is passed to the synth def constructor
+ * as the completion message. the rest shows you how to send bundles to set the
+ * resonance value of the synth at certain times.
  * <p>
- * You will probably want to use SClang to prototype the synthesizers
- * and then just port them to JCollider which shouldn't be too
- * difficult after some practising. See the JColliderDemo for
- * more examples of UGen graphs.
+ * You will probably want to use SClang to prototype the synthesizers and then
+ * just port them to JCollider which shouldn't be too difficult after some
+ * practising. See the JColliderDemo for more examples of UGen graphs.
  *
- * @todo for the same synth def, the graphs produced by SClang
- *       and JCollider can look slightly different regarding the
- *       ordering of the topology. this should be reviewed more
- *       thoroughly. It doesn't seem that JCollider is less
- *       efficient (from the CPU loads point of view), but it
- *       makes comparison and debugging a bit tricky
+ * @todo for the same synth def, the graphs produced by SClang and JCollider can
+ *       look slightly different regarding the ordering of the topology. this
+ *       should be reviewed more thoroughly. It doesn't seem that JCollider is
+ *       less efficient (from the CPU loads point of view), but it makes
+ *       comparison and debugging a bit tricky
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08
@@ -181,8 +173,7 @@ public class SynthDef implements Constants {
 	public static final String SUFFIX = ".scsyndef";
 
 	/**
-	 * Currently supported synth def file
-	 * version (1).
+	 * Currently supported synth def file version (1).
 	 */
 	public static final int SCGF_VERSION = 1;
 
@@ -213,20 +204,20 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Constructs a new SynthDef from the given
-	 * graph element.
+	 * Constructs a new SynthDef from the given graph element.
 	 *
-	 * @param name the name of the synth def
-	 *        as would be used to instantiate a <code>Synth</code>
-	 * @param graph a graph element such as a <code>UGen</code> or
-	 *        a collection of ugens. Basically anything that
-	 *        comes out of one of the static contructor methods
-	 *        of the <code>UGen</code> class. Note that when there
-	 *        are several &quot;dead ends&quot; in the graph, those
-	 *        dead ends should be collected in a <code>GraphElemArray</code>
-	 *        which is then passed to <code>SynthDef</code>, otherwise the
-	 *        synthdef may be incomplete. See the <code>JColliderDemo</code>
-	 *        to see how to do it.
+	 * @param name
+	 *            the name of the synth def as would be used to instantiate a
+	 *            <code>Synth</code>
+	 * @param graph
+	 *            a graph element such as a <code>UGen</code> or a collection of
+	 *            ugens. Basically anything that comes out of one of the static
+	 *            contructor methods of the <code>UGen</code> class. Note that when
+	 *            there are several &quot;dead ends&quot; in the graph, those dead
+	 *            ends should be collected in a <code>GraphElemArray</code> which is
+	 *            then passed to <code>SynthDef</code>, otherwise the synthdef may
+	 *            be incomplete. See the <code>JColliderDemo</code> to see how to do
+	 *            it.
 	 */
 	public SynthDef(String name, GraphElem graph) {
 		this(name);
@@ -235,18 +226,18 @@ public class SynthDef implements Constants {
 
 	private void build(GraphElemArray graphArray) {
 		// save/restore controls in case of *wrap
-//		var saveControlNames = controlNames;
+		// var saveControlNames = controlNames;
 
-//		prependArgs = prependArgs.asArray;
-//		this.addControlsFromArgsOfFunc( func, rates, prependArgs.size );
-//		result = func.valueArray( prependArgs ++ this.buildControls );
+		// prependArgs = prependArgs.asArray;
+		// this.addControlsFromArgsOfFunc( func, rates, prependArgs.size );
+		// result = func.valueArray( prependArgs ++ this.buildControls );
 
-//		controlNames = saveControlNames
+		// controlNames = saveControlNames
 
 		// collectUGens)
 
 		collectUGens(graphArray);
-//		optimizeGraph();
+		// optimizeGraph();
 
 		// collects only those in used UGens,
 		// therefore we do not pass graphArray as an argument
@@ -254,34 +245,34 @@ public class SynthDef implements Constants {
 
 		// XXX should do this conditionally
 		// (using a static boolean)
-//		checkInputs();
+		// checkInputs();
 
 		// re-sort graph. reindex.
 		topologicalSort();
-//		indexUGens();
+		// indexUGens();
 	}
 
-//	private void addUGenInput( UGenInput ui )
-//	{
-//		if( ui instanceof UGenChannel ) {
-//			addUGen( ((UGenChannel) ui).getUGen() );
-//		} else if( ui instanceof Constant ) {
-//			addConstant( (Constant) ui );
-//		} else {
-//			assert false : ui.getClass().getName();
-//		}
-//	}
+	// private void addUGenInput( UGenInput ui )
+	// {
+	// if( ui instanceof UGenChannel ) {
+	// addUGen( ((UGenChannel) ui).getUGen() );
+	// } else if( ui instanceof Constant ) {
+	// addConstant( (Constant) ui );
+	// } else {
+	// assert false : ui.getClass().getName();
+	// }
+	// }
 
 	private void addControlDesc(ControlDesc desc) {
-//System.err.print( "me add dem desc " );
-//desc.printOn( System.err );
+		// System.err.print( "me add dem desc " );
+		// desc.printOn( System.err );
 		controlDescs.add(desc);
 	}
 
 	// includes check for Controls !
 	private void addUGen(UGen ugen) {
 		if (ugenSet.add(ugen)) {
-//		ugen.initSetSynthIndex( ugens.size() );
+			// ugen.initSetSynthIndex( ugens.size() );
 			ugens.add(ugen);
 			if (ugen instanceof Control) {
 				final Control ctrl = (Control) ugen;
@@ -367,7 +358,7 @@ public class SynthDef implements Constants {
 			ugens.add(env.ugen);
 		}
 
-//		cleanupTopoSort();
+		// cleanupTopoSort();
 	}
 
 	private List initTopoSort() {
@@ -391,7 +382,7 @@ public class SynthDef implements Constants {
 		for (int i = 0; i < numUGens; i++) {
 			env = envs[i];
 			ugen = env.ugen;
-//			ugen.initTopoSort(); // this populates the descendants and antecedents
+			// ugen.initTopoSort(); // this populates the descendants and antecedents
 			for (int j = 0; j < ugen.getNumInputs(); j++) {
 				ui = ugen.getInput(j);
 				if (ui instanceof UGenChannel) {
@@ -403,10 +394,10 @@ public class SynthDef implements Constants {
 		}
 		for (int i = numUGens - 1; i >= 0; i--) {
 			env = envs[i];
-//			ugen.descendants = ugen.descendants.asArray.sort(
-//								{ arg a, b; a.synthIndex < b.synthIndex }
+			// ugen.descendants = ugen.descendants.asArray.sort(
+			// { arg a, b; a.synthIndex < b.synthIndex }
 			Collections.sort(env.collDe, synthIdxComp);
-//			ugen.makeAvailable(); // all ugens with no antecedents are made available
+			// ugen.makeAvailable(); // all ugens with no antecedents are made available
 			if (env.collAnte.isEmpty()) {
 				available.add(env);
 			}
@@ -431,65 +422,61 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Sends the definition to
-	 * a server.
+	 * Sends the definition to a server.
 	 *
-	 * @param server to representation of the server
-	 *        to send the def to
+	 * @param server
+	 *            to representation of the server to send the def to
 	 *
-	 * @throws IOException if a network error occured
+	 * @throws IOException
+	 *             if a network error occured
 	 */
 	public void send(Server server) throws IOException {
 		server.sendMsg(recvMsg());
 	}
 
 	/**
-	 * Sends the definition to
-	 * a server. The server will
-	 * execute the optional completion message
-	 * when it has processed the definition.
+	 * Sends the definition to a server. The server will execute the optional
+	 * completion message when it has processed the definition.
 	 *
-	 * @param server to representation of the server
-	 *        to send the def to
-	 * @param completionMsg message to execute by the server
-	 *        when the synth def has become available.
-	 *        typically something like <code>Synth.newMsg( ... )</code>.
-	 *        may be <code>null</code>
+	 * @param server
+	 *            to representation of the server to send the def to
+	 * @param completionMsg
+	 *            message to execute by the server when the synth def has become
+	 *            available. typically something like
+	 *            <code>Synth.newMsg( ... )</code>. may be <code>null</code>
 	 *
-	 * @throws IOException if a network error occured
+	 * @throws IOException
+	 *             if a network error occured
 	 */
 	public void send(Server server, OSCMessage completionMsg) throws IOException {
 		server.sendMsg(recvMsg(completionMsg));
 	}
 
 	/**
-	 * Constructs a message to sends to
-	 * a server for providing the synth def.
+	 * Constructs a message to sends to a server for providing the synth def.
 	 *
 	 * @return message ready to send to a server
 	 *
-	 * @throws IOException when synth def compilation
-	 *         fails (? this should never happen?)
+	 * @throws IOException
+	 *             when synth def compilation fails (? this should never happen?)
 	 */
 	public OSCMessage recvMsg() throws IOException {
 		return recvMsg(null);
 	}
 
 	/**
-	 * Constructs a message to sends to
-	 * a server for providing the synth def.
-	 * The optional completion message is
-	 * attached to the returned message and
-	 * will be executed by the server, when
-	 * the definition has become available.
+	 * Constructs a message to sends to a server for providing the synth def. The
+	 * optional completion message is attached to the returned message and will be
+	 * executed by the server, when the definition has become available.
 	 *
-	 * @param completionMsg completion message, such as <code>/s_new</code>
-	 *        or <code>null</code>
+	 * @param completionMsg
+	 *            completion message, such as <code>/s_new</code> or
+	 *            <code>null</code>
 	 *
 	 * @return message ready to send to a server
 	 *
-	 * @throws IOException when synth def compilation
-	 *         fails (? this should never happen?)
+	 * @throws IOException
+	 *             when synth def compilation fails (? this should never happen?)
 	 */
 	public OSCMessage recvMsg(OSCMessage completionMsg) throws IOException {
 		final Object[] args;
@@ -510,25 +497,31 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Stores the def in a temp file and sends a
-	 * corresponding OSC <code>/d_load</code> message to the server.
+	 * Stores the def in a temp file and sends a corresponding OSC
+	 * <code>/d_load</code> message to the server.
 	 *
-	 * @param s the server to send the def to
+	 * @param s
+	 *            the server to send the def to
 	 *
-	 * @throws IOException if the file could not be created or the message could not be sent
+	 * @throws IOException
+	 *             if the file could not be created or the message could not be sent
 	 */
 	public void load(Server s) throws IOException {
 		load(s, null);
 	}
 
 	/**
-	 * Stores the def in a temp file and sends a
-	 * corresponding OSC <code>/d_load</code> message to the server.
+	 * Stores the def in a temp file and sends a corresponding OSC
+	 * <code>/d_load</code> message to the server.
 	 *
-	 * @param s the server to send the def to
-	 * @param completionMsg an OSC message to be executed when the def was received (can be <code>null</code>)
+	 * @param s
+	 *            the server to send the def to
+	 * @param completionMsg
+	 *            an OSC message to be executed when the def was received (can be
+	 *            <code>null</code>)
 	 *
-	 * @throws IOException if the file could not be created or the message could not be sent
+	 * @throws IOException
+	 *             if the file could not be created or the message could not be sent
 	 */
 	public void load(Server s, OSCMessage completionMsg) throws IOException {
 		final File f = File.createTempFile("tmp", SUFFIX);
@@ -537,19 +530,23 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Stores the def in a file and sends a
-	 * corresponding OSC <code>/d_load</code> message to the server.
+	 * Stores the def in a file and sends a corresponding OSC <code>/d_load</code>
+	 * message to the server.
 	 *
-	 * @param s the server to send the def to
-	 * @param completionMsg an OSC message to be executed when the def was received (can be <code>null</code>)
-	 * @param path path to a file. if a file by this name
-	 *        already exists, the caller should delete it
-	 *        before calling this method
+	 * @param s
+	 *            the server to send the def to
+	 * @param completionMsg
+	 *            an OSC message to be executed when the def was received (can be
+	 *            <code>null</code>)
+	 * @param path
+	 *            path to a file. if a file by this name already exists, the caller
+	 *            should delete it before calling this method
 	 *
-	 * @throws IOException if the file could not be created or the message could not be sent
+	 * @throws IOException
+	 *             if the file could not be created or the message could not be sent
 	 *
-	 * @warning unlike in SClang, the path denotes the file not the
-	 *          parent folder of the file
+	 * @warning unlike in SClang, the path denotes the file not the parent folder of
+	 *          the file
 	 */
 	public void load(Server s, OSCMessage completionMsg, File path) throws IOException {
 		final Object[] args;
@@ -565,10 +562,12 @@ public class SynthDef implements Constants {
 	/**
 	 * Sends the def to the server and creates a synth from this def.
 	 *
-	 * @param target the group to whose head the node is added
+	 * @param target
+	 *            the group to whose head the node is added
 	 * @return the newly created synth
 	 *
-	 * @throws IOException if a network error occurs
+	 * @throws IOException
+	 *             if a network error occurs
 	 */
 	public Synth play(Group target) throws IOException {
 		return play(target, null, null);
@@ -577,14 +576,19 @@ public class SynthDef implements Constants {
 	/**
 	 * Sends the def to the server and creates a synth from this def.
 	 *
-	 * @param target the group to whose head the node is added
-	 * @param argNames the names of the controls to set. can be <code>null</code>
-	 * @param argValues the values of the controls. each array element corresponds to
-	 *        the element in <code>argNames</code> with the same index. the sizes of <code>argValues</code>
-	 *        and <code>argNames</code> must be equal. can be <code>null</code>
+	 * @param target
+	 *            the group to whose head the node is added
+	 * @param argNames
+	 *            the names of the controls to set. can be <code>null</code>
+	 * @param argValues
+	 *            the values of the controls. each array element corresponds to the
+	 *            element in <code>argNames</code> with the same index. the sizes of
+	 *            <code>argValues</code> and <code>argNames</code> must be equal.
+	 *            can be <code>null</code>
 	 * @return the newly created synth
 	 *
-	 * @throws IOException if a network error occurs
+	 * @throws IOException
+	 *             if a network error occurs
 	 */
 	public Synth play(Group target, String[] argNames, float[] argValues) throws IOException {
 		return play(target, argNames, argValues, kAddToHead);
@@ -593,15 +597,21 @@ public class SynthDef implements Constants {
 	/**
 	 * Sends the def to the server and creates a synth from this def.
 	 *
-	 * @param target the node to which the new synth is added
-	 * @param argNames the names of the controls to set. can be <code>null</code>
-	 * @param argValues the values of the controls. each array element corresponds to
-	 *        the element in <code>argNames</code> with the same index. the sizes of <code>argValues</code>
-	 *        and <code>argNames</code> must be equal. can be <code>null</code>
-	 * @param addAction the add action re <code>target</code>
+	 * @param target
+	 *            the node to which the new synth is added
+	 * @param argNames
+	 *            the names of the controls to set. can be <code>null</code>
+	 * @param argValues
+	 *            the values of the controls. each array element corresponds to the
+	 *            element in <code>argNames</code> with the same index. the sizes of
+	 *            <code>argValues</code> and <code>argNames</code> must be equal.
+	 *            can be <code>null</code>
+	 * @param addAction
+	 *            the add action re <code>target</code>
 	 * @return the newly created synth
 	 *
-	 * @throws IOException if a network error occurs
+	 * @throws IOException
+	 *             if a network error occurs
 	 */
 	public Synth play(Node target, String[] argNames, float[] argValues, int addAction) throws IOException {
 		final Synth synth;
@@ -616,19 +626,15 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Prints a textual representation
-	 * of the synth def to the given stream.
-	 * This will print a list of all ugens
-	 * and their wiring. Useful for debugging.
+	 * Prints a textual representation of the synth def to the given stream. This
+	 * will print a list of all ugens and their wiring. Useful for debugging.
 	 *
-	 * @param out the stream to print on, such as <code>System.out</code>
+	 * @param out
+	 *            the stream to print on, such as <code>System.out</code>
 	 *
-	 * @todo resolve alias names for specialIndex
-	 *       synths such as BinaryOpUGen
-	 *       (would require the use of <code>UGenInfo</code>
-	 *       which in turn requires to read in all
-	 *       UGen definitions, some overhead we may
-	 *       not want ... ?)
+	 * @todo resolve alias names for specialIndex synths such as BinaryOpUGen (would
+	 *       require the use of <code>UGenInfo</code> which in turn requires to read
+	 *       in all UGen definitions, some overhead we may not want ... ?)
 	 *
 	 * @see System#out
 	 */
@@ -682,8 +688,8 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Return a list of all UGens in the graph
-	 * (in the depth-first sorted topological order).
+	 * Return a list of all UGens in the graph (in the depth-first sorted
+	 * topological order).
 	 *
 	 * @return list whose elements are of class <code>UGen</code>
 	 */
@@ -692,16 +698,16 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Checks to see if a given file is a
-	 * synth definition file.
+	 * Checks to see if a given file is a synth definition file.
 	 *
-	 * @param path to the synth def file
+	 * @param path
+	 *            to the synth def file
 	 *
-	 * @return <code>true</code> if the file starts with
-	 *         the synth definition magic cookie. does not
-	 *         check for the synth def file version
+	 * @return <code>true</code> if the file starts with the synth definition magic
+	 *         cookie. does not check for the synth def file version
 	 *
-	 * @throws IOException if the file could not be read
+	 * @throws IOException
+	 *             if the file could not be read
 	 */
 	public static boolean isDefFile(File path) throws IOException {
 		final DataInputStream dis = new DataInputStream(new FileInputStream(path));
@@ -713,17 +719,18 @@ public class SynthDef implements Constants {
 	/**
 	 * Writes an array of definitions to a file.
 	 *
-	 * @param path path to a file. if a file by this name
-	 *        already exists, the caller should delete it
-	 *        before calling this method
-	 * @param defs array of definitions which will be written
-	 *        one after another
+	 * @param path
+	 *            path to a file. if a file by this name already exists, the caller
+	 *            should delete it before calling this method
+	 * @param defs
+	 *            array of definitions which will be written one after another
 	 *
-	 * @throws IOException if the file cannot be opened, denotes a
-	 *         directory, or if a write error occurs
+	 * @throws IOException
+	 *             if the file cannot be opened, denotes a directory, or if a write
+	 *             error occurs
 	 *
-	 * @warning unlike in SClang, the path denotes the file not the
-	 *          parent folder of the file
+	 * @warning unlike in SClang, the path denotes the file not the parent folder of
+	 *          the file
 	 */
 	public static void writeDefFile(File path, SynthDef[] defs) throws IOException {
 		final OutputStream os = new FileOutputStream(path);
@@ -742,32 +749,33 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Writes this def to a definition file. That it,
-	 * the resulting file will contain just one definition, that is us.
+	 * Writes this def to a definition file. That it, the resulting file will
+	 * contain just one definition, that is us.
 	 *
-	 * @param path path to a file. if a file by this name
-	 *        already exists, the caller should delete it
-	 *        before calling this method
+	 * @param path
+	 *            path to a file. if a file by this name already exists, the caller
+	 *            should delete it before calling this method
 	 *
-	 * @throws IOException if the file cannot be opened, denotes a
-	 *         directory, or if a write error occurs
+	 * @throws IOException
+	 *             if the file cannot be opened, denotes a directory, or if a write
+	 *             error occurs
 	 *
-	 * @warning unlike in SClang, the path denotes the file not the
-	 *          parent folder of the file
+	 * @warning unlike in SClang, the path denotes the file not the parent folder of
+	 *          the file
 	 */
 	public void writeDefFile(File path) throws IOException {
 		SynthDef.writeDefFile(path, new SynthDef[] { this });
 	}
 
 	/**
-	 * Writes this def to an output stream (such as a file or
-	 * a memory buffer).
+	 * Writes this def to an output stream (such as a file or a memory buffer).
 	 *
-	 * @param os stream to write to. the stream will be
-	 *        buffered by this method, so you do not need
-	 *        to do this
+	 * @param os
+	 *            stream to write to. the stream will be buffered by this method, so
+	 *            you do not need to do this
 	 *
-	 * @throws IOException if a write error occurs
+	 * @throws IOException
+	 *             if a write error occurs
 	 */
 	public void write(OutputStream os) throws IOException {
 		final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
@@ -794,7 +802,7 @@ public class SynthDef implements Constants {
 			desc = (ControlDesc) controlDescs.get(i);
 			if (desc.getName() != null) {
 				SynthDef.writePascalString(dos, desc.getName());
-//				dos.writeShort( desc.getIndex() );
+				// dos.writeShort( desc.getIndex() );
 				dos.writeShort(i);
 			} else {
 				System.err.println("Warning: unnamed control " + i + " dropped.");
@@ -875,14 +883,15 @@ public class SynthDef implements Constants {
 	/**
 	 * Reads definitions from a synth def file.
 	 *
-	 * @param path the location of the synth def file
-	 *        such as a local harddisk or remote server file
+	 * @param path
+	 *            the location of the synth def file such as a local harddisk or
+	 *            remote server file
 	 * @return an array of all definitions found in the file
 	 *
-	 * @throws IOException if a read error occurs, if the
-	 *         file has not a valid synth def
-	 *         format or if the synth def file
-	 *         version is unsupported (greater than <code>SCFG_VERSION</code>)
+	 * @throws IOException
+	 *             if a read error occurs, if the file has not a valid synth def
+	 *             format or if the synth def file version is unsupported (greater
+	 *             than <code>SCFG_VERSION</code>)
 	 */
 	public static SynthDef[] readDefFile(URL path) throws IOException {
 		final InputStream is = path.openStream();
@@ -897,13 +906,14 @@ public class SynthDef implements Constants {
 	/**
 	 * Reads definitions from a synth def file.
 	 *
-	 * @param path the location of the synth def file
+	 * @param path
+	 *            the location of the synth def file
 	 * @return an array of all definitions found in the file
 	 *
-	 * @throws IOException if a read error occurs, if the
-	 *         file has not a valid synth def
-	 *         format or if the synth def file
-	 *         version is unsupported (greater than <code>SCFG_VERSION</code>)
+	 * @throws IOException
+	 *             if a read error occurs, if the file has not a valid synth def
+	 *             format or if the synth def file version is unsupported (greater
+	 *             than <code>SCFG_VERSION</code>)
 	 */
 	public static SynthDef[] readDefFile(File path) throws IOException {
 		final InputStream is = new FileInputStream(path);
@@ -916,16 +926,17 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Reads definitions from an input stream
-	 * (such as a harddisk file or memory buffer).
+	 * Reads definitions from an input stream (such as a harddisk file or memory
+	 * buffer).
 	 *
-	 * @param is the stream to read from
+	 * @param is
+	 *            the stream to read from
 	 * @return an array of all definitions found in the stream
 	 *
-	 * @throws IOException if a read error occurs, if the
-	 *         stream has not a valid synth def
-	 *         format or if the synth def file
-	 *         version is unsupported (greater than <code>SCFG_VERSION</code>)
+	 * @throws IOException
+	 *             if a read error occurs, if the stream has not a valid synth def
+	 *             format or if the synth def file version is unsupported (greater
+	 *             than <code>SCFG_VERSION</code>)
 	 */
 	public static SynthDef[] readDefFile(InputStream is) throws IOException {
 		final DataInputStream dis = new DataInputStream(new BufferedInputStream(is));
@@ -950,19 +961,20 @@ public class SynthDef implements Constants {
 	}
 
 	/**
-	 * Reads a single <code>SynthDef</code> from an input stream
-	 * (such as a harddisk file or memory buffer). Please refer
-	 * to the SuperCollider document <code>Synth-Definition-File-Format.rtf</code>
-	 * to read how a synth def is constructed
-	 * (read the paragraph &quot;a synth-definition is :&quot;).
-	 * This assumes synth def file format version 1 as used
-	 * by SuperCollider as of september 2005.
+	 * Reads a single <code>SynthDef</code> from an input stream (such as a harddisk
+	 * file or memory buffer). Please refer to the SuperCollider document
+	 * <code>Synth-Definition-File-Format.rtf</code> to read how a synth def is
+	 * constructed (read the paragraph &quot;a synth-definition is :&quot;). This
+	 * assumes synth def file format version 1 as used by SuperCollider as of
+	 * september 2005.
 	 *
-	 * @param is the stream to read from with the current read
-	 *        position placed at the start of a new synth def
+	 * @param is
+	 *            the stream to read from with the current read position placed at
+	 *            the start of a new synth def
 	 * @return the decoded synth def
 	 *
-	 * @throws IOException if a read error occurs
+	 * @throws IOException
+	 *             if a read error occurs
 	 */
 	public static SynthDef read(InputStream is) throws IOException {
 		return read(new DataInputStream(new BufferedInputStream(is)));
@@ -981,13 +993,13 @@ public class SynthDef implements Constants {
 		UGen ugen;
 		String str;
 
-//		UGen.buildSynthDef	= def;
+		// UGen.buildSynthDef = def;
 
 		numConstants = dis.readShort();
 		constants = new Constant[numConstants];
 
-//		inputs.clear();
-//		outputs.clear();
+		// inputs.clear();
+		// outputs.clear();
 
 		for (int i = 0; i < numConstants; i++) {
 			constants[i] = new Constant(dis.readFloat());
@@ -998,10 +1010,11 @@ public class SynthDef implements Constants {
 		controlDescs = new ControlDesc[numParams];
 
 		for (int i = 0; i < numParams; i++) {
-//			def.controls[ i ]		= dis.readFloat();
+			// def.controls[ i ] = dis.readFloat();
 			controlDefaults[i] = dis.readFloat();
 
-//			this.controlDescs[ i ]	= new ControlDesc( null, i, UGen.UNKNOWN_RATE, def.controls[ i ]);	// XXX
+			// this.controlDescs[ i ] = new ControlDesc( null, i, UGen.UNKNOWN_RATE,
+			// def.controls[ i ]); // XXX
 		}
 
 		numParamNames = dis.readShort();
@@ -1009,8 +1022,8 @@ public class SynthDef implements Constants {
 		for (int i = 0; i < numParamNames; i++) {
 			str = readPascalString(dis);
 			paramName[dis.readShort()] = str;
-//			this.controlDescs[ dis.readShort() ].name = str;
-//System.err.println( "name[ "+x+" ] == "+str );
+			// this.controlDescs[ dis.readShort() ].name = str;
+			// System.err.println( "name[ "+x+" ] == "+str );
 		}
 
 		numUGens = dis.readShort();
@@ -1021,15 +1034,19 @@ public class SynthDef implements Constants {
 			// the controlDescs manually, while a user instantiated
 			// Control will behave differently!
 			def.addUGen(ugen);
-			//		ugen.addToSynth();
-			//		ugen.initFinished();
+			// ugen.addToSynth();
+			// ugen.initFinished();
 
-			//		if( ugen instanceof ControlUGen ) {
-//			if( ugen.getName().equals( "Control" )) {
+			// if( ugen instanceof ControlUGen ) {
+			// if( ugen.getName().equals( "Control" )) {
 			if (ctrlUGensSet.contains(ugen.getName())) {
-//System.err.println( "special index "+ugen.getSpecialIndex()+"; numoutputs "+ugen.getNumOutputs()+"; controlDescs.length"+controlDescs.length+"; paramName.length "+paramName.length+"; controlDefaults.length "+controlDefaults.length );
+				// System.err.println( "special index "+ugen.getSpecialIndex()+"; numoutputs
+				// "+ugen.getNumOutputs()+"; controlDescs.length"+controlDescs.length+";
+				// paramName.length "+paramName.length+"; controlDefaults.length
+				// "+controlDefaults.length );
 				for (int k = 0, j = ugen.getSpecialIndex(); k < ugen.getNumOutputs(); k++, j++) {
-//					controlDescs[ j ] = new ControlDesc( paramName[ j ], j, ugen.getRate(), def.controls[ j ]);
+					// controlDescs[ j ] = new ControlDesc( paramName[ j ], j, ugen.getRate(),
+					// def.controls[ j ]);
 					controlDescs[j] = new ControlDesc(j < paramName.length ? paramName[j] : "?", ugen.getRate(),
 							controlDefaults[j]);
 				}
@@ -1037,8 +1054,9 @@ public class SynthDef implements Constants {
 		}
 
 		for (int i = 0; i < controlDescs.length; i++) {
-// this is a bug in sclang
-//			if( controlDescs[ i ].getName() != null ) def.controlDescs.add( controlDescs[ i ]);
+			// this is a bug in sclang
+			// if( controlDescs[ i ].getName() != null ) def.controlDescs.add( controlDescs[
+			// i ]);
 			if (controlDescs[i] != null) {
 				if (controlDescs[i].getName() != null) {
 					def.addControlDesc(controlDescs[i]);
@@ -1050,17 +1068,17 @@ public class SynthDef implements Constants {
 			}
 		}
 		for (int i = 0; i < constants.length; i++) {
-// this is a bug in sclang
-//			def.constants.put( constants[ i ], new Integer( i ));
+			// this is a bug in sclang
+			// def.constants.put( constants[ i ], new Integer( i ));
 			def.addConstant(constants[i]);
 		}
 
 		// if( !keepDef ) {
-		//		def			= null;
-		//		constants	= null;
+		// def = null;
+		// constants = null;
 		// }
 		// makeMsgFunc();
-//		UGen.buildSynthDef = null;
+		// UGen.buildSynthDef = null;
 
 		return def;
 	}
@@ -1071,8 +1089,10 @@ public class SynthDef implements Constants {
 		final Object rate = RATES[dis.readByte()];
 		final int numInputs = dis.readShort();
 		final int numOutputs = dis.readShort();
-		// specialIndex: this value is used by some unit generators for a special purpose. For example, UnaryOpUGen
-		// and BinaryOpUGen use it to indicate which operator to perform. If not used it should be set to zero
+		// specialIndex: this value is used by some unit generators for a special
+		// purpose. For example, UnaryOpUGen
+		// and BinaryOpUGen use it to indicate which operator to perform. If not used it
+		// should be set to zero
 		final int specialIndex = dis.readShort();
 		final Object[] outputRates = new Object[numOutputs];
 		final UGenInput[] ugenInputs = new UGenInput[numInputs];
@@ -1087,11 +1107,11 @@ public class SynthDef implements Constants {
 			if (ugenIndex < 0) { // constant input
 				ugenInputs[i] = constants[outputIndex];
 			} else { // input from another ugen's output
-//				if( ugen instanceof MultiOutUGen ) {
-//					ugenInputs[ i ]	= ((MultiOutUGen) ugen).channels[ outputIndex ];
-//				} else {
-//					ugenInputs[ i ]	= ugen;
-//				}
+				// if( ugen instanceof MultiOutUGen ) {
+				// ugenInputs[ i ] = ((MultiOutUGen) ugen).channels[ outputIndex ];
+				// } else {
+				// ugenInputs[ i ] = ugen;
+				// }
 				ugenInputs[i] = new UGenChannel((UGen) def.ugens.get(ugenIndex), outputIndex);
 			}
 		}
@@ -1113,7 +1133,7 @@ public class SynthDef implements Constants {
 		return new String(buf);
 	}
 
-// ---------------- internal classes ----------------
+	// ---------------- internal classes ----------------
 
 	private static class UGenEnv {
 		protected final UGen ugen;
@@ -1130,7 +1150,8 @@ public class SynthDef implements Constants {
 	}
 
 	private static class SynthIndexComparator implements Comparator {
-		protected SynthIndexComparator() { /* empty */ }
+		protected SynthIndexComparator() {
+			/* empty */ }
 
 		public int compare(Object env1, Object env2) {
 			return (((UGenEnv) env1).synthIndex - ((UGenEnv) env2).synthIndex);

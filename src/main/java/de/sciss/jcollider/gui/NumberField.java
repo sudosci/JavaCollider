@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -40,53 +41,49 @@ import de.sciss.app.BasicEvent;
 import de.sciss.app.EventManager;
 
 /**
- * A NumberField is basically a <code>JPanel</code>
- * holding a <code>JTextField</code> whose content
- * is limited to decimal numbers. The
- * idea is somewhat similar to FScape's
- * <code>ParamField</code>, but we try to avoid the
- * conceptual drawbacks made there.
+ * A NumberField is basically a <code>JPanel</code> holding a
+ * <code>JTextField</code> whose content is limited to decimal numbers. The idea
+ * is somewhat similar to FScape's <code>ParamField</code>, but we try to avoid
+ * the conceptual drawbacks made there.
  * <p>
- * Number formatting is accomplished by using
- * a <code>NumberFormat</code> object whose configuration
- * is determinated by a <code>NumberSpace</code> given
- * to the constructor.
+ * Number formatting is accomplished by using a <code>NumberFormat</code> object
+ * whose configuration is determinated by a <code>NumberSpace</code> given to
+ * the constructor.
  * <p>
- * Clients can listen to user edits by registering
- * a <code>NumberListener</code>.
+ * Clients can listen to user edits by registering a
+ * <code>NumberListener</code>.
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 19-Mar-08
  */
-public class NumberField extends JFormattedTextField implements EventManager.Processor //, PropertyChangeListener
+public class NumberField extends JFormattedTextField implements EventManager.Processor // , PropertyChangeListener
 {
 	private static final double LN10 = Math.log(10);
 
 	/**
-	 * Constructor flag : Format the values
-	 * as minutes:seconds
+	 * Constructor flag : Format the values as minutes:seconds
 	 */
 	public static final int HHMMSS = 0x20000; // display as HH:MM:SS.xxx
 
-//	/**
-//	 *  Constructor flag : Pressing enter
-//	 *	unfocusses the gadget
-//	 */
-//	public static final int ENTER_UNFOCUS	=	0x00001;
+	// /**
+	// * Constructor flag : Pressing enter
+	// * unfocusses the gadget
+	// */
+	// public static final int ENTER_UNFOCUS = 0x00001;
 
 	private NumberSpace space;
 	protected Number value;
 	private NumberFormat numberFormat;
-// JJJ
-//	private TimeFormat						timeFormat;
+	// JJJ
+	// private TimeFormat timeFormat;
 	private int flags;
 
 	private EventManager em = null; // lazy creation
 
 	private final DefaultFormatterFactory factory = new DefaultFormatterFactory();
 	private final NumberFormatter numberFormatter = new NumberFormatter();
-// JJJ
-//	private final TimeFormatter				timeFormatter	= new TimeFormatter();
+	// JJJ
+	// private final TimeFormatter timeFormatter = new TimeFormatter();
 
 	protected final NumberField enc_this = this;
 	private final AbstractAction actionLooseFocus;
@@ -95,18 +92,14 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	protected static final DataFlavor[] supportedFlavors = { numberFlavor, DataFlavor.stringFlavor };
 
 	/**
-	 * Create a new <code>NumberField</code> for
-	 * a given space. the initial value of the
-	 * <code>NumberField</code> is taken
-	 * from <code>space.reset</code>. The number of
-	 * displayed integers and decimals is calculated
-	 * by evaluating the space's <code>min</code>,
-	 * <code>max</code> and <code>quant</code>
-	 * fields. If the <code>quant</code> field is integer, no
-	 * decimals are displayed. User adjustments of
-	 * the number are automatically trimmed to the
-	 * space's <code>min</code> and <code>max</code> and
-	 * quantisized to its <code>quant</code> field
+	 * Create a new <code>NumberField</code> for a given space. the initial value of
+	 * the <code>NumberField</code> is taken from <code>space.reset</code>. The
+	 * number of displayed integers and decimals is calculated by evaluating the
+	 * space's <code>min</code>, <code>max</code> and <code>quant</code> fields. If
+	 * the <code>quant</code> field is integer, no decimals are displayed. User
+	 * adjustments of the number are automatically trimmed to the space's
+	 * <code>min</code> and <code>max</code> and quantisized to its
+	 * <code>quant</code> field
 	 */
 	public NumberField() {
 		super();
@@ -145,12 +138,12 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), key);
 		amap.put(key, actionLooseFocus);
 
-// we don't need cut
-//		action				= TransferHandler.getCutAction();
-//		key					= action.getValue( Action.NAME );
-//		// action.getValue( Action.ACCELERATOR_KEY ) returns null unfortunately
-//		imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_X, msh ), key );
-//		amap.put( key, action );
+		// we don't need cut
+		// action = TransferHandler.getCutAction();
+		// key = action.getValue( Action.NAME );
+		// // action.getValue( Action.ACCELERATOR_KEY ) returns null unfortunately
+		// imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_X, msh ), key );
+		// amap.put( key, action );
 
 		action = TransferHandler.getCopyAction();
 		key = action.getValue(Action.NAME);
@@ -178,7 +171,8 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	}
 
 	public void setFlags(int newFlags) {
-//System.err.println(" old : "+this.flags+"; new : "+newFlags+" ; XOR "+(this.flags ^ newFlags) );
+		// System.err.println(" old : "+this.flags+"; new : "+newFlags+" ; XOR
+		// "+(this.flags ^ newFlags) );
 		final int change = this.flags ^ newFlags;
 
 		this.flags = newFlags;
@@ -186,12 +180,12 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		if ((change & HHMMSS) != 0) {
 			updateFormatter();
 		}
-//		if( (change & ENTER_UNFOCUS) != 0 ) {
-//			final InputMap	imap	= getInputMap();
-//			
-//			imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, 0 ),
-//				(newFlags & ENTER_UNFOCUS) == 0 ? null : "lost" );
-//		}
+		// if( (change & ENTER_UNFOCUS) != 0 ) {
+		// final InputMap imap = getInputMap();
+		//
+		// imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, 0 ),
+		// (newFlags & ENTER_UNFOCUS) == 0 ? null : "lost" );
+		// }
 	}
 
 	public int getFlags() {
@@ -210,15 +204,17 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			numberFormat.setMinimumFractionDigits(space.minFracDigits);
 			numberFormat.setMaximumFractionDigits(i);
 		}
-// JJJ
-//		if( (flags & HHMMSS) != 0 ) {
-//			timeFormat  = new TimeFormat( 0, null, null, numberFormat.getMaximumFractionDigits(), Locale.US );
-//			numberFormat.setMinimumIntegerDigits( 2 );
-//			numberFormat.setMaximumIntegerDigits( 2 );
-//			numberFormat.setMinimumFractionDigits( numberFormat.getMaximumFractionDigits() );
-//			i			= 5;
-//		} else {
-//			timeFormat  = null;
+		// JJJ
+		// if( (flags & HHMMSS) != 0 ) {
+		// timeFormat = new TimeFormat( 0, null, null,
+		// numberFormat.getMaximumFractionDigits(), Locale.US );
+		// numberFormat.setMinimumIntegerDigits( 2 );
+		// numberFormat.setMaximumIntegerDigits( 2 );
+		// numberFormat.setMinimumFractionDigits(
+		// numberFormat.getMaximumFractionDigits() );
+		// i = 5;
+		// } else {
+		// timeFormat = null;
 		if (Double.isInfinite(space.min) || Double.isInfinite(space.max)) {
 			numberFormat.setMaximumIntegerDigits(8);
 		} else {
@@ -229,8 +225,8 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			numberFormat.setMaximumIntegerDigits(i);
 		}
 		i = 1;
-// JJJ
-//		}
+		// JJJ
+		// }
 		i += Math.min(4, numberFormat.getMaximumFractionDigits()) + numberFormat.getMaximumIntegerDigits();
 
 		setColumns(i);
@@ -241,8 +237,8 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		}
 		numberFormat.setGroupingUsed(false);
 
-// JJJ
-//		if( (flags & HHMMSS) == 0 ) {
+		// JJJ
+		// if( (flags & HHMMSS) == 0 ) {
 		numberFormatter.setFormat(numberFormat);
 		if (space.isInteger()) {
 			numberFormatter.setValueClass(Long.class);
@@ -264,12 +260,12 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 
 		factory.setDefaultFormatter(numberFormatter);
 
-// JJJ
-//		} else {
-//			// XXX fehlt setMin/Max
-//			timeFormatter.setFormat( timeFormat );
-//			factory.setDefaultFormatter( timeFormatter );
-//		}
+		// JJJ
+		// } else {
+		// // XXX fehlt setMin/Max
+		// timeFormatter.setFormat( timeFormat );
+		// factory.setDefaultFormatter( timeFormatter );
+		// }
 
 		setValue(value);
 	}
@@ -277,17 +273,16 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	/**
 	 * Return the number currently displayed
 	 *
-	 * @return the number displayed in the gadget.
-	 *         if the <code>NumberSpace</space> is
-	 *				integer, a <code>Long</code> is returned,
-	 *         otherwise a <code>Double</code>.
+	 * @return the number displayed in the gadget. if the
+	 *         <code>NumberSpace</space> is
+	 *				integer, a <code>Long</code> is returned, otherwise a
+	 *         <code>Double</code>.
 	 *
 	 * @see de.sciss.jcollider.gui.NumberSpace#isInteger()
-	 * @warning if the number was set using the <code>setNumber</code>
-	 *          method, it is possible that the returned object
-	 *          is neither <code>Long</code> nor <code>Double</code>.
-	 *          Thus never cast it to a subclass of Number, but rather
-	 *          use an appropriate translation like <code>intValue()</code>
+	 * @warning if the number was set using the <code>setNumber</code> method, it is
+	 *          possible that the returned object is neither <code>Long</code> nor
+	 *          <code>Double</code>. Thus never cast it to a subclass of Number, but
+	 *          rather use an appropriate translation like <code>intValue()</code>
 	 *          or <code>doubleValue()</code>!
 	 */
 	public Number getNumber() {
@@ -295,15 +290,12 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	}
 
 	/**
-	 * Set the gadget contents
-	 * to a new number. No event
-	 * is fired. Though the number is formatted
-	 * according to the space's settings
-	 * (e.g. number of decimals), its value
-	 * is not altered, even if it exceeds the
-	 * space's bounds.
+	 * Set the gadget contents to a new number. No event is fired. Though the number
+	 * is formatted according to the space's settings (e.g. number of decimals), its
+	 * value is not altered, even if it exceeds the space's bounds.
 	 *
-	 * @param value the new number to display
+	 * @param value
+	 *            the new number to display
 	 */
 	public void setNumber(Number value) {
 		this.value = value;
@@ -313,8 +305,8 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	/**
 	 * Returns the used number space.
 	 *
-	 * @return the <code>NumberSpace</code> that was used
-	 *         to construct the <code>NumberField</code>.
+	 * @return the <code>NumberSpace</code> that was used to construct the
+	 *         <code>NumberField</code>.
 	 */
 	public NumberSpace getSpace() {
 		return space;
@@ -323,11 +315,11 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	// --- listener registration ---
 
 	/**
-	 * Register a <code>NumberListener</code>
-	 * which will be informed about changes of
-	 * the gadgets content.
+	 * Register a <code>NumberListener</code> which will be informed about changes
+	 * of the gadgets content.
 	 *
-	 * @param listener the <code>NumberListener</code> to register
+	 * @param listener
+	 *            the <code>NumberListener</code> to register
 	 */
 	public void addListener(NumberListener listener) {
 		synchronized (this) {
@@ -339,10 +331,10 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	}
 
 	/**
-	 * Unregister a <code>NumberListener</code>
-	 * from receiving number change events.
+	 * Unregister a <code>NumberListener</code> from receiving number change events.
 	 *
-	 * @param listener the <code>NumberListener</code> to unregister
+	 * @param listener
+	 *            the <code>NumberListener</code> to unregister
 	 */
 	public void removeListener(NumberListener listener) {
 		if (em != null)
@@ -370,10 +362,11 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		}
 	}
 
-// ----------- internal action classes -----------
+	// ----------- internal action classes -----------
 
 	private class ActionLooseFocus extends AbstractAction {
-		protected ActionLooseFocus() { /* empty */ }
+		protected ActionLooseFocus() {
+			/* empty */ }
 
 		public void actionPerformed(ActionEvent e) {
 			final JRootPane rp = SwingUtilities.getRootPane(enc_this);
@@ -382,10 +375,11 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		}
 	}
 
-// ----------- internal TransferHandler -----------
+	// ----------- internal TransferHandler -----------
 
 	private class NumberTransferHandler extends TransferHandler {
-		protected NumberTransferHandler() { /* empty */ }
+		protected NumberTransferHandler() {
+			/* empty */ }
 
 		/**
 		 * Overridden to import a Number or String if it is available.
@@ -404,9 +398,12 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 					fireNumberChanged();
 					return true;
 				}
-			} catch (UnsupportedFlavorException e1) { /* ignored */ } catch (IOException e2) { /* ignored */ } catch (ParseException e3) { /*
-																																			 * ignored
-																																			 */ }
+			} catch (UnsupportedFlavorException e1) {
+				/* ignored */ } catch (IOException e2) {
+				/* ignored */ } catch (ParseException e3) {
+				/*
+				 * ignored
+				 */ }
 
 			return false;
 		}
@@ -419,9 +416,9 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			return new NumberTransferable(getNumber(), getFormatter());
 		}
 
-//		protected void exportDone( JComponent source, Transferable data, int action )
-//		{
-//		}
+		// protected void exportDone( JComponent source, Transferable data, int action )
+		// {
+		// }
 
 		public boolean canImport(JComponent c, DataFlavor[] flavors) {
 			for (int i = 0; i < flavors.length; i++) {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
@@ -48,8 +49,8 @@ import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCMessage;
 
 /**
- * A panel that contains a tree view of the nodes as
- * monitored by a <code>NodeWatcher</code>.
+ * A panel that contains a tree view of the nodes as monitored by a
+ * <code>NodeWatcher</code>.
  *
  * @author Hanns Holger Rutz
  * @version 0.31, 08-Oct-07
@@ -58,8 +59,7 @@ import de.sciss.net.OSCMessage;
  */
 public class NodeTreePanel extends JPanel implements TreeSelectionListener, TreeModelListener {
 	/**
-	 * Flag for the constructor: create a button
-	 * bar to message the nodes.
+	 * Flag for the constructor: create a button bar to message the nodes.
 	 */
 	public static final int BUTTONS = 0x01;
 
@@ -80,15 +80,18 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	private ActionTrace actionTrace = null;
 
 	/**
-	 * Creates a new <code>NodeTreePanel</code> for a given node watcher
-	 * and root element. See the <code>NodeTreeManager</code> constructor
-	 * for details. Don't forget to call the <code>dispose</code> method
-	 * when the component is not needed any more.
+	 * Creates a new <code>NodeTreePanel</code> for a given node watcher and root
+	 * element. See the <code>NodeTreeManager</code> constructor for details. Don't
+	 * forget to call the <code>dispose</code> method when the component is not
+	 * needed any more.
 	 *
-	 * @param nw the node watcher to use for monitoring
-	 * @param rootNode the root element to display in the tree
-	 * @param flags flags that control what kind of gadgets are created
-	 *        (e.g. <code>BUTTONS</code>).
+	 * @param nw
+	 *            the node watcher to use for monitoring
+	 * @param rootNode
+	 *            the root element to display in the tree
+	 * @param flags
+	 *            flags that control what kind of gadgets are created (e.g.
+	 *            <code>BUTTONS</code>).
 	 *
 	 * @see NodeTreeManager#NodeTreeManager( NodeWatcher, Node )
 	 */
@@ -100,7 +103,8 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 		ggTree = new JTree(ntm.getModel());
 		ggTree.setShowsRootHandles(true);
 		ggTree.setCellRenderer(new TreeNodeRenderer());
-//		ggTree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+		// ggTree.getSelectionModel().setSelectionMode(
+		// TreeSelectionModel.SINGLE_TREE_SELECTION );
 		ggTree.addTreeSelectionListener(this);
 		ntm.getModel().addTreeModelListener(this);
 
@@ -131,31 +135,30 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 		tb.setFloatable(false);
 		actionPauseResume = new ActionPauseResume();
 		but = new JButton(actionPauseResume);
-//		but.setFont( fntGUI );
+		// but.setFont( fntGUI );
 		tb.add(but);
 		actionFree = new ActionFree();
 		but = new JButton(actionFree);
-//		but.setFont( fntGUI );
+		// but.setFont( fntGUI );
 		tb.add(but);
 		actionFreeAll = new ActionFreeAll();
 		but = new JButton(actionFreeAll);
-//		but.setFont( fntGUI );
+		// but.setFont( fntGUI );
 		tb.add(but);
 		actionDeepFree = new ActionDeepFree();
 		but = new JButton(actionDeepFree);
-//		but.setFont( fntGUI );
+		// but.setFont( fntGUI );
 		tb.add(but);
 		actionTrace = new ActionTrace();
 		but = new JButton(actionTrace);
-//		but.setFont( fntGUI );
+		// but.setFont( fntGUI );
 		tb.add(but);
 
 		return tb;
 	}
 
 	/**
-	 * Frees resources when the component is
-	 * not used any more. This will dispose
+	 * Frees resources when the component is not used any more. This will dispose
 	 * the internal <code>NodeTreeManager</code>.
 	 */
 	public void dispose() {
@@ -165,15 +168,12 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	}
 
 	/**
-	 * Creates a window containing this panel.
-	 * Do not try to create more than one window
-	 * for one panel or to attach the panel to
-	 * more than one container. The returned
-	 * frame will be visible and brought to the
-	 * front. The frame's default close operation
-	 * is <code>JFrame.DO_NOTHING_ON_CLOSE</code>,
-	 * so you will have to install a <code>WindowListener</code>
-	 * if the user shall be able to close the window.
+	 * Creates a window containing this panel. Do not try to create more than one
+	 * window for one panel or to attach the panel to more than one container. The
+	 * returned frame will be visible and brought to the front. The frame's default
+	 * close operation is <code>JFrame.DO_NOTHING_ON_CLOSE</code>, so you will have
+	 * to install a <code>WindowListener</code> if the user shall be able to close
+	 * the window.
 	 */
 	public JFrame makeWindow() {
 		final JFrame f = new JFrame("[" + rootNode.getServer().getName() + "] tree for " + rootNode.toString());
@@ -230,51 +230,51 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			actionTrace.update();
 	}
 
-// --------------- TreeSelectionListener interface ---------------
+	// --------------- TreeSelectionListener interface ---------------
 
 	/**
-	 * This method is part of the <code>TreeSelectionListener</code> interface.
-	 * Do not call this method.
+	 * This method is part of the <code>TreeSelectionListener</code> interface. Do
+	 * not call this method.
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
 		updateActions();
 	}
 
-// --------------- TreeModelListener interface ---------------
+	// --------------- TreeModelListener interface ---------------
 
 	/**
-	 * This method is part of the <code>TreeModelListener</code> interface.
-	 * Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface. Do not
+	 * call this method.
 	 */
 	public void treeNodesChanged(TreeModelEvent e) {
 		updateActions(); // some actions change behaviour when nodes are paused/ resumed
 	}
 
 	/**
-	 * This method is part of the <code>TreeModelListener</code> interface.
-	 * Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface. Do not
+	 * call this method.
 	 */
 	public void treeNodesInserted(TreeModelEvent e) {
-		// updateActions();	// not necessary i think XXX
+		// updateActions(); // not necessary i think XXX
 	}
 
 	/**
-	 * This method is part of the <code>TreeModelListener</code> interface.
-	 * Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface. Do not
+	 * call this method.
 	 */
 	public void treeNodesRemoved(TreeModelEvent e) {
 		updateActions(); // because corresponding deselections are not fired
 	}
 
 	/**
-	 * This method is part of the <code>TreeModelListener</code> interface.
-	 * Do not call this method.
+	 * This method is part of the <code>TreeModelListener</code> interface. Do not
+	 * call this method.
 	 */
 	public void treeStructureChanged(TreeModelEvent e) {
 		updateActions(); // necessary? XXX
 	}
 
-// --------------- internal classes ---------------
+	// --------------- internal classes ---------------
 
 	private abstract class NodeAction extends AbstractAction {
 		protected NodeAction(String name) {
@@ -411,8 +411,8 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	}
 
 	private static class TreeNodeRenderer extends DefaultTreeCellRenderer {
-// doch 'n bisschen krass
-//		private static final Color	colrPlaying	= new Color( 0x00, 0x50, 0x30 );
+		// doch 'n bisschen krass
+		// private static final Color colrPlaying = new Color( 0x00, 0x50, 0x30 );
 		private static final Color colrPlaying = Color.black;
 		private static final Color colrPausing = new Color(0x90, 0x90, 0x90);
 		private static final Color colrDied = new Color(0x90, 0x00, 0x30);

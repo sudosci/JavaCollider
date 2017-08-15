@@ -16,15 +16,13 @@ import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCMessage;
 
 /**
- * Mimics SCLang's Buffer class,
- * that is, it's a client side
- * representation of an audio buffer
+ * Mimics SCLang's Buffer class, that is, it's a client side representation of
+ * an audio buffer
  *
- * @warning this is a quick direct translation from SClang
- *          which is largely untested. before all methods have been
- *          thoroughly verified, excepted some of them to be wrong
- *          or behave different than expected. what certainly works
- *          is alloc-, read-, free-, zero- and close-messages
+ * @warning this is a quick direct translation from SClang which is largely
+ *          untested. before all methods have been thoroughly verified, excepted
+ *          some of them to be wrong or behave different than expected. what
+ *          certainly works is alloc-, read-, free-, zero- and close-messages
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08
@@ -42,19 +40,22 @@ public class Buffer implements Constants {
 	private String path = null;
 	private CompletionAction doOnInfo = null;
 
-//	public Buffer( Server server, int numFrames )
-//	{
-//		this( server, numFrames, 1 );
-//	}
+	// public Buffer( Server server, int numFrames )
+	// {
+	// this( server, numFrames, 1 );
+	// }
 
 	/**
-	 * Creates a new Buffer with given number of frames and channels.
-	 * This method uses the Server's allocators but does not send
-	 * an <code>allocMsg</code> to the server.
+	 * Creates a new Buffer with given number of frames and channels. This method
+	 * uses the Server's allocators but does not send an <code>allocMsg</code> to
+	 * the server.
 	 *
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
 	 *
 	 * @see #alloc()
 	 *
@@ -67,15 +68,18 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates a new Buffer with given number of frames and channels.
-	 * This method requires an explicit buffer index and does not use the Server's allocators.
-	 * This method does not send
-	 * an <code>allocMsg</code> to the server.
+	 * Creates a new Buffer with given number of frames and channels. This method
+	 * requires an explicit buffer index and does not use the Server's allocators.
+	 * This method does not send an <code>allocMsg</code> to the server.
 	 *
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
-	 * @param bufNum the index of the buffer
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
+	 * @param bufNum
+	 *            the index of the buffer
 	 */
 	public Buffer(Server server, int numFrames, int numChannels, int bufNum) {
 		this.server = server;
@@ -100,9 +104,9 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Queries the buffer data's sample rate. This rate is
-	 * updated when an asynchronous read command is completed
-	 * and buffer info has been received from the server.
+	 * Queries the buffer data's sample rate. This rate is updated when an
+	 * asynchronous read command is completed and buffer info has been received from
+	 * the server.
 	 *
 	 * @return the buffer content's sample rate
 	 */
@@ -124,10 +128,9 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Queries the buffer data's number of frames (samples per channel).
-	 * In ansynchronous allocation by read this value is filled in when
-	 * the read is completed
-	 * and buffer info has been received from the server.
+	 * Queries the buffer data's number of frames (samples per channel). In
+	 * ansynchronous allocation by read this value is filled in when the read is
+	 * completed and buffer info has been received from the server.
 	 *
 	 * @return the number of frames in the buffer
 	 */
@@ -140,10 +143,9 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Queries the buffer's number of channels.
-	 * In ansynchronous allocation by read this value is filled in when
-	 * the read is completed
-	 * and buffer info has been received from the server.
+	 * Queries the buffer's number of channels. In ansynchronous allocation by read
+	 * this value is filled in when the read is completed and buffer info has been
+	 * received from the server.
 	 *
 	 * @return the number of channels in the buffer
 	 */
@@ -156,8 +158,8 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Queries the buffer's sound file path.
-	 * In ansynchronous allocation by read this value is instantely filled in.
+	 * Queries the buffer's sound file path. In ansynchronous allocation by read
+	 * this value is instantely filled in.
 	 *
 	 * @return the sound file path of the buffer or <code>null</code>
 	 */
@@ -170,11 +172,11 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Queries the buffer's duration in seconds.
-	 * This is only valid after the buffer info (such as sampleRate)
-	 * has been retrieved.
+	 * Queries the buffer's duration in seconds. This is only valid after the buffer
+	 * info (such as sampleRate) has been retrieved.
 	 * 
-	 * @return the total duration of the buffer (when played back at normal rate) in seconds
+	 * @return the total duration of the buffer (when played back at normal rate) in
+	 *         seconds
 	 */
 	public double getDuration() {
 		return getNumFrames() / getSampleRate();
@@ -188,12 +190,15 @@ public class Buffer implements Constants {
 	/**
 	 * Allocates and returns a new mono Buffer with given number of frames.
 	 *
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer alloc(Server server, int numFrames) throws IOException {
 		return Buffer.alloc(server, numFrames, 1);
@@ -202,13 +207,17 @@ public class Buffer implements Constants {
 	/**
 	 * Allocates and returns a new Buffer with given number of channels and frames.
 	 *
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer alloc(Server server, int numFrames, int numChannels) throws IOException {
 		return Buffer.alloc(server, numFrames, numChannels, null);
@@ -217,15 +226,21 @@ public class Buffer implements Constants {
 	/**
 	 * Allocates and returns a new Buffer with given number of channels and frames.
 	 *
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
-	 * @param completionFunc a function that returns an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
+	 * @param completionFunc
+	 *            a function that returns an <code>OSCMessage</code> which is
+	 *            processed by the server when the reading is complete. can be
+	 *            <code>null</code>.
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer alloc(Server server, int numFrames, int numChannels, CompletionFunction completionFunc)
 			throws IOException {
@@ -244,15 +259,22 @@ public class Buffer implements Constants {
 	 * Allocates and returns a new Buffer with given number of channels and frames.
 	 * This uses an explicitly provided buffer index and not the server's allocator.
 	 *
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
-	 * @param completionFunc a function that returns an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
-	 * @param bufNum the index by which the buffer is known on the server
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
+	 * @param completionFunc
+	 *            a function that returns an <code>OSCMessage</code> which is
+	 *            processed by the server when the reading is complete. can be
+	 *            <code>null</code>.
+	 * @param bufNum
+	 *            the index by which the buffer is known on the server
 	 * @return the newly created Buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer alloc(Server server, int numFrames, int numChannels, CompletionFunction completionFunc,
 			int bufNum) throws IOException {
@@ -263,33 +285,42 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Allocates and returns an array of neighbouring single channel <code>Buffer</code> objects
-	 * with given number of frames. Neighbouring means, that
-	 * <code>buf[ n ].getBufNum() == buf[ n-1 ].getBufNum() + 1</code>.
+	 * Allocates and returns an array of neighbouring single channel
+	 * <code>Buffer</code> objects with given number of frames. Neighbouring means,
+	 * that <code>buf[ n ].getBufNum() == buf[ n-1 ].getBufNum() + 1</code>.
 	 *
-	 * @param numBufs the number of buffers to allocate
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
+	 * @param numBufs
+	 *            the number of buffers to allocate
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
 	 * @return the newly created Buffers
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer[] allocConsecutive(int numBufs, Server server, int numFrames) throws IOException {
 		return Buffer.allocConsecutive(numBufs, server, numFrames, 1);
 	}
 
 	/**
-	 * Allocates and returns an array of neighbouring <code>Buffer</code> objects with given number
-	 * of channels and frames. Neighbouring means, that
+	 * Allocates and returns an array of neighbouring <code>Buffer</code> objects
+	 * with given number of channels and frames. Neighbouring means, that
 	 * <code>buf[ n ].getBufNum() == buf[ n-1 ].getBufNum() + 1</code>.
 	 *
-	 * @param numBufs the number of buffers to allocate
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
+	 * @param numBufs
+	 *            the number of buffers to allocate
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
 	 * @return the newly created Buffers
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer[] allocConsecutive(int numBufs, Server server, int numFrames, int numChannels)
 			throws IOException {
@@ -297,19 +328,26 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Allocates and returns an array of neighbouring <code>Buffer</code> objects with given number
-	 * of channels and frames. Neighbouring means, that
+	 * Allocates and returns an array of neighbouring <code>Buffer</code> objects
+	 * with given number of channels and frames. Neighbouring means, that
 	 * <code>buf[ n ].getBufNum() == buf[ n-1 ].getBufNum() + 1</code>.
 	 *
-	 * @param numBufs the number of buffers to allocate
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
-	 * @param completionFunc a function that returns an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
+	 * @param numBufs
+	 *            the number of buffers to allocate
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
+	 * @param completionFunc
+	 *            a function that returns an <code>OSCMessage</code> which is
+	 *            processed by the server when the reading is complete. can be
+	 *            <code>null</code>.
 	 * @return the newly created Buffers
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer[] allocConsecutive(int numBufs, Server server, int numFrames, int numChannels,
 			CompletionFunction completionFunc) throws IOException {
@@ -325,23 +363,33 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Allocates and returns an array of neighbouring <code>Buffer</code> objects with given number
-	 * of channels and frames. This uses an explicitly provided buffer index and not the server's
-	 * allocator. The first element of the returned array has a buffer index equal to the provided
-	 * <code>bufNum</code>, the next element has a buffer index of <code>bufNum + 1</code>,
-	 * the next element an index of <code>bufNum + 2</code> etc.
+	 * Allocates and returns an array of neighbouring <code>Buffer</code> objects
+	 * with given number of channels and frames. This uses an explicitly provided
+	 * buffer index and not the server's allocator. The first element of the
+	 * returned array has a buffer index equal to the provided <code>bufNum</code>,
+	 * the next element has a buffer index of <code>bufNum + 1</code>, the next
+	 * element an index of <code>bufNum + 2</code> etc.
 	 *
-	 * @param numBufs the number of buffers to allocate
-	 * @param server the server to which the buffer belongs
-	 * @param numFrames the number of frames (samples per channel) that buffer occupies
-	 * @param numChannels the number of channels the buffer occupies
-	 * @param completionFunc a function that returns an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
-	 * @param bufNum the index by which the first buffer is known on the server.
-	 *        the consecutive buffers have indices of <code>bufNum + (1...numBufs-1)</code>
+	 * @param numBufs
+	 *            the number of buffers to allocate
+	 * @param server
+	 *            the server to which the buffer belongs
+	 * @param numFrames
+	 *            the number of frames (samples per channel) that buffer occupies
+	 * @param numChannels
+	 *            the number of channels the buffer occupies
+	 * @param completionFunc
+	 *            a function that returns an <code>OSCMessage</code> which is
+	 *            processed by the server when the reading is complete. can be
+	 *            <code>null</code>.
+	 * @param bufNum
+	 *            the index by which the first buffer is known on the server. the
+	 *            consecutive buffers have indices of
+	 *            <code>bufNum + (1...numBufs-1)</code>
 	 * @return the newly created Buffers
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer[] allocConsecutive(int numBufs, Server server, int numFrames, int numChannels,
 			CompletionFunction completionFunc, int bufNum) throws IOException {
@@ -362,7 +410,8 @@ public class Buffer implements Constants {
 					if (bufs[i] != null) {
 						try {
 							bufs[i].free();
-						} catch (IOException e1) { /* ignored */ }
+						} catch (IOException e1) {
+							/* ignored */ }
 					}
 				}
 			}
@@ -372,7 +421,8 @@ public class Buffer implements Constants {
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #Buffer( Server, int, int )
 	 */
@@ -383,10 +433,12 @@ public class Buffer implements Constants {
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor.
 	 *
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the allocation is complete. can be <code>null</code>.
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the allocation is complete. can be <code>null</code>.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #Buffer( Server, int, int )
 	 */
@@ -395,8 +447,8 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_alloc</code> message to allocate the buffer created with the basic <code>new</code>
-	 * constructor.
+	 * Creates an OSC <code>/b_alloc</code> message to allocate the buffer created
+	 * with the basic <code>new</code> constructor.
 	 *
 	 * @return the message to be sent to the server
 	 *
@@ -407,11 +459,12 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_alloc</code> message to allocate the buffer created with the basic <code>new</code>
-	 * constructor.
+	 * Creates an OSC <code>/b_alloc</code> message to allocate the buffer created
+	 * with the basic <code>new</code> constructor.
 	 *
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the allocation is complete. can be <code>null</code>.
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the allocation is complete. can be <code>null</code>.
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
@@ -428,12 +481,14 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Allocates the buffer created with the basic <code>new</code> constructor,
-	 * by reading in a sound file.
+	 * Allocates the buffer created with the basic <code>new</code> constructor, by
+	 * reading in a sound file.
 	 *
-	 * @param path the path to the sound file
+	 * @param path
+	 *            the path to the sound file
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #Buffer( Server, int, int )
 	 */
@@ -442,111 +497,140 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Allocates the buffer created with the basic <code>new</code> constructor,
-	 * by reading in a sound file.
+	 * Allocates the buffer created with the basic <code>new</code> constructor, by
+	 * reading in a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void allocRead(String path, long startFrame) throws IOException {
 		allocRead(path, startFrame, -1);
 	}
 
 	/**
-	 * Allocates the buffer created with the basic <code>new</code> constructor,
-	 * by reading in a sound file.
+	 * Allocates the buffer created with the basic <code>new</code> constructor, by
+	 * reading in a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void allocRead(String path, long startFrame, int numFrames) throws IOException {
 		allocRead(path, startFrame, numFrames, null);
 	}
 
 	/**
-	 * Allocates the buffer created with the basic <code>new</code> constructor,
-	 * by reading in a sound file.
+	 * Allocates the buffer created with the basic <code>new</code> constructor, by
+	 * reading in a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the allocation and reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the allocation and reading is complete. can be <code>null</code>.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void allocRead(String path, long startFrame, int numFrames, OSCMessage completionMsg) throws IOException {
-//	setPath() is called by allocReadMsg()
-//		setPath( path );
+		// setPath() is called by allocReadMsg()
+		// setPath( path );
 		getServer().sendMsg(allocReadMsg(path, startFrame, numFrames, completionMsg));
 	}
 
 	/**
-	 * Allocates the buffer created with the basic <code>new</code> constructor,
-	 * by reading in selected channels of a sound file.
+	 * Allocates the buffer created with the basic <code>new</code> constructor, by
+	 * reading in selected channels of a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void allocReadChannel(String path, long startFrame, int numFrames, int[] channels) throws IOException {
 		allocReadChannel(path, startFrame, numFrames, channels, null);
 	}
 
 	/**
-	 * Allocates the buffer created with the basic <code>new</code> constructor,
-	 * by reading in selected channels of a sound file.
+	 * Allocates the buffer created with the basic <code>new</code> constructor, by
+	 * reading in selected channels of a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the allocation and reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the allocation and reading is complete. can be <code>null</code>.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void allocReadChannel(String path, long startFrame, int numFrames, int[] channels, OSCMessage completionMsg)
 			throws IOException {
-//	setPath() is called by allocReadChannelMsg()
-//		setPath( path );
+		// setPath() is called by allocReadChannelMsg()
+		// setPath( path );
 		getServer().sendMsg(allocReadChannelMsg(path, startFrame, numFrames, channels, completionMsg));
 	}
 
 	/**
-	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer created with the basic <code>new</code>
-	 * constructor,
-	 * by reading in a sound file.
+	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer
+	 * created with the basic <code>new</code> constructor, by reading in a sound
+	 * file.
 	 *
-	 * @param path the path to the sound file
+	 * @param path
+	 *            the path to the sound file
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
@@ -556,57 +640,69 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer created with the basic <code>new</code>
-	 * constructor,
-	 * by reading in a sound file.
+	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer
+	 * created with the basic <code>new</code> constructor, by reading in a sound
+	 * file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage allocReadMsg(String path, long startFrame) throws IOException {
 		return allocReadMsg(path, startFrame, -1);
 	}
 
 	/**
-	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer created with the basic <code>new</code>
-	 * constructor,
-	 * by reading in a sound file.
+	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer
+	 * created with the basic <code>new</code> constructor, by reading in a sound
+	 * file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage allocReadMsg(String path, long startFrame, int numFrames) throws IOException {
 		return allocReadMsg(path, startFrame, numFrames, null);
 	}
 
 	/**
-	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer created with the basic <code>new</code>
-	 * constructor,
-	 * by reading in a sound file.
+	 * Creates an OSC <code>/b_allocRead</code> message to allocate the buffer
+	 * created with the basic <code>new</code> constructor, by reading in a sound
+	 * file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the allocation and reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the allocation and reading is complete. can be <code>null</code>.
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage allocReadMsg(String path, long startFrame, int numFrames, OSCMessage completionMsg)
 			throws IOException {
@@ -627,20 +723,25 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_allocReadChannel</code> message to allocate the buffer created with the basic
-	 * <code>new</code> constructor,
-	 * by reading in selected channels from a sound file.
+	 * Creates an OSC <code>/b_allocReadChannel</code> message to allocate the
+	 * buffer created with the basic <code>new</code> constructor, by reading in
+	 * selected channels from a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage allocReadChannelMsg(String path, long startFrame, int numFrames, int[] channels)
 			throws IOException {
@@ -648,22 +749,28 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_allocReadChannel</code> message to allocate the buffer created with the basic
-	 * <code>new</code> constructor,
-	 * by reading in selected channels from a sound file.
+	 * Creates an OSC <code>/b_allocReadChannel</code> message to allocate the
+	 * buffer created with the basic <code>new</code> constructor, by reading in
+	 * selected channels from a sound file.
 	 *
-	 * @param path the path to the sound file
-	 * @param startFrame starting frame in the sound file
-	 * @param numFrames the number of frames to read, which equals the number of frames
-	 *        allocated for the buffer
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the allocation and reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            starting frame in the sound file
+	 * @param numFrames
+	 *            the number of frames to read, which equals the number of frames
+	 *            allocated for the buffer
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the allocation and reading is complete. can be <code>null</code>.
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage allocReadChannelMsg(String path, long startFrame, int numFrames, int[] channels,
 			OSCMessage completionMsg) throws IOException {
@@ -690,16 +797,19 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a whole file into memory for PlayBuf etc.
-	 * adds a query as a completion message.
+	 * Reads a whole file into memory for PlayBuf etc. adds a query as a completion
+	 * message.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public static Buffer read(Server server, String path) throws IOException {
 		return Buffer.read(server, path, 0);
@@ -709,61 +819,79 @@ public class Buffer implements Constants {
 	 * Reads a whole file into memory for PlayBuf etc., starting at a given frame.
 	 * adds a query as a completion message.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer read(Server server, String path, long startFrame) throws IOException {
 		return Buffer.read(server, path, startFrame, -1);
 	}
 
 	/**
-	 * Reads a section of a file into memory for PlayBuf etc.
-	 * adds a query as a completion message.
+	 * Reads a section of a file into memory for PlayBuf etc. adds a query as a
+	 * completion message.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer read(Server server, String path, long startFrame, int numFrames) throws IOException {
 		return Buffer.read(server, path, startFrame, numFrames, null);
 	}
 
 	/**
-	 * Reads a section of a file into memory for PlayBuf etc.
-	 * adds a query as a completion message.
+	 * Reads a section of a file into memory for PlayBuf etc. adds a query as a
+	 * completion message.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
-	 * @param action an action to be executed when the <code>/b_info</code> message comes
-	 *        back from the server. at this time the buffer has been allocated and filled.
-	 *        <code>action</code> can be <code>null</code>
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
+	 * @param action
+	 *            an action to be executed when the <code>/b_info</code> message
+	 *            comes back from the server. at this time the buffer has been
+	 *            allocated and filled. <code>action</code> can be <code>null</code>
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer read(Server server, String path, long startFrame, int numFrames, CompletionAction action)
 			throws IOException {
@@ -779,24 +907,32 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a section of a file into memory for PlayBuf etc.
-	 * adds a query as a completion message. An explicit buffer index is provided.
+	 * Reads a section of a file into memory for PlayBuf etc. adds a query as a
+	 * completion message. An explicit buffer index is provided.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
-	 * @param action an action to be executed when the <code>/b_info</code> message comes
-	 *        back from the server. at this time the buffer has been allocated and filled.
-	 *        <code>action</code> can be <code>null</code>
-	 * @param bufNum the index to use for the buffer
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
+	 * @param action
+	 *            an action to be executed when the <code>/b_info</code> message
+	 *            comes back from the server. at this time the buffer has been
+	 *            allocated and filled. <code>action</code> can be <code>null</code>
+	 * @param bufNum
+	 *            the index to use for the buffer
 	 *
 	 * @return the newly created buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer read(Server server, String path, long startFrame, int numFrames, CompletionAction action,
 			int bufNum) throws IOException {
@@ -809,21 +945,29 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a section of a given set of channels from a file into memory for PlayBuf etc.
-	 * adds a query as a completion message.
+	 * Reads a section of a given set of channels from a file into memory for
+	 * PlayBuf etc. adds a query as a completion message.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer. Use <code>-1</code> to read the whole file.
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer. Use <code>-1</code> to read the
+	 *            whole file.
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
 	 *
 	 * @return the newly created buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readChannel(Server server, String path, long startFrame, int numFrames, int[] channels)
 			throws IOException {
@@ -831,24 +975,32 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a section of a given set of channels from a file into memory for PlayBuf etc.
-	 * adds a query as a completion message.
+	 * Reads a section of a given set of channels from a file into memory for
+	 * PlayBuf etc. adds a query as a completion message.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
-	 * @param action an action to be executed when the <code>/b_info</code> message comes
-	 *        back from the server. at this time the buffer has been allocated and filled.
-	 *        <code>action</code> can be <code>null</code>
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
+	 * @param action
+	 *            an action to be executed when the <code>/b_info</code> message
+	 *            comes back from the server. at this time the buffer has been
+	 *            allocated and filled. <code>action</code> can be <code>null</code>
 	 *
 	 * @return the newly created buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readChannel(Server server, String path, long startFrame, int numFrames, int[] channels,
 			CompletionAction action) throws IOException {
@@ -864,25 +1016,35 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a section of a given set of channels from a file into memory for PlayBuf etc.
-	 * adds a query as a completion message. An explicit buffer index is provided.
+	 * Reads a section of a given set of channels from a file into memory for
+	 * PlayBuf etc. adds a query as a completion message. An explicit buffer index
+	 * is provided.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
-	 * @param action an action to be executed when the <code>/b_info</code> message comes
-	 *        back from the server. at this time the buffer has been allocated and filled.
-	 *        <code>action</code> can be <code>null</code>
-	 * @param bufNum the index to use for the buffer
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
+	 * @param action
+	 *            an action to be executed when the <code>/b_info</code> message
+	 *            comes back from the server. at this time the buffer has been
+	 *            allocated and filled. <code>action</code> can be <code>null</code>
+	 * @param bufNum
+	 *            the index to use for the buffer
 	 *
 	 * @return the newly created buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readChannel(Server server, String path, long startFrame, int numFrames, int[] channels,
 			CompletionAction action, int bufNum) throws IOException {
@@ -895,88 +1057,108 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads in as many frames from a sound file as fit into the buffer,
-	 * starting at the beginning of the file.
-	 * Closes the file after reading.
+	 * Reads in as many frames from a sound file as fit into the buffer, starting at
+	 * the beginning of the file. Closes the file after reading.
 	 *
-	 * @param path the path to the sound file
+	 * @param path
+	 *            the path to the sound file
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void read(String path) throws IOException {
 		read(path, 0);
 	}
 
 	/**
-	 * Reads in as many frames from a sound file as fit into the buffer,
-	 * starting at a given frame in the file.
-	 * Closes the file after reading.
+	 * Reads in as many frames from a sound file as fit into the buffer, starting at
+	 * a given frame in the file. Closes the file after reading.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void read(String path, long fileStartFrame) throws IOException {
 		read(path, fileStartFrame, -1);
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer.
-	 * Closes the file after reading.
+	 * Reads in frames from a sound file into the buffer. Closes the file after
+	 * reading.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void read(String path, long fileStartFrame, int numFrames) throws IOException {
 		read(path, fileStartFrame, numFrames, 0);
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer. Closes the file after reading.
+	 * Reads in frames from a sound file into the buffer, beginning a given offset
+	 * in the buffer. Closes the file after reading.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void read(String path, long fileStartFrame, int numFrames, int bufStartFrame) throws IOException {
 		read(path, fileStartFrame, numFrames, bufStartFrame, false);
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Reads in frames from a sound file into the buffer, beginning a given offset
+	 * in the buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void read(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen)
 			throws IOException {
@@ -984,24 +1166,32 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Reads in frames from a sound file into the buffer, beginning a given offset
+	 * in the buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param action an action to be executed when the <code>/b_info</code> comes back from the server.
-	 *        at this moment, the read operation is completed.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param action
+	 *            an action to be executed when the <code>/b_info</code> comes back
+	 *            from the server. at this moment, the read operation is completed.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void read(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
 			CompletionAction action) throws IOException {
@@ -1012,25 +1202,34 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads in frames from selected channels of a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Reads in frames from selected channels of a sound file into the buffer,
+	 * beginning a given offset in the buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
-	 * @param action an action to be executed when the <code>/b_info</code> comes back from the server.
-	 *        at this moment, the read operation is completed.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
+	 * @param action
+	 *            an action to be executed when the <code>/b_info</code> comes back
+	 *            from the server. at this moment, the read operation is completed.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void readChannel(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
 			int[] channels, CompletionAction action) throws IOException {
@@ -1042,11 +1241,12 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in as many frames from a sound file as fit into the buffer,
-	 * starting at the beginning of the file,
+	 * Creates an OSC <code>/b_read</code> message to read in as many frames from a
+	 * sound file as fit into the buffer, starting at the beginning of the file,
 	 * closing the file after reading.
 	 *
-	 * @param path the path to the sound file
+	 * @param path
+	 *            the path to the sound file
 	 * @return the message to be sent to the server
 	 */
 	public OSCMessage readMsg(String path) {
@@ -1054,93 +1254,116 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in as many frames from a sound file as fit into the buffer,
-	 * starting at a given frame in the file,
+	 * Creates an OSC <code>/b_read</code> message to read in as many frames from a
+	 * sound file as fit into the buffer, starting at a given frame in the file,
 	 * closing the file after reading.
 	 *
-	 * @param path the path to the sound file
+	 * @param path
+	 *            the path to the sound file
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readMsg(String path, long fileStartFrame) {
 		return readMsg(path, fileStartFrame, -1);
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound file into the buffer,
-	 * closing the file after reading.
+	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
+	 * file into the buffer, closing the file after reading.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames) {
 		return readMsg(path, fileStartFrame, numFrames, 0);
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer, closing the file after reading.
+	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
+	 * file into the buffer, beginning a given offset in the buffer, closing the
+	 * file after reading.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame) {
 		return readMsg(path, fileStartFrame, numFrames, bufStartFrame, false);
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
+	 * file into the buffer, beginning a given offset in the buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen) {
 		return readMsg(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, null);
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
+	 * file into the buffer, beginning a given offset in the buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the reading is complete. can be <code>null</code>.
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
 			OSCMessage completionMsg) {
@@ -1162,23 +1385,30 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in frames from selected channels of
-	 * a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Creates an OSC <code>/b_read</code> message to read in frames from selected
+	 * channels of a sound file into the buffer, beginning a given offset in the
+	 * buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readChannelMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame,
 			boolean leaveOpen, int[] channels) {
@@ -1186,25 +1416,33 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_read</code> message to read in frames from selected channels of
-	 * a sound file into the buffer, beginning a
-	 * given offset in the buffer.
+	 * Creates an OSC <code>/b_read</code> message to read in frames from selected
+	 * channels of a sound file into the buffer, beginning a given offset in the
+	 * buffer.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param channels an array of channel indices to read (starting from <code>0</code>)
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param channels
+	 *            an array of channel indices to read (starting from <code>0</code>)
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the reading is complete. can be <code>null</code>.
 	 * @return the message to be sent to the server
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public OSCMessage readChannelMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame,
 			boolean leaveOpen, int[] channels, OSCMessage completionMsg) {
@@ -1234,9 +1472,11 @@ public class Buffer implements Constants {
 	/**
 	 * Writes the buffer contents to a sound file, using AIFF integer 24 bit format.
 	 *
-	 * @param path the path name of the file to write to
+	 * @param path
+	 *            the path name of the file to write to
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void write(String path) throws IOException {
 		write(path, "aiff", "int24");
@@ -1245,11 +1485,15 @@ public class Buffer implements Constants {
 	/**
 	 * Writes the buffer contents to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
@@ -1261,12 +1505,18 @@ public class Buffer implements Constants {
 	/**
 	 * Writes the buffer contents to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
@@ -1278,13 +1528,20 @@ public class Buffer implements Constants {
 	/**
 	 * Writes a section of the buffer to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
-	 * @param bufStartFrame the start frame in the buffer from which to write
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
+	 * @param bufStartFrame
+	 *            the start frame in the buffer from which to write
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
@@ -1297,16 +1554,25 @@ public class Buffer implements Constants {
 	/**
 	 * Writes a section of the buffer to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
-	 * @param bufStartFrame the start frame in the buffer from which to write
-	 * @param leaveOpen <code>false</code> to close the sound file after writing, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskOut</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
+	 * @param bufStartFrame
+	 *            the start frame in the buffer from which to write
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after writing,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskOut</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
@@ -1319,18 +1585,28 @@ public class Buffer implements Constants {
 	/**
 	 * Writes a section of the buffer to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
-	 * @param bufStartFrame the start frame in the buffer from which to write
-	 * @param leaveOpen <code>false</code> to close the sound file after writing, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskOut</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the writing is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
+	 * @param bufStartFrame
+	 *            the start frame in the buffer from which to write
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after writing,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskOut</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the writing is complete. can be <code>null</code>.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
@@ -1342,10 +1618,11 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to a sound file, using AIFF integer 24
-	 * bit format.
+	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to
+	 * a sound file, using AIFF integer 24 bit format.
 	 *
-	 * @param path the path name of the file to write to
+	 * @param path
+	 *            the path name of the file to write to
 	 * @return the message to send to the server
 	 */
 	public OSCMessage writeMsg(String path) {
@@ -1353,11 +1630,15 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to a sound file.
+	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to
+	 * a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
 	 * @return the message to send to the server
 	 *
 	 * @see Constants#kHeaderAIFF
@@ -1368,12 +1649,18 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to a sound file.
+	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to
+	 * a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
 	 * @return the message to send to the server
 	 *
 	 * @see Constants#kHeaderAIFF
@@ -1384,13 +1671,20 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer to a sound file.
+	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer
+	 * to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
-	 * @param bufStartFrame the start frame in the buffer from which to write
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
+	 * @param bufStartFrame
+	 *            the start frame in the buffer from which to write
 	 * @return the message to send to the server
 	 *
 	 * @see Constants#kHeaderAIFF
@@ -1402,16 +1696,25 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer to a sound file.
+	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer
+	 * to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
-	 * @param bufStartFrame the start frame in the buffer from which to write
-	 * @param leaveOpen <code>false</code> to close the sound file after writing, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskOut</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
+	 * @param bufStartFrame
+	 *            the start frame in the buffer from which to write
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after writing,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskOut</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
 	 * @return the message to send to the server
 	 *
 	 * @see Constants#kHeaderAIFF
@@ -1423,18 +1726,28 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer to a sound file.
+	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer
+	 * to a sound file.
 	 *
-	 * @param path the path name of the file to write to
-	 * @param headerFormat one of <code>kHeaderAIFF</code> etc.
-	 * @param sampleFormat one of <code>kSampleInt24</code> etc.
-	 * @param numFrames to number of frames to write, or <code>-1</code> to write the whole buffer
-	 * @param bufStartFrame the start frame in the buffer from which to write
-	 * @param leaveOpen <code>false</code> to close the sound file after writing, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskOut</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the writing is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path name of the file to write to
+	 * @param headerFormat
+	 *            one of <code>kHeaderAIFF</code> etc.
+	 * @param sampleFormat
+	 *            one of <code>kSampleInt24</code> etc.
+	 * @param numFrames
+	 *            to number of frames to write, or <code>-1</code> to write the
+	 *            whole buffer
+	 * @param bufStartFrame
+	 *            the start frame in the buffer from which to write
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after writing,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskOut</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the writing is complete. can be <code>null</code>.
 	 * @return the message to send to the server
 	 *
 	 * @see Constants#kHeaderAIFF
@@ -1460,17 +1773,21 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a whole file into memory for PlayBuf etc. Just like <code>read( Server, String )</code> but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>
+	 * Reads a whole file into memory for PlayBuf etc. Just like
+	 * <code>read( Server, String )</code> but without sending a
+	 * <code>/b_query</code>. Hence, the internal fields are not updated unless you
+	 * explicitly call <code>query()</code>
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #read( Server, String )
 	 */
@@ -1479,48 +1796,59 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads a whole file into memory for PlayBuf etc. Just like <code>read( Server, String, long )</code> but without
-	 * sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>
+	 * Reads a whole file into memory for PlayBuf etc. Just like
+	 * <code>read( Server, String, long )</code> but without sending a
+	 * <code>/b_query</code>. Hence, the internal fields are not updated unless you
+	 * explicitly call <code>query()</code>
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #read( Server, String, long )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readNoUpdate(Server server, String path, long startFrame) throws IOException {
 		return Buffer.readNoUpdate(server, path, startFrame, -1);
 	}
 
 	/**
-	 * Reads a section of a file into memory for PlayBuf etc. Just like <code>read( Server, String, long, int )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>
+	 * Reads a section of a file into memory for PlayBuf etc. Just like
+	 * <code>read( Server, String, long, int )</code> but without sending a
+	 * <code>/b_query</code>. Hence, the internal fields are not updated unless you
+	 * explicitly call <code>query()</code>
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
 	 * @see #read( Server, String, long, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readNoUpdate(Server server, String path, long startFrame, int numFrames) throws IOException {
 		return Buffer.readNoUpdate(server, path, startFrame, numFrames, null);
@@ -1528,28 +1856,34 @@ public class Buffer implements Constants {
 
 	/**
 	 * Reads a section of a file into memory for PlayBuf etc. Just like
-	 * <code>read( Server, String, long, int, CompletionFunction )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * <code>read( Server, String, long, int, CompletionFunction )</code> but
+	 * without sending a <code>/b_query</code>. Hence, the internal fields are not
+	 * updated unless you explicitly call <code>query()</code>.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
-	 * @param completionFunc an action to be executed when the <code>/b_info</code> message comes
-	 *        back from the server. at this time the buffer has been allocated and filled.
-	 *        <code>action</code> can be <code>null</code>
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
+	 * @param completionFunc
+	 *            an action to be executed when the <code>/b_info</code> message
+	 *            comes back from the server. at this time the buffer has been
+	 *            allocated and filled. <code>action</code> can be <code>null</code>
 	 *
-	 * @return the newly created Buffer or <code>null</code> if the server's buffer allocator
-	 *         is exhausted
+	 * @return the newly created Buffer or <code>null</code> if the server's buffer
+	 *         allocator is exhausted
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 * 
 	 * @see #read( Server, String, long, int, CompletionAction )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readNoUpdate(Server server, String path, long startFrame, int numFrames,
 			CompletionFunction completionFunc) throws IOException {
@@ -1566,29 +1900,36 @@ public class Buffer implements Constants {
 
 	/**
 	 * Reads a section of a file into memory for PlayBuf etc. Just like
-	 * <code>read( Server, String, long, int, CompletionFunction, int )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
-	 * An explicit buffer index is provided.
+	 * <code>read( Server, String, long, int, CompletionFunction, int )</code> but
+	 * without sending a <code>/b_query</code>. Hence, the internal fields are not
+	 * updated unless you explicitly call <code>query()</code>. An explicit buffer
+	 * index is provided.
 	 *
-	 * @param server the server on which the buffer is allocated
-	 * @param path the path to the sound file
-	 * @param startFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read. this is equal to the number of frames
-	 *        allocated for the buffer
-	 * @param completionFunc an action to be executed when the <code>/b_info</code> message comes
-	 *        back from the server. at this time the buffer has been allocated and filled.
-	 *        <code>action</code> can be <code>null</code>
-	 * @param bufNum the index to use for the buffer
+	 * @param server
+	 *            the server on which the buffer is allocated
+	 * @param path
+	 *            the path to the sound file
+	 * @param startFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read. this is equal to the number of
+	 *            frames allocated for the buffer
+	 * @param completionFunc
+	 *            an action to be executed when the <code>/b_info</code> message
+	 *            comes back from the server. at this time the buffer has been
+	 *            allocated and filled. <code>action</code> can be <code>null</code>
+	 * @param bufNum
+	 *            the index to use for the buffer
 	 *
 	 * @return the newly created buffer
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 * 
 	 * @see #read( Server, String, long, int, CompletionAction, int )
 	 *
-	 * @warning <code>long startFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long startFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public static Buffer readNoUpdate(Server server, String path, long startFrame, int numFrames,
 			CompletionFunction completionFunc, int bufNum) throws IOException {
@@ -1598,104 +1939,122 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads in as many frames from a sound file as fit into the buffer,
-	 * starting at the beginning of the file.
-	 * Closes the file after reading. Just like <code>read( String )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * Reads in as many frames from a sound file as fit into the buffer, starting at
+	 * the beginning of the file. Closes the file after reading. Just like
+	 * <code>read( String )</code> but without sending a <code>/b_query</code>.
+	 * Hence, the internal fields are not updated unless you explicitly call
+	 * <code>query()</code>.
 	 *
-	 * @param path the path to the sound file
+	 * @param path
+	 *            the path to the sound file
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void readNoUpdate(String path) throws IOException {
 		readNoUpdate(path, 0);
 	}
 
 	/**
-	 * Reads in as many frames from a sound file as fit into the buffer,
-	 * starting at a given frame in the file.
-	 * Closes the file after reading. Just like <code>read( String, long )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * Reads in as many frames from a sound file as fit into the buffer, starting at
+	 * a given frame in the file. Closes the file after reading. Just like
+	 * <code>read( String, long )</code> but without sending a
+	 * <code>/b_query</code>. Hence, the internal fields are not updated unless you
+	 * explicitly call <code>query()</code>.
 	 *
 	 * 
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void readNoUpdate(String path, long fileStartFrame) throws IOException {
 		readNoUpdate(path, fileStartFrame, -1);
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer.
-	 * Closes the file after reading. Just like <code>read( String, long, int )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * Reads in frames from a sound file into the buffer. Closes the file after
+	 * reading. Just like <code>read( String, long, int )</code> but without sending
+	 * a <code>/b_query</code>. Hence, the internal fields are not updated unless
+	 * you explicitly call <code>query()</code>.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void readNoUpdate(String path, long fileStartFrame, int numFrames) throws IOException {
 		readNoUpdate(path, fileStartFrame, numFrames, 0);
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer. Closes the file after reading. Just like <code>read( String, long, int, int )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * Reads in frames from a sound file into the buffer, beginning a given offset
+	 * in the buffer. Closes the file after reading. Just like
+	 * <code>read( String, long, int, int )</code> but without sending a
+	 * <code>/b_query</code>. Hence, the internal fields are not updated unless you
+	 * explicitly call <code>query()</code>.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void readNoUpdate(String path, long fileStartFrame, int numFrames, int bufStartFrame) throws IOException {
 		readNoUpdate(path, fileStartFrame, numFrames, bufStartFrame, false);
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer. Just like <code>read( String, long, int, int, boolean )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * Reads in frames from a sound file into the buffer, beginning a given offset
+	 * in the buffer. Just like <code>read( String, long, int, int, boolean )</code>
+	 * but without sending a <code>/b_query</code>. Hence, the internal fields are
+	 * not updated unless you explicitly call <code>query()</code>.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void readNoUpdate(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen)
 			throws IOException {
@@ -1703,27 +2062,35 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Reads in frames from a sound file into the buffer, beginning a
-	 * given offset in the buffer. Just like <code>read( String, long, int, int, boolean, CompletionAction )</code>
-	 * but without sending
-	 * a <code>/b_query</code>. Hence, the internal fields are not updated
-	 * unless you explicitly call <code>query()</code>.
+	 * Reads in frames from a sound file into the buffer, beginning a given offset
+	 * in the buffer. Just like
+	 * <code>read( String, long, int, int, boolean, CompletionAction )</code> but
+	 * without sending a <code>/b_query</code>. Hence, the internal fields are not
+	 * updated unless you explicitly call <code>query()</code>.
 	 *
-	 * @param path the path to the sound file
-	 * @param fileStartFrame the frame index in the sound file to start reading from
-	 * @param numFrames the number of frames to read
-	 *        a value of <code>-1</code> indicates that as many frames as fit into the buffer
-	 *        should be read
-	 * @param bufStartFrame the offset (in frames) in the buffer at which the filling begins
-	 * @param leaveOpen <code>false</code> to close the sound file after reading, <code>true</code> to
-	 *        leave it open (as required for a <code>DiskIn</code> UGen). If you leave the file
-	 *        open, don't forget to call <code>close</code> on the buffer eventually.
-	 * @param completionMsg an <code>OSCMessage</code> which is processed by the server
-	 *        when the reading is complete. can be <code>null</code>.
+	 * @param path
+	 *            the path to the sound file
+	 * @param fileStartFrame
+	 *            the frame index in the sound file to start reading from
+	 * @param numFrames
+	 *            the number of frames to read a value of <code>-1</code> indicates
+	 *            that as many frames as fit into the buffer should be read
+	 * @param bufStartFrame
+	 *            the offset (in frames) in the buffer at which the filling begins
+	 * @param leaveOpen
+	 *            <code>false</code> to close the sound file after reading,
+	 *            <code>true</code> to leave it open (as required for a
+	 *            <code>DiskIn</code> UGen). If you leave the file open, don't
+	 *            forget to call <code>close</code> on the buffer eventually.
+	 * @param completionMsg
+	 *            an <code>OSCMessage</code> which is processed by the server when
+	 *            the reading is complete. can be <code>null</code>.
 	 *
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 *
-	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by <code>OSCMessage</code> for now
+	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
+	 *          <code>OSCMessage</code> for now
 	 */
 	public void readNoUpdate(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
 			OSCMessage completionMsg) throws IOException {
@@ -1793,8 +2160,7 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Called from Server when b_info is received.
-	 * Do not call this method directly
+	 * Called from Server when b_info is received. Do not call this method directly
 	 */
 	protected void queryDone() {
 		if (getDoOnInfo() != null) {
@@ -1888,13 +2254,14 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Frees all known buffers on a server.
-	 * Known buffers are those which were allocated regularly
-	 * using the server's buffer allocator.
+	 * Frees all known buffers on a server. Known buffers are those which were
+	 * allocated regularly using the server's buffer allocator.
 	 *
-	 * @param server the server whose buffers should be freed
+	 * @param server
+	 *            the server whose buffers should be freed
 	 *
-	 * @throws IOException if an error occurs in OSC bundle sending
+	 * @throws IOException
+	 *             if an error occurs in OSC bundle sending
 	 */
 	public static void freeAll(Server server) throws IOException {
 		final BlockAllocator bufferAllocator = server.getBufferAllocator();
@@ -1913,15 +2280,16 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * A debugging method for querying the current buffer parameters
-	 * and printing them into the console. This sends a query message
-	 * to the server and upon reply prints the current buffer parameters
-	 * into the console (as defined by <code>server.setPrintStream()</code>).
+	 * A debugging method for querying the current buffer parameters and printing
+	 * them into the console. This sends a query message to the server and upon
+	 * reply prints the current buffer parameters into the console (as defined by
+	 * <code>server.setPrintStream()</code>).
 	 *
-	 * @throws IOException if a networking error occurs
+	 * @throws IOException
+	 *             if a networking error occurs
 	 *
-	 * @todo this simply waits for the next /b_info message to come in without checking the bufNum
-	 *       ; also there is no time out
+	 * @todo this simply waits for the next /b_info message to come in without
+	 *       checking the bufNum ; also there is no time out
 	 */
 	public void query() throws IOException {
 		new OSCResponderNode(getServer(), "/b_info", new OSCResponderNode.Action() {
@@ -1938,8 +2306,8 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Constructs an OSC message <code>/b_query</code> for querying the
-	 * buffer's parameters.
+	 * Constructs an OSC message <code>/b_query</code> for querying the buffer's
+	 * parameters.
 	 *
 	 * @return the OSC message, ready to be send to the server
 	 */
@@ -1948,14 +2316,15 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Asynchronously updates the buffer parameters
-	 * (such as number of frames or sample rate). It sends
-	 * a query message to the server and upon reply, executes
+	 * Asynchronously updates the buffer parameters (such as number of frames or
+	 * sample rate). It sends a query message to the server and upon reply, executes
 	 * a given completion action.
 	 *
-	 * @param action the action to be executed once the buffer info is updated
+	 * @param action
+	 *            the action to be executed once the buffer info is updated
 	 *
-	 * @throws IOException if a networking error occurs
+	 * @throws IOException
+	 *             if a networking error occurs
 	 */
 	public void updateInfo(CompletionAction action) throws IOException {
 		// add to the array here. That way, update will be accurate even if this buf
@@ -1973,13 +2342,13 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Plays the buffer contents (oneshot) beginning
-	 * on the first audio output.
+	 * Plays the buffer contents (oneshot) beginning on the first audio output.
 	 *
-	 * @return the buffer playing synth. the synth is automatically freed
-	 *         when the buffer playback is complete.
+	 * @return the buffer playing synth. the synth is automatically freed when the
+	 *         buffer playback is complete.
 	 *
-	 * @throws IOException if an error occurs in message sending
+	 * @throws IOException
+	 *             if an error occurs in message sending
 	 * @warning requires prior UGenInfo.readDefinitions
 	 */
 	public Synth play() throws IOException {
@@ -1987,14 +2356,15 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Plays the buffer contents beginning
-	 * on the first audio output.
+	 * Plays the buffer contents beginning on the first audio output.
 	 *
-	 * @param loop whether the playback should be looped or not.
-	 * @return the buffer playing synth. when not looping, the synth is automatically freed
-	 *         when the buffer playback is complete.
+	 * @param loop
+	 *            whether the playback should be looped or not.
+	 * @return the buffer playing synth. when not looping, the synth is
+	 *         automatically freed when the buffer playback is complete.
 	 *
-	 * @throws IOException if an error occurs in message sending
+	 * @throws IOException
+	 *             if an error occurs in message sending
 	 * @warning requires prior UGenInfo.readDefinitions
 	 */
 	public Synth play(boolean loop) throws IOException {
@@ -2002,15 +2372,17 @@ public class Buffer implements Constants {
 	}
 
 	/**
-	 * Plays the buffer contents beginning
-	 * on the first audio output.
+	 * Plays the buffer contents beginning on the first audio output.
 	 *
-	 * @param loop whether the playback should be looped or not.
-	 * @param amp the amplitude scaling
-	 * @return the buffer playing synth. when not looping, the synth is automatically freed
-	 *         when the buffer playback is complete.
+	 * @param loop
+	 *            whether the playback should be looped or not.
+	 * @param amp
+	 *            the amplitude scaling
+	 * @return the buffer playing synth. when not looping, the synth is
+	 *         automatically freed when the buffer playback is complete.
 	 *
-	 * @throws IOException if an error occurs in message sending
+	 * @throws IOException
+	 *             if an error occurs in message sending
 	 * @warning requires prior UGenInfo.readDefinitions
 	 */
 	public Synth play(boolean loop, float amp) throws IOException {
@@ -2020,13 +2392,17 @@ public class Buffer implements Constants {
 	/**
 	 * Plays the buffer contents.
 	 *
-	 * @param loop whether the playback should be looped or not.
-	 * @param amp the amplitude scaling
-	 * @param outBus the index of the first bus to play on
-	 * @return the buffer playing synth. when not looping, the synth is automatically freed
-	 *         when the buffer playback is complete.
+	 * @param loop
+	 *            whether the playback should be looped or not.
+	 * @param amp
+	 *            the amplitude scaling
+	 * @param outBus
+	 *            the index of the first bus to play on
+	 * @return the buffer playing synth. when not looping, the synth is
+	 *         automatically freed when the buffer playback is complete.
 	 *
-	 * @throws IOException if an error occurs in message sending
+	 * @throws IOException
+	 *             if an error occurs in message sending
 	 * @warning requires prior UGenInfo.readDefinitions
 	 */
 	public Synth play(boolean loop, float amp, int outBus) throws IOException {
@@ -2036,14 +2412,20 @@ public class Buffer implements Constants {
 	/**
 	 * Plays the buffer contents.
 	 *
-	 * @param loop whether the playback should be looped or not.
-	 * @param amp the amplitude scaling
-	 * @param outBus the index of the first bus to play on
-	 * @param fadeTime the time in seconds for the synth to fade in and out (upon release())
-	 * @return the buffer playing synth. when not looping, the synth is automatically freed
-	 *         when the buffer playback is complete.
+	 * @param loop
+	 *            whether the playback should be looped or not.
+	 * @param amp
+	 *            the amplitude scaling
+	 * @param outBus
+	 *            the index of the first bus to play on
+	 * @param fadeTime
+	 *            the time in seconds for the synth to fade in and out (upon
+	 *            release())
+	 * @return the buffer playing synth. when not looping, the synth is
+	 *         automatically freed when the buffer playback is complete.
 	 *
-	 * @throws IOException if an error occurs in message sending
+	 * @throws IOException
+	 *             if an error occurs in message sending
 	 * @warning requires prior UGenInfo.readDefinitions
 	 */
 	public Synth play(boolean loop, float amp, int outBus, float fadeTime) throws IOException {
@@ -2053,16 +2435,24 @@ public class Buffer implements Constants {
 	/**
 	 * Plays the buffer contents.
 	 *
-	 * @param loop whether the playback should be looped or not.
-	 * @param amp the amplitude scaling
-	 * @param outBus the index of the first bus to play on
-	 * @param fadeTime the time in seconds for the synth to fade in and out (upon release())
-	 * @param target to node to add the new synth to
-	 * @param addAction the add action to use when adding the synth
-	 * @return the buffer playing synth. when not looping, the synth is automatically freed
-	 *         when the buffer playback is complete.
+	 * @param loop
+	 *            whether the playback should be looped or not.
+	 * @param amp
+	 *            the amplitude scaling
+	 * @param outBus
+	 *            the index of the first bus to play on
+	 * @param fadeTime
+	 *            the time in seconds for the synth to fade in and out (upon
+	 *            release())
+	 * @param target
+	 *            to node to add the new synth to
+	 * @param addAction
+	 *            the add action to use when adding the synth
+	 * @return the buffer playing synth. when not looping, the synth is
+	 *         automatically freed when the buffer playback is complete.
 	 *
-	 * @throws IOException if an error occurs in message sending
+	 * @throws IOException
+	 *             if an error occurs in message sending
 	 * @warning requires prior UGenInfo.readDefinitions
 	 */
 	public Synth play(boolean loop, float amp, int outBus, float fadeTime, Node target, int addAction)
@@ -2090,7 +2480,7 @@ public class Buffer implements Constants {
 
 		if (!loop) {
 			// XXX should be replaced by a Line and BufDur
-//			graph	= UGen.array( graph, UGen.kr( "FreeSelfWhenDone", player ));
+			// graph = UGen.array( graph, UGen.kr( "FreeSelfWhenDone", player ));
 			graph = UGen.array(graph,
 					UGen.kr("Line", UGen.ir(0f), UGen.ir(1f), UGen.kr("BufDur", bufNum), UGen.ir(kDoneFree)));
 		}
@@ -2105,31 +2495,34 @@ public class Buffer implements Constants {
 		return synth;
 	}
 
-// ---------- internal classes and interfaces ----------
+	// ---------- internal classes and interfaces ----------
 
 	/**
-	 * Interface describing an action to take place after
-	 * an asynchronous buffer command is completed.
+	 * Interface describing an action to take place after an asynchronous buffer
+	 * command is completed.
 	 */
 	public static interface CompletionAction {
 		/**
 		 * Executes the completion action.
 		 *
-		 * @param buf the buffer whose asynchronous action is completed.
+		 * @param buf
+		 *            the buffer whose asynchronous action is completed.
 		 */
 		public void completion(Buffer buf);
 	}
 
 	/**
-	 * Interface describing an function that creates an
-	 * OSC message used as a completion message in asynchronous buffer commands.
+	 * Interface describing an function that creates an OSC message used as a
+	 * completion message in asynchronous buffer commands.
 	 */
 	public static interface CompletionFunction {
 		/**
 		 * Queries the creation of the completion message.
 		 *
-		 * @param buf the buffer for which the completion message is created
-		 * @return the <code>OSCMessage</code> attached to as completion message to an asynchronous command
+		 * @param buf
+		 *            the buffer for which the completion message is created
+		 * @return the <code>OSCMessage</code> attached to as completion message to an
+		 *         asynchronous command
 		 */
 		public OSCMessage completion(Buffer buf);
 	}

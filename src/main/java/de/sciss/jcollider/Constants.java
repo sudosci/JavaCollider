@@ -10,9 +10,8 @@
 package de.sciss.jcollider;
 
 /**
- * A utility interface that
- * different classes can implements to
- * gain access to commonly used constants.
+ * A utility interface that different classes can implements to gain access to
+ * commonly used constants.
  *
  * @author Hanns Holger Rutz
  * @version 0.28, 31-Jul-06
@@ -79,11 +78,13 @@ public interface Constants {
 	 */
 	public static final String kSampleInt32 = "int32";
 	/**
-	 * sample encoding used for <code>/b_write</code>: single precision floating point
+	 * sample encoding used for <code>/b_write</code>: single precision floating
+	 * point
 	 */
 	public static final String kSampleFloat = "float";
 	/**
-	 * sample encoding used for <code>/b_write</code>: double precision floating point
+	 * sample encoding used for <code>/b_write</code>: double precision floating
+	 * point
 	 */
 	public static final String kSampleDouble = "double";
 	/**
@@ -117,11 +118,13 @@ public interface Constants {
 	 */
 	public static final int kDoneFreeSucc = 4;
 	/**
-	 * done action: free this synth; if the preceding node is a group then do g_freeAll on it, else free it
+	 * done action: free this synth; if the preceding node is a group then do
+	 * g_freeAll on it, else free it
 	 */
 	public static final int kDoneFreePredGroup = 5;
 	/**
-	 * done action: free this synth; if the following node is a group then do g_freeAll on it, else free it
+	 * done action: free this synth; if the following node is a group then do
+	 * g_freeAll on it, else free it
 	 */
 	public static final int kDoneFreeSuccGroup = 6;
 	/**
@@ -141,19 +144,23 @@ public interface Constants {
 	 */
 	public static final int kDoneFreePauseSucc = 10;
 	/**
-	 * done action: free this synth and if the preceding node is a group then do g_deepFree on it, else free it
+	 * done action: free this synth and if the preceding node is a group then do
+	 * g_deepFree on it, else free it
 	 */
 	public static final int kDoneFreePredGroupDeep = 11;
 	/**
-	 * done action: free this synth and if the following node is a group then do g_deepFree on it, else free it
+	 * done action: free this synth and if the following node is a group then do
+	 * g_deepFree on it, else free it
 	 */
 	public static final int kDoneFreeSuccGroupDeep = 12;
 	/**
-	 * done action: free this synth and all other nodes in this group (before and after)
+	 * done action: free this synth and all other nodes in this group (before and
+	 * after)
 	 */
 	public static final int kDoneFreeAll = 13;
 	/**
-	 * done action: free the enclosing group and all nodes within it (including this synth)
+	 * done action: free the enclosing group and all nodes within it (including this
+	 * synth)
 	 */
 	public static final int kDoneFreeGroup = 14;
 }

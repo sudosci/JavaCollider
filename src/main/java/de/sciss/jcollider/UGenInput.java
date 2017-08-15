@@ -10,20 +10,18 @@
 package de.sciss.jcollider;
 
 /**
- * A subinterface of <code>GraphElem</code>
- * that represents elements in a graph
- * that can directly be used as inputs to a ugen.
- * So there are two implementing classes,
- * <code>UGenChannel</code> and <code>Constant</code>.
+ * A subinterface of <code>GraphElem</code> that represents elements in a graph
+ * that can directly be used as inputs to a ugen. So there are two implementing
+ * classes, <code>UGenChannel</code> and <code>Constant</code>.
  *
  * @author Hanns Holger Rutz
  * @version 0.31, 08-Oct-07
  */
 public interface UGenInput extends GraphElem {
 	/**
-	 * A UGen input is naturally single-channelled.
-	 * So this returns the rate of that single channel
-	 * or <code>kScalarRate</code> in the case of a <code>Constant</code>
+	 * A UGen input is naturally single-channelled. So this returns the rate of that
+	 * single channel or <code>kScalarRate</code> in the case of a
+	 * <code>Constant</code>
 	 */
 	public Object getRate();
 

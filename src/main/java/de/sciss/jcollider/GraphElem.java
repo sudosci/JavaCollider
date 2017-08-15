@@ -10,12 +10,9 @@
 package de.sciss.jcollider;
 
 /**
- * This interface does the dirty
- * job of putting all kinds of different
- * elements under one brand which
- * can be used in UGen graph generation.
- * Kind of a wurmfortsatz of quickly translating
- * an untyped polymorph language into java.
+ * This interface does the dirty job of putting all kinds of different elements
+ * under one brand which can be used in UGen graph generation. Kind of a
+ * wurmfortsatz of quickly translating an untyped polymorph language into java.
  *
  * @author Hanns Holger Rutz
  * @version 0.2, 11-Sep-05 (some countries are still at war)

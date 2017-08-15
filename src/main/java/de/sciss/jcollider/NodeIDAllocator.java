@@ -10,17 +10,15 @@
 package de.sciss.jcollider;
 
 /**
- * Quite a 1:1 translation from SClang, this
- * is used as the default node allocator by the server.
+ * Quite a 1:1 translation from SClang, this is used as the default node
+ * allocator by the server.
  * 
- * @todo allocPerm should be more generally available
- *       from other classes such as Synth and Group,
- *       because it can be vital to sound installation
- *       programming where the non-perm node count
- *       might well end up at the maximum value(?)
+ * TODO allocPerm should be more generally available from other classes such as
+ * Synth and Group, because it can be vital to sound installation programming
+ * where the non-perm node count might well end up at the maximum value(?)
  *
- * @todo should check if user-max should be one less
- *       because java ints are signed?!
+ * TODO should check if user-max should be one less because java ints are
+ * signed?!
  *
  * @author Hanns Holger Rutz
  * @version 0.31, 08-Oct-07

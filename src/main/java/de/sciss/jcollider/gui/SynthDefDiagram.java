@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -57,10 +58,9 @@ import de.sciss.jcollider.UGenInfo;
 import de.sciss.jcollider.UGenInput;
 
 /**
- * An experimental view of a SynthDef's graph.
- * This still lacks intelligent code to
- * bring a form into the wires, but for
- * small ugens and for debugging it's quite useful.
+ * An experimental view of a SynthDef's graph. This still lacks intelligent code
+ * to bring a form into the wires, but for small ugens and for debugging it's
+ * quite useful.
  * <p>
  * Colours are as follows:
  * <ul>
@@ -70,9 +70,8 @@ import de.sciss.jcollider.UGenInput;
  * <li>grey : scalars</li>
  * </ul>
  * <p>
- * The view can be magnified and boxes can
- * be dragged around. Double clicking on a
- * UGen will reveal the names of its inlets.
+ * The view can be magnified and boxes can be dragged around. Double clicking on
+ * a UGen will reveal the names of its inlets.
  *
  * @version 0.32, 25-Feb-08
  * @author Hanns Holger Rutz
@@ -86,17 +85,18 @@ public class SynthDefDiagram extends JFrame {
 	protected static final NumberFormat frmtZoom = NumberFormat.getPercentInstance(Locale.US);
 
 	/**
-	 * Creates a new frame displaying
-	 * the diagram of the provided SynthDef.
-	 * The frame is automatically made visible.
+	 * Creates a new frame displaying the diagram of the provided SynthDef. The
+	 * frame is automatically made visible.
 	 *
-	 * @param def the synth def to illustrate
+	 * @param def
+	 *            the synth def to illustrate
 	 */
 	public SynthDefDiagram(SynthDef def) {
 		super("SynthDef(\"" + def.getName() + "\")");
 
 		final Container cp = getContentPane();
-//		frame.getRootPane().setBorder( BorderFactory.createEmptyBorder( 8, 8, 8, 8 ));
+		// frame.getRootPane().setBorder( BorderFactory.createEmptyBorder( 8, 8, 8, 8
+		// ));
 		final SynthDefView synthDefView = new SynthDefView(def);
 		final JScrollPane scroll = new JScrollPane(synthDefView);
 		final Box box = Box.createHorizontalBox();
@@ -114,7 +114,8 @@ public class SynthDefDiagram extends JFrame {
 				Number num = null;
 				try {
 					num = frmtZoom.parse(text);
-				} catch (ParseException e1) { /* ignored */ }
+				} catch (ParseException e1) {
+					/* ignored */ }
 
 				if (num != null) {
 					synthDefView.setZoom(num.doubleValue());
@@ -152,7 +153,7 @@ public class SynthDefDiagram extends JFrame {
 	}
 
 	private class SynthDefView
-//	extends JComponent
+			// extends JComponent
 			extends JPanel implements MouseListener, MouseMotionListener {
 		private static final double HPAD = 12.0;
 		private static final double VPAD = 12.0;
@@ -182,8 +183,8 @@ public class SynthDefDiagram extends JFrame {
 			this.def = def;
 
 			this.setFont(fntUGen);
-//			this.setBackground( null );
-//			this.setOpaque( false );
+			// this.setBackground( null );
+			// this.setOpaque( false );
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
 			this.setFocusable(true);
@@ -214,7 +215,8 @@ public class SynthDefDiagram extends JFrame {
 			mapUGensToViews.clear();
 			collWires.clear();
 
-//			ugenRects.add( new Rectangle( 0, -10, 65536, 10 ));	// simulates top window border
+			// ugenRects.add( new Rectangle( 0, -10, 65536, 10 )); // simulates top window
+			// border
 
 			do {
 				x = 0;
@@ -265,10 +267,13 @@ public class SynthDefDiagram extends JFrame {
 					rect = (Rectangle2D) constRects.get(i);
 					for (int j = 0; j < ugenRects.size(); j++) {
 						rect2 = (Rectangle2D) ugenRects.get(j);
-//System.err.println( "const "+rect.getX()+","+rect.getY()+","+rect.getWidth()+","+rect.getHeight()+"; ugen "+
-//							 rect2.getX()+","+rect2.getY()+","+rect2.getWidth()+","+rect2.getHeight() );
+						// System.err.println( "const
+						// "+rect.getX()+","+rect.getY()+","+rect.getWidth()+","+rect.getHeight()+";
+						// ugen "+
+						// rect2.getX()+","+rect2.getY()+","+rect2.getWidth()+","+rect2.getHeight() );
 						if (rect.intersects(rect2)) {
-//System.err.println( "intersects. dy = "+ (rect.getY() - (rect2.getY() + rect2.getHeight()) + 4) );
+							// System.err.println( "intersects. dy = "+ (rect.getY() - (rect2.getY() +
+							// rect2.getHeight()) + 4) );
 							incY = Math.max(incY, (rect2.getY() + rect2.getHeight()) - rect.getY() + 6);
 						}
 					}
@@ -307,15 +312,15 @@ public class SynthDefDiagram extends JFrame {
 		protected void setZoom(double newZoom) {
 			zoom = newZoom;
 
-//			final Dimension oldSize	= getPreferredSize();
+			// final Dimension oldSize = getPreferredSize();
 			final Dimension newSize = new Dimension((int) (boundingBox.getMaxX() * zoom + 4),
 					(int) (boundingBox.getMaxY() * zoom + 4));
 
-//			if( !oldSize.equals( newSize )) {
+			// if( !oldSize.equals( newSize )) {
 			setPreferredSize(newSize);
 			revalidate();
-//			}
-//			repaint();
+			// }
+			// repaint();
 		}
 
 		private void recalcBoundingBox() {
@@ -334,7 +339,8 @@ public class SynthDefDiagram extends JFrame {
 			final Dimension newSize = new Dimension((int) (boundingBox.getMaxX() * zoom + 4),
 					(int) (boundingBox.getMaxY() * zoom + 4));
 
-//System.err.println( "bounding box: "+box.getX()+","+box.getY()+","+box.getWidth()+","+box.getHeight() );
+			// System.err.println( "bounding box:
+			// "+box.getX()+","+box.getY()+","+box.getWidth()+","+box.getHeight() );
 
 			if ((boundingBox.getX() < 4) || (boundingBox.getY() < 4)) {
 				final int dx = Math.max(0, (int) (5 - boundingBox.getX()));
@@ -345,12 +351,13 @@ public class SynthDefDiagram extends JFrame {
 					pt = uv.getLocation();
 					uv.setLocation(new Point2D.Double(pt.getX() + dx, pt.getY() + dy));
 				}
-//				final Point	viewPt	= viewport.getViewPosition();
-//				viewport.setViewPosition( new Point( viewPt.x - dx, viewPt.y - dy ));
+				// final Point viewPt = viewport.getViewPosition();
+				// viewport.setViewPosition( new Point( viewPt.x - dx, viewPt.y - dy ));
 			}
 
 			if (!oldSize.equals(newSize)) {
-//System.err.println( "setting new size "+newSize.getWidth()+","+newSize.getHeight() );
+				// System.err.println( "setting new size
+				// "+newSize.getWidth()+","+newSize.getHeight() );
 				setPreferredSize(newSize);
 				revalidate();
 			}
@@ -426,7 +433,8 @@ public class SynthDefDiagram extends JFrame {
 				}
 			}
 
-			if ((!e.isShiftDown() && !collSelectedViews.isEmpty()) && ((hitView == null) || !hitView.isSelected())) { // deselect all
+			if ((!e.isShiftDown() && !collSelectedViews.isEmpty()) && ((hitView == null) || !hitView.isSelected())) { // deselect
+																													  // all
 
 				for (int i = 0; i < collSelectedViews.size(); i++) {
 					uv = (UGenView) collSelectedViews.get(i);
@@ -513,13 +521,17 @@ public class SynthDefDiagram extends JFrame {
 			}
 		}
 
-		public void mouseClicked(MouseEvent e) { /* ignored */ }
+		public void mouseClicked(MouseEvent e) {
+			/* ignored */ }
 
-		public void mouseMoved(MouseEvent e) { /* ignored */ }
+		public void mouseMoved(MouseEvent e) {
+			/* ignored */ }
 
-		public void mouseEntered(MouseEvent e) { /* ignored */ }
+		public void mouseEntered(MouseEvent e) {
+			/* ignored */ }
 
-		public void mouseExited(MouseEvent e) { /* ignored */ }
+		public void mouseExited(MouseEvent e) {
+			/* ignored */ }
 	}
 
 	private static class Wire implements Constants {
@@ -569,23 +581,23 @@ public class SynthDefDiagram extends JFrame {
 
 		protected void paint(Graphics2D g2) {
 			final Stroke strkOrig = g2.getStroke();
-//			final AffineTransform	atOrig		= g2.getTransform();
-//			
-//			g2.translate( -1, -1 );	// account for symmetric stroke width
+			// final AffineTransform atOrig = g2.getTransform();
+			//
+			// g2.translate( -1, -1 ); // account for symmetric stroke width
 
 			g2.setPaint(pntWire);
 			g2.setStroke(strkWire);
 			g2.draw(shpWire);
 
 			g2.setStroke(strkOrig);
-//			g2.setTransform( atOrig );
+			// g2.setTransform( atOrig );
 		}
 	}
 
 	private static class UGenView implements Constants {
 		private final UGen ugen;
-//		private final UGenInfo			ui;
-//		private final String			name;
+		// private final UGenInfo ui;
+		// private final String name;
 		private final Shape shpContainer;
 		private final Shape shpCons;
 		private final Shape shpConsts;
@@ -598,8 +610,9 @@ public class SynthDefDiagram extends JFrame {
 		private static final Stroke strkCons = new BasicStroke(2.0f);
 		private static final Paint pntConst = new Color(0x00, 0x00, 0x00, 0xC0);
 		private static final Paint pntConstD = new Color(0x00, 0x00, 0x00, 0x60);
-//		private static final Paint	pntToolTips	= new GradientPaint( 0, 0, new Color( 0xFF, 0xFF, 0x00, 0xA0 ),
-//																	 0, 20, new Color( 0xFF, 0xFF, 0x00, 0x00 ));
+		// private static final Paint pntToolTips = new GradientPaint( 0, 0, new Color(
+		// 0xFF, 0xFF, 0x00, 0xA0 ),
+		// 0, 20, new Color( 0xFF, 0xFF, 0x00, 0x00 ));
 		private static final Paint pntToolTips = new Color(0xFF, 0xFF, 0x00, 0xB0);
 		private static final Paint pntToolTipTxt = new Color(0x00, 0x00, 0x00, 0xD8);
 
@@ -629,8 +642,8 @@ public class SynthDefDiagram extends JFrame {
 
 		protected UGenView(UGen ugen, UGenInfo ui, String name, Rectangle2D bounds, FontMetrics fm, FontMetrics fm2) {
 			this.ugen = ugen;
-//			this.ui			= ui;
-//			this.name		= name;
+			// this.ui = ui;
+			// this.name = name;
 			this.bounds = bounds;
 
 			inletLocations = new Point2D[ugen.getNumInputs()];
@@ -680,10 +693,10 @@ public class SynthDefDiagram extends JFrame {
 			pntLabelD = new Color(r >> 2, g >> 2, b >> 2, 0x80);
 
 			// inlets
-//			x	= SynthDefView.HPAD / 2 + 1 + bounds.getX();
+			// x = SynthDefView.HPAD / 2 + 1 + bounds.getX();
 			x = SynthDefView.HPAD / 2 + 1;
 			dx = (bounds.getWidth() - 2 - SynthDefView.HPAD) / (ugen.getNumInputs() - 1);
-//			y	= bounds.getY() + 1.0;
+			// y = bounds.getY() + 1.0;
 			y = 1.0;
 			h = SynthDefView.VPAD / 4;
 
@@ -708,7 +721,8 @@ public class SynthDefDiagram extends JFrame {
 					if (str != null) {
 						collToolTips.add(new PositionedString(str, x + fm2.getAscent() - 4, y2 - 4));
 						x2 = fm2.stringWidth(str) + 8;
-//						a.add( new Area( new Rectangle2D.Double( x - 2, y2 - x2 - 2, fm2.getHeight(), x2 )));
+						// a.add( new Area( new Rectangle2D.Double( x - 2, y2 - x2 - 2, fm2.getHeight(),
+						// x2 )));
 						a.add(new Area(new RoundRectangle2D.Double(x - 2.5, y2 - x2 - 2, fm2.getHeight(), x2, 6, 6)));
 					}
 				}
@@ -717,10 +731,10 @@ public class SynthDefDiagram extends JFrame {
 			}
 
 			// outlets
-//			x	= SynthDefView.HPAD / 2 + 1 + bounds.getX();
+			// x = SynthDefView.HPAD / 2 + 1 + bounds.getX();
 			x = SynthDefView.HPAD / 2 + 1;
 			dx = (bounds.getWidth() - 2 - SynthDefView.HPAD) / (ugen.getNumOutputs() - 1);
-//			y	= bounds.getY() + bounds.getHeight() - 1;
+			// y = bounds.getY() + bounds.getHeight() - 1;
 			y = bounds.getHeight() - 1;
 
 			for (int i = 0; i < ugen.getNumOutputs(); i++) {
@@ -732,13 +746,14 @@ public class SynthDefDiagram extends JFrame {
 			shpCons = gp;
 			shpConsts = gp2;
 			shpToolTips = a;
-//			label		= new PositionedString( ugen.getName(), SynthDefView.HPAD / 2 + bounds.getX(),
-//																SynthDefView.VPAD / 2 + bounds.getY() + fm.getAscent() );
+			// label = new PositionedString( ugen.getName(), SynthDefView.HPAD / 2 +
+			// bounds.getX(),
+			// SynthDefView.VPAD / 2 + bounds.getY() + fm.getAscent() );
 			label = new PositionedString(name, SynthDefView.HPAD / 2, SynthDefView.VPAD / 2 + fm.getAscent());
 
 			shpContainer = new Rectangle2D.Double(0.0, 0.0, bounds.getWidth(), bounds.getHeight());
 
-//			System.err.println( "# consts : " +collConsts.size() );
+			// System.err.println( "# consts : " +collConsts.size() );
 		}
 
 		protected void setSelected(boolean selected) {

@@ -10,12 +10,9 @@
 package de.sciss.jcollider;
 
 /**
- * Utility class for
- * outputting unique incremental
- * numbers.
+ * Utility class for outputting unique incremental numbers.
  *
- * @todo this should be simply put in
- *       the JCollider class
+ * @todo this should be simply put in the JCollider class
  *
  * @author Hanns Holger Rutz
  * @version 0.2, 11-Sep-05 (some countries are still at war)

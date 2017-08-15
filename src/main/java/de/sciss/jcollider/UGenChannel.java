@@ -10,8 +10,7 @@
 package de.sciss.jcollider;
 
 /**
- * Represents one output channel of a (potentially
- * multi-ouput) UGen.
+ * Represents one output channel of a (potentially multi-ouput) UGen.
  *
  * @author Hanns Holger Rutz
  * @version 0.31, 08-Oct-07
@@ -21,9 +20,8 @@ public class UGenChannel implements UGenInput {
 	private final int channel;
 
 	/**
-	 * You do not directly create <code>UGenChannel</code>s
-	 * but retrieve them from a <code>UGen</code> by
-	 * calling its <code>getChannel</code> method
+	 * You do not directly create <code>UGenChannel</code>s but retrieve them from a
+	 * <code>UGen</code> by calling its <code>getChannel</code> method
 	 *
 	 * @see UGen#getChannel( int )
 	 */
@@ -33,28 +31,28 @@ public class UGenChannel implements UGenInput {
 	}
 
 	/**
-	 * Returns the <code>UGen</code> whose
-	 * output this object represents
+	 * Returns the <code>UGen</code> whose output this object represents
 	 */
 	public UGen getUGen() {
 		return ugen;
 	}
 
 	/**
-	 * Returns the index in the array of
-	 * outputs of the corresponding <code>UGen</code>
-	 * (beginning at zero).
+	 * Returns the index in the array of outputs of the corresponding
+	 * <code>UGen</code> (beginning at zero).
 	 */
 	public int getChannel() {
 		return channel;
 	}
 
-// -------- UGenInput interface --------
+	// -------- UGenInput interface --------
 
+	@Override
 	public Object getRate() {
 		return ugen.getOutputRate(channel);
 	}
 
+	@Override
 	public String dumpName() {
 		if (ugen.getNumOutputs() <= 1) {
 			return ugen.dumpName();
@@ -62,13 +60,14 @@ public class UGenChannel implements UGenInput {
 			return (ugen.dumpName() + "[ch:" + channel + ']');
 		}
 
-//		return( ugen.getSynthIndex() + "_" + ugen.getName() +
-//			(ugen.getNumOutputs() > 1 ? String.valueOf( channel ) : "") );
+		// return( ugen.getSynthIndex() + "_" + ugen.getName() +
+		// (ugen.getNumOutputs() > 1 ? String.valueOf( channel ) : "") );
 	}
 
 	/**
 	 * Returns <code>this</code> as an array
 	 */
+	@Override
 	public UGenInput[] asUGenInputs() {
 		return new UGenInput[] { this };
 	}
@@ -76,6 +75,7 @@ public class UGenChannel implements UGenInput {
 	/**
 	 * Returns <code>1</code> naturally
 	 */
+	@Override
 	public int getNumOutputs() {
 		return 1;
 	}
@@ -83,6 +83,7 @@ public class UGenChannel implements UGenInput {
 	/**
 	 * Returns <code>this</code> naturally
 	 */
+	@Override
 	public GraphElem getOutput(int idx) {
 		return this;
 	}

@@ -11,29 +11,30 @@ package de.sciss.jcollider;
 
 import java.io.IOException;
 import java.io.PrintStream;
+
 import javax.swing.tree.TreeNode;
 
 import de.sciss.net.OSCMessage;
 
 /**
- * This is a client side representation of a node in the synthesis graph.
- * It is the superclass of <code>Synth</code> and <code>Group</code> and
- * as such abstract. The <code>javax.swing.tree.TreeNode</code> interface
- * is implemented since it's a natural match and it allows classes such
- * as <code>NodeTreeManager</code> to wrap scsynth's node graph on the
- * client side into a usefull GUI representation.
+ * This is a client side representation of a node in the synthesis graph. It is
+ * the superclass of <code>Synth</code> and <code>Group</code> and as such
+ * abstract. The <code>javax.swing.tree.TreeNode</code> interface is implemented
+ * since it's a natural match and it allows classes such as
+ * <code>NodeTreeManager</code> to wrap scsynth's node graph on the client side
+ * into a usefull GUI representation.
  * <p>
  * Unlike SCLang, the status fields are not updated by the methods in this
- * class. SCLang does this partly: It will update the node's parent group,
- * while changing the running flag only when the node is freed. We decided to
- * not copy this heterogenous behaviour. Parent group, running and playing
- * flags as well as the newly introduced predecessor and successor fields
- * must be updated by monitoring classes, typically a <code>NodeWatcher</code>.
+ * class. SCLang does this partly: It will update the node's parent group, while
+ * changing the running flag only when the node is freed. We decided to not copy
+ * this heterogenous behaviour. Parent group, running and playing flags as well
+ * as the newly introduced predecessor and successor fields must be updated by
+ * monitoring classes, typically a <code>NodeWatcher</code>.
  *
  * @warning not all methods are thorougly tested. before all methods have been
- *          thoroughly verified, excepted some of them to be wrong
- *          or behave different than expected. what certainly works
- *          is run-, set-, trace- and free-messages
+ *          thoroughly verified, excepted some of them to be wrong or behave
+ *          different than expected. what certainly works is run-, set-, trace-
+ *          and free-messages
  *
  * @author Hanns Holger Rutz
  * @version 0.36, 11-Oct-09
@@ -52,12 +53,13 @@ public abstract class Node implements Constants, TreeNode {
 	private boolean isRunning = false;
 
 	/**
-	 * Creates a Node representation for a given
-	 * node ID. This method does not send any
-	 * messages to the server.
+	 * Creates a Node representation for a given node ID. This method does not send
+	 * any messages to the server.
 	 *
-	 * @param server the <code>Server</code> at which the <code>Node</code> resides
-	 * @param nodeID the identifier of the <code>Node</code>
+	 * @param server
+	 *            the <code>Server</code> at which the <code>Node</code> resides
+	 * @param nodeID
+	 *            the identifier of the <code>Node</code>
 	 */
 	protected Node(Server server, int nodeID) {
 		this.server = server;
@@ -65,30 +67,30 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Creates a Node representation. This method does not send any
-	 * messages to the server. The node ID is automatically
-	 * assigned from the server's allocator.
+	 * Creates a Node representation. This method does not send any messages to the
+	 * server. The node ID is automatically assigned from the server's allocator.
 	 *
-	 * @param server the <code>Server</code> at which the <code>Node</code> resides
+	 * @param server
+	 *            the <code>Server</code> at which the <code>Node</code> resides
 	 */
 	protected Node(Server server) {
 		this(server, server.nextNodeID());
 	}
 
 	/**
-	 * Set a custom name for the node.
-	 * This name is used in print out
-	 * or GUI representation
+	 * Set a custom name for the node. This name is used in print out or GUI
+	 * representation
 	 *
-	 * @param name a name for the node, or <code>null</node>
+	 * @param name
+	 *            a name for the node, or <code>null</node>
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Queries the custom name of the node.
-	 * By default, a node has not an assigned name.
+	 * Queries the custom name of the node. By default, a node has not an assigned
+	 * name.
 	 *
 	 * @return the node's name or <code>null</code> if no name has been given
 	 */
@@ -99,20 +101,18 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * Queries the group in which the node resides.
 	 *
-	 * @return the parent <code>Group</code> of the <code>Node</code> or <code>null</code>
-	 *         if no group has been assigned.
+	 * @return the parent <code>Group</code> of the <code>Node</code> or
+	 *         <code>null</code> if no group has been assigned.
 	 */
 	public Group getGroup() {
 		return group;
 	}
 
 	/**
-	 * Queries the node's predecessor in the
-	 * graph tree. This will only return a valid
-	 * node, if the node was created on the server
-	 * and is monitored by a node watcher. If the
-	 * node is the head node of a group, this will
-	 * return <code>null</code>.
+	 * Queries the node's predecessor in the graph tree. This will only return a
+	 * valid node, if the node was created on the server and is monitored by a node
+	 * watcher. If the node is the head node of a group, this will return
+	 * <code>null</code>.
 	 *
 	 * @return the node's predecessor or <code>null</code>
 	 */
@@ -121,12 +121,10 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Queries the node's successor in the
-	 * graph tree. This will only return a valid
-	 * node, if the node was created on the server
-	 * and is monitored by a node watcher. If the
-	 * node is the tail node of a group, this will
-	 * return <code>null</code>.
+	 * Queries the node's successor in the graph tree. This will only return a valid
+	 * node, if the node was created on the server and is monitored by a node
+	 * watcher. If the node is the tail node of a group, this will return
+	 * <code>null</code>.
 	 *
 	 * @return the node's successor or <code>null</code>
 	 */
@@ -144,65 +142,68 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets the node's group. This method
-	 * does not send any messages to the server.
-	 * It merely stores the group object. This method
-	 * may be called by a <code>NodeWatcher</code> for example
-	 * when it receives a <code>/n_info</code> message.
+	 * Sets the node's group. This method does not send any messages to the server.
+	 * It merely stores the group object. This method may be called by a
+	 * <code>NodeWatcher</code> for example when it receives a <code>/n_info</code>
+	 * message.
 	 *
-	 * @param group the node's new <code>Group</code> or <code>null</code> (if the node is invalidated)
+	 * @param group
+	 *            the node's new <code>Group</code> or <code>null</code> (if the
+	 *            node is invalidated)
 	 */
 	protected void setGroup(Group group) {
-//		if( group == null ) {
-//			if( this.group != null ) {
-//			
-//			}
-//		} else {
-//			if( this.group == null ) {
-//				this.group	= group;
-//				if( group.getHeadNode() == null ) 
-//			} else if( this.group.getNodeID() != group.getNodeID() ) {
-//				if( (group.getHeadNode() != null) && (group.getHeadNode().getNodeID() == this.getNodeID()) ) {
-//					group.setHeadNode( this.getSuccNode() );
-//				}
-//				if( (group.getTailNode() != null) && (group.getTailNode().getNodeID() == this.getNodeID()) ) {
-//					group.setTailNode( this.getPredNode() );
-//				}
+		// if( group == null ) {
+		// if( this.group != null ) {
+		//
+		// }
+		// } else {
+		// if( this.group == null ) {
+		// this.group = group;
+		// if( group.getHeadNode() == null )
+		// } else if( this.group.getNodeID() != group.getNodeID() ) {
+		// if( (group.getHeadNode() != null) && (group.getHeadNode().getNodeID() ==
+		// this.getNodeID()) ) {
+		// group.setHeadNode( this.getSuccNode() );
+		// }
+		// if( (group.getTailNode() != null) && (group.getTailNode().getNodeID() ==
+		// this.getNodeID()) ) {
+		// group.setTailNode( this.getPredNode() );
+		// }
 		this.group = group;
-//			}
-//		}
+		// }
+		// }
 	}
 
 	/**
-	 * Sets the node's predecessor node. This method
-	 * does not send any messages to the server.
-	 * It merely stores the passed in object. This method
-	 * may be called by a <code>NodeWatcher</code> for example
-	 * when it receives a <code>/n_info</code> message.
+	 * Sets the node's predecessor node. This method does not send any messages to
+	 * the server. It merely stores the passed in object. This method may be called
+	 * by a <code>NodeWatcher</code> for example when it receives a
+	 * <code>/n_info</code> message.
 	 *
-	 * @param predNode the node's new predecessor <code>Node</code> or <code>null</code>
+	 * @param predNode
+	 *            the node's new predecessor <code>Node</code> or <code>null</code>
 	 */
 	protected void setPredNode(Node predNode) {
 		this.predNode = predNode;
-//		if( predNode != null ) {
-//			predNode.succNode	= this;
-//		}
+		// if( predNode != null ) {
+		// predNode.succNode = this;
+		// }
 	}
 
 	/**
-	 * Sets the node's successor node. This method
-	 * does not send any messages to the server.
-	 * It merely stores the passed in object. This method
-	 * may be called by a <code>NodeWatcher</code> for example
-	 * when it receives a <code>/n_info</code> message.
+	 * Sets the node's successor node. This method does not send any messages to the
+	 * server. It merely stores the passed in object. This method may be called by a
+	 * <code>NodeWatcher</code> for example when it receives a <code>/n_info</code>
+	 * message.
 	 *
-	 * @param succNode the node's new successor <code>Node</code> or <code>null</code>
+	 * @param succNode
+	 *            the node's new successor <code>Node</code> or <code>null</code>
 	 */
 	protected void setSuccNode(Node succNode) {
 		this.succNode = succNode;
-//		if( succNode != null ) {
-//			succNode.predNode	= this;
-//		}
+		// if( succNode != null ) {
+		// succNode.predNode = this;
+		// }
 	}
 
 	/**
@@ -215,34 +216,32 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Queries whether the node exists on the server and is
-	 * playing (not paused).
-	 * This information is only valid when the node was
-	 * tracked by a <code>NodeWatcher</code>.
+	 * Queries whether the node exists on the server and is playing (not paused).
+	 * This information is only valid when the node was tracked by a
+	 * <code>NodeWatcher</code>.
 	 *
-	 * @return <code>true</code> if the node exists on the server and is playing (not paused),
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if the node exists on the server and is playing
+	 *         (not paused), <code>false</code> otherwise
 	 */
 	public boolean isPlaying() {
 		return isPlaying;
 	}
 
 	/**
-	 * Specifies whether the node is playing (not paused).
-	 * This method is supposed to be called by a <code>NodeWatcher</code>.
-	 * Do not call it yourself.
+	 * Specifies whether the node is playing (not paused). This method is supposed
+	 * to be called by a <code>NodeWatcher</code>. Do not call it yourself.
 	 *
-	 * @param isPlaying <code>true</code> if the node is playing
-	 *        <code>false</code> if the node is paused
+	 * @param isPlaying
+	 *            <code>true</code> if the node is playing <code>false</code> if the
+	 *            node is paused
 	 */
 	protected void setPlaying(boolean isPlaying) {
 		this.isPlaying = isPlaying;
 	}
 
 	/**
-	 * Queries whether the node exists on the server.
-	 * This information is only valid when the node was
-	 * tracked by a <code>NodeWatcher</code>.
+	 * Queries whether the node exists on the server. This information is only valid
+	 * when the node was tracked by a <code>NodeWatcher</code>.
 	 *
 	 * @return <code>true</code> if the node exists on the server,
 	 *         <code>false</code> otherwise
@@ -252,27 +251,24 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Specifies whether the node exists on the server.
-	 * This method is supposed to be called by a <code>NodeWatcher</code>.
-	 * Do not call it yourself.
+	 * Specifies whether the node exists on the server. This method is supposed to
+	 * be called by a <code>NodeWatcher</code>. Do not call it yourself.
 	 *
-	 * @param isRunning <code>true</code> if the node exists on the server,
-	 *        <code>false</code> otherwise
+	 * @param isRunning
+	 *            <code>true</code> if the node exists on the server,
+	 *            <code>false</code> otherwise
 	 */
 	protected void setRunning(boolean isRunning) {
 		this.isRunning = isRunning;
 	}
 
 	/**
-	 * Two nodes are equal if they
-	 * reside on the same server and
-	 * have the same node ID. Note
-	 * that in this implementation,
-	 * object reference identity for the
-	 * servers is assumed. You should
-	 * not create several instances for
-	 * the same server.
+	 * Two nodes are equal if they reside on the same server and have the same node
+	 * ID. Note that in this implementation, object reference identity for the
+	 * servers is assumed. You should not create several instances for the same
+	 * server.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Node) {
 			final Node node = (Node) o;
@@ -285,33 +281,35 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * @see #equals( Object )
 	 */
+	@Override
 	public int hashCode() {
 		return (getServer().hashCode() ^ getNodeID());
 	}
 
 	/**
-	 * Frees the node on the server.
-	 * This sends a <code>/n_free</code> message to the server.
+	 * Frees the node on the server. This sends a <code>/n_free</code> message to
+	 * the server.
 	 *
 	 * @see #freeMsg()
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void free() throws IOException {
-//		free( true );
+		// free( true );
 		getServer().sendMsg(freeMsg());
 	}
 
-//	public void free( boolean sendFlag )
-//	throws IOException
-//	{
-//		if( sendFlag ) {
-//			getServer().sendMsg( freeMsg() );
-//		}
-//// removed 02-oct-05
-////		setGroup( null );
-////		setPlaying( false );
-////		setRunning( false );
-//	}
+	// public void free( boolean sendFlag )
+	// throws IOException
+	// {
+	// if( sendFlag ) {
+	// getServer().sendMsg( freeMsg() );
+	// }
+	//// removed 02-oct-05
+	//// setGroup( null );
+	//// setPlaying( false );
+	//// setRunning( false );
+	// }
 
 	/**
 	 * Creates an OSC <code>/n_free</code> message for the node.
@@ -325,31 +323,36 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Resumes the node if it was paused.
-	 * This sends a <code>[ /n_run, &lt;nodeID&gt;, 1 ]</code> message to the server.
+	 * Resumes the node if it was paused. This sends a
+	 * <code>[ /n_run, &lt;nodeID&gt;, 1 ]</code> message to the server.
 	 *
 	 * @see #runMsg()
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void run() throws IOException {
 		run(true);
 	}
 
 	/**
-	 * Pauses or resumes the node.
-	 * This sends a <code>/n_run</code> message to the server.
+	 * Pauses or resumes the node. This sends a <code>/n_run</code> message to the
+	 * server.
 	 *
-	 * @param flag <code>false</code> to pause the node, <code>true</code> to resume the node.
+	 * @param flag
+	 *            <code>false</code> to pause the node, <code>true</code> to resume
+	 *            the node.
 	 *
 	 * @see #runMsg( boolean )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void run(boolean flag) throws IOException {
 		getServer().sendMsg(runMsg(flag));
 	}
 
 	/**
-	 * Creates an OSC <code>[ /n_run, &lt;nodeID&gt;, 1 ]</code> message for the node.
+	 * Creates an OSC <code>[ /n_run, &lt;nodeID&gt;, 1 ]</code> message for the
+	 * node.
 	 *
 	 * @return an <code>OSCMessage</code> which can be sent to the server
 	 *
@@ -362,7 +365,9 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * Creates an OSC <code>/n_run</code> message for the node.
 	 *
-	 * @param flag <code>false</code> to pause the node, <code>true</code> to resume the node.
+	 * @param flag
+	 *            <code>false</code> to pause the node, <code>true</code> to resume
+	 *            the node.
 	 * @return an <code>OSCMessage</code> which can be sent to the server
 	 *
 	 * @see #run( boolean )
@@ -372,30 +377,36 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets a node's control parameter to a new value.
-	 * This sends a <code>/n_set</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control value.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets a node's control parameter to a new value. This sends a
+	 * <code>/n_set</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control value. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlName the name of the control (<code>SynthDef</code> argument)
-	 * @param value the new value of the control
+	 * @param ctrlName
+	 *            the name of the control (<code>SynthDef</code> argument)
+	 * @param value
+	 *            the new value of the control
 	 *
 	 * @see #setMsg( String, float )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void set(String ctrlName, float value) throws IOException {
 		getServer().sendMsg(setMsg(ctrlName, value));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_set</code> message to change a node's control parameter to a new value.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control value.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_set</code> message to change a node's control
+	 * parameter to a new value. Sending this message to a <code>Synth</code>
+	 * adjusts the synth's control value. Sending this message to a
+	 * <code>Group</code> adjusts the control values of all synths in this group and
+	 * subgroups of this group.
 	 *
-	 * @param ctrlName the name of the control (<code>SynthDef</code> argument)
-	 * @param value the new value of the control
+	 * @param ctrlName
+	 *            the name of the control (<code>SynthDef</code> argument)
+	 * @param value
+	 *            the new value of the control
 	 *
 	 * @see #set( String, float )
 	 */
@@ -404,30 +415,36 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets a node's control parameter to a new value.
-	 * This sends a <code>/n_set</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control value.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets a node's control parameter to a new value. This sends a
+	 * <code>/n_set</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control value. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlIdx the index of the control (<code>SynthDef</code> argument)
-	 * @param value the new value of the control
+	 * @param ctrlIdx
+	 *            the index of the control (<code>SynthDef</code> argument)
+	 * @param value
+	 *            the new value of the control
 	 *
 	 * @see #setMsg( int, float )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void set(int ctrlIdx, float value) throws IOException {
 		getServer().sendMsg(setMsg(ctrlIdx, value));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_set</code> message to change a node's control parameter to a new value.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control value.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_set</code> message to change a node's control
+	 * parameter to a new value. Sending this message to a <code>Synth</code>
+	 * adjusts the synth's control value. Sending this message to a
+	 * <code>Group</code> adjusts the control values of all synths in this group and
+	 * subgroups of this group.
 	 *
-	 * @param ctrlIdx the index of the control (<code>SynthDef</code> argument)
-	 * @param value the new value of the control
+	 * @param ctrlIdx
+	 *            the index of the control (<code>SynthDef</code> argument)
+	 * @param value
+	 *            the new value of the control
 	 *
 	 * @see #set( int, float )
 	 */
@@ -437,34 +454,44 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets a list of the node's control parameters to new values.
-	 * This sends a <code>/n_set</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control values.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets a list of the node's control parameters to new values. This sends a
+	 * <code>/n_set</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control values. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param values an array of the new values of the controls. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>values</code> must be equal.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param values
+	 *            an array of the new values of the controls. Each array element
+	 *            corresponds to the control name in <code>ctrlNames</code> at the
+	 *            same array index. the array sizes of <code>ctrlNames</code> and
+	 *            <code>values</code> must be equal.
 	 *
 	 * @see #setMsg( String[], float[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void set(String[] ctrlNames, float[] values) throws IOException {
 		getServer().sendMsg(setMsg(ctrlNames, values));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_set</code> message to adjust a list of the node's control parameters to new values.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control values.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_set</code> message to adjust a list of the node's
+	 * control parameters to new values. Sending this message to a
+	 * <code>Synth</code> adjusts the synth's control values. Sending this message
+	 * to a <code>Group</code> adjusts the control values of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param values an array of the new values of the controls. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>values</code> must be equal.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param values
+	 *            an array of the new values of the controls. Each array element
+	 *            corresponds to the control name in <code>ctrlNames</code> at the
+	 *            same array index. the array sizes of <code>ctrlNames</code> and
+	 *            <code>values</code> must be equal.
 	 *
 	 * @see #set( String[], float[] )
 	 */
@@ -481,34 +508,44 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets a list of the node's control parameters to new values.
-	 * This sends a <code>/n_set</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control values.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets a list of the node's control parameters to new values. This sends a
+	 * <code>/n_set</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control values. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param values an array of the new values of the controls. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>values</code> must be equal.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param values
+	 *            an array of the new values of the controls. Each array element
+	 *            corresponds to the control index in <code>ctrlIndices</code> at
+	 *            the same array index. the array sizes of <code>ctrlIndices</code>
+	 *            and <code>values</code> must be equal.
 	 *
 	 * @see #setMsg( int[], float[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void set(int[] ctrlIndices, float[] values) throws IOException {
 		getServer().sendMsg(setMsg(ctrlIndices, values));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_set</code> message to adjust a list of the node's control parameters to new values.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control values.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_set</code> message to adjust a list of the node's
+	 * control parameters to new values. Sending this message to a
+	 * <code>Synth</code> adjusts the synth's control values. Sending this message
+	 * to a <code>Group</code> adjusts the control values of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param values an array of the new values of the controls. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>values</code> must be equal.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param values
+	 *            an array of the new values of the controls. Each array element
+	 *            corresponds to the control index in <code>ctrlIndices</code> at
+	 *            the same array index. the array sizes of <code>ctrlIndices</code>
+	 *            and <code>values</code> must be equal.
 	 *
 	 * @see #set( int[], float[] )
 	 */
@@ -525,36 +562,44 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets ranges of the node's control parameters to new values.
-	 * This sends a <code>/n_fill</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control values.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets ranges of the node's control parameters to new values. This sends a
+	 * <code>/n_fill</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control values. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlNames the names of the first control to change
-	 * @param numControls the numbers of successive controls to change
-	 * @param values an array of the new values of the controls. the sizes
-	 *        of <code>ctrlNames</code>, <code>numControls</code> and <code>values</code>
-	 *        must be equal.
+	 * @param ctrlNames
+	 *            the names of the first control to change
+	 * @param numControls
+	 *            the numbers of successive controls to change
+	 * @param values
+	 *            an array of the new values of the controls. the sizes of
+	 *            <code>ctrlNames</code>, <code>numControls</code> and
+	 *            <code>values</code> must be equal.
 	 *
 	 * @see #fillMsg( String[], int[], float[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void fill(String[] ctrlNames, int[] numControls, float[] values) throws IOException {
 		getServer().sendMsg(fillMsg(ctrlNames, numControls, values));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_fill</code> message to adjust ranges of the node's control parameters to new values.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control values.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_fill</code> message to adjust ranges of the node's
+	 * control parameters to new values. Sending this message to a
+	 * <code>Synth</code> adjusts the synth's control values. Sending this message
+	 * to a <code>Group</code> adjusts the control values of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames the names of the first control to change
-	 * @param numControls the numbers of successive controls to change
-	 * @param values an array of the new values of the controls. the sizes
-	 *        of <code>ctrlNames</code>, <code>numControls</code> and <code>values</code>
-	 *        must be equal.
+	 * @param ctrlNames
+	 *            the names of the first control to change
+	 * @param numControls
+	 *            the numbers of successive controls to change
+	 * @param values
+	 *            an array of the new values of the controls. the sizes of
+	 *            <code>ctrlNames</code>, <code>numControls</code> and
+	 *            <code>values</code> must be equal.
 	 *
 	 * @see #fill( String[], int[], float[] )
 	 */
@@ -572,36 +617,44 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets ranges of the node's control parameters to new values.
-	 * This sends a <code>/n_fill</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control values.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets ranges of the node's control parameters to new values. This sends a
+	 * <code>/n_fill</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control values. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlIndices the indices of the first control to change
-	 * @param numControls the numbers of successive controls to change
-	 * @param values an array of the new values of the controls. the sizes
-	 *        of <code>ctrlIndices</code>, <code>numControls</code> and <code>values</code>
-	 *        must be equal.
+	 * @param ctrlIndices
+	 *            the indices of the first control to change
+	 * @param numControls
+	 *            the numbers of successive controls to change
+	 * @param values
+	 *            an array of the new values of the controls. the sizes of
+	 *            <code>ctrlIndices</code>, <code>numControls</code> and
+	 *            <code>values</code> must be equal.
 	 *
 	 * @see #fillMsg( int[], int[], float[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void fill(int[] ctrlIndices, int[] numControls, float[] values) throws IOException {
 		getServer().sendMsg(fillMsg(ctrlIndices, numControls, values));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_fill</code> message to adjust ranges of the node's control parameters to new values.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control values.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_fill</code> message to adjust ranges of the node's
+	 * control parameters to new values. Sending this message to a
+	 * <code>Synth</code> adjusts the synth's control values. Sending this message
+	 * to a <code>Group</code> adjusts the control values of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices the indices of the first control to change
-	 * @param numControls the numbers of successive controls to change
-	 * @param values an array of the new values of the controls. the sizes
-	 *        of <code>ctrlIndices</code>, <code>numControls</code> and <code>values</code>
-	 *        must be equal.
+	 * @param ctrlIndices
+	 *            the indices of the first control to change
+	 * @param numControls
+	 *            the numbers of successive controls to change
+	 * @param values
+	 *            an array of the new values of the controls. the sizes of
+	 *            <code>ctrlIndices</code>, <code>numControls</code> and
+	 *            <code>values</code> must be equal.
 	 *
 	 * @see #fill( int[], int[], float[] )
 	 */
@@ -619,36 +672,42 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets ranges of the node's control parameters to new values.
-	 * This sends a <code>/n_setn</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control values.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets ranges of the node's control parameters to new values. This sends a
+	 * <code>/n_setn</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control values. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlNames the names of the first control to change
-	 * @param values an array of arrays of the new values of the controls. each outer
-	 *        array corresponds to one element in <code>ctrlNames</code>, hence
-	 *        <code>ctrlNames.length</code> and <code>values.length</code>
-	 *        must be equal.
+	 * @param ctrlNames
+	 *            the names of the first control to change
+	 * @param values
+	 *            an array of arrays of the new values of the controls. each outer
+	 *            array corresponds to one element in <code>ctrlNames</code>, hence
+	 *            <code>ctrlNames.length</code> and <code>values.length</code> must
+	 *            be equal.
 	 *
 	 * @see #setnMsg( String[], float[][] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void setn(String[] ctrlNames, float[][] values) throws IOException {
 		getServer().sendMsg(setnMsg(ctrlNames, values));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_setn</code> message to adjust ranges of the node's control parameters to new values.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control values.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_setn</code> message to adjust ranges of the node's
+	 * control parameters to new values. Sending this message to a
+	 * <code>Synth</code> adjusts the synth's control values. Sending this message
+	 * to a <code>Group</code> adjusts the control values of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames the names of the first control to change
-	 * @param values an array of arrays of the new values of the controls. each outer
-	 *        array corresponds to one element in <code>ctrlNames</code>, hence
-	 *        <code>ctrlNames.length</code> and <code>values.length</code>
-	 *        must be equal.
+	 * @param ctrlNames
+	 *            the names of the first control to change
+	 * @param values
+	 *            an array of arrays of the new values of the controls. each outer
+	 *            array corresponds to one element in <code>ctrlNames</code>, hence
+	 *            <code>ctrlNames.length</code> and <code>values.length</code> must
+	 *            be equal.
 	 *
 	 * @see #setn( String[], float[][] )
 	 */
@@ -677,36 +736,42 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sets ranges of the node's control parameters to new values.
-	 * This sends a <code>/n_setn</code> message to the server.
-	 * If the node is a <code>Synth</code>, it adjusts the synth's control values.
-	 * If the node is a <code>Group</code>, it adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Sets ranges of the node's control parameters to new values. This sends a
+	 * <code>/n_setn</code> message to the server. If the node is a
+	 * <code>Synth</code>, it adjusts the synth's control values. If the node is a
+	 * <code>Group</code>, it adjusts the control values of all synths in this group
+	 * and subgroups of this group.
 	 *
-	 * @param ctrlIndices the indices of the first control to change
-	 * @param values an array of arrays of the new values of the controls. each outer
-	 *        array corresponds to one element in <code>ctrlNames</code>, hence
-	 *        <code>ctrlNames.length</code> and <code>values.length</code>
-	 *        must be equal.
+	 * @param ctrlIndices
+	 *            the indices of the first control to change
+	 * @param values
+	 *            an array of arrays of the new values of the controls. each outer
+	 *            array corresponds to one element in <code>ctrlNames</code>, hence
+	 *            <code>ctrlNames.length</code> and <code>values.length</code> must
+	 *            be equal.
 	 *
 	 * @see #setnMsg( int[], float[][] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void setn(int[] ctrlIndices, float[][] values) throws IOException {
 		getServer().sendMsg(setnMsg(ctrlIndices, values));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_setn</code> message to adjust ranges of the node's control parameters to new values.
-	 * Sending this message to a <code>Synth</code> adjusts the synth's control values.
-	 * Sending this message to a <code>Group</code> adjusts the control values of
-	 * all synths in this group and subgroups of this group.
+	 * Creates an OSC <code>/n_setn</code> message to adjust ranges of the node's
+	 * control parameters to new values. Sending this message to a
+	 * <code>Synth</code> adjusts the synth's control values. Sending this message
+	 * to a <code>Group</code> adjusts the control values of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices the indices of the first control to change
-	 * @param values an array of arrays of the new values of the controls. each outer
-	 *        array corresponds to one element in <code>ctrlNames</code>, hence
-	 *        <code>ctrlNames.length</code> and <code>values.length</code>
-	 *        must be equal.
+	 * @param ctrlIndices
+	 *            the indices of the first control to change
+	 * @param values
+	 *            an array of arrays of the new values of the controls. each outer
+	 *            array corresponds to one element in <code>ctrlNames</code>, hence
+	 *            <code>ctrlNames.length</code> and <code>values.length</code> must
+	 *            be equal.
 	 *
 	 * @see #setn( String[], float[][] )
 	 */
@@ -735,39 +800,50 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_map</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_map</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the indices of the control busses. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the indices of the control busses. Each array element
+	 *            corresponds to the control index in <code>ctrlIndices</code> at
+	 *            the same array index. the array sizes of <code>ctrlIndices</code>
+	 *            and <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
 	 *
 	 * @see #mapMsg( int[], int[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void map(int[] ctrlIndices, int[] busIndices) throws IOException {
 		getServer().sendMsg(mapMsg(ctrlIndices, busIndices));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_map</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_map</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the indices of the control busses. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the indices of the control busses. Each array element
+	 *            corresponds to the control index in <code>ctrlIndices</code> at
+	 *            the same array index. the array sizes of <code>ctrlIndices</code>
+	 *            and <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
 	 *
 	 * @see #map( int[], int[] )
 	 */
@@ -784,39 +860,50 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_map</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_map</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the names of the control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the names of the control busses. Each array element
+	 *            corresponds to the control name in <code>ctrlNames</code> at the
+	 *            same array index. the array sizes of <code>ctrlNames</code> and
+	 *            <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
 	 *
 	 * @see #mapMsg( String[], int[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void map(String[] ctrlNames, int[] busIndices) throws IOException {
 		getServer().sendMsg(mapMsg(ctrlNames, busIndices));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_map</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_map</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the names of the control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the names of the control busses. Each array element
+	 *            corresponds to the control name in <code>ctrlNames</code> at the
+	 *            same array index. the array sizes of <code>ctrlNames</code> and
+	 *            <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
 	 *
 	 * @see #map( String[], int[] )
 	 */
@@ -833,39 +920,50 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_map</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_map</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>busses</code> must be equal. whenever a bus is
-	 *        <code>null</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control index in <code>ctrlIndices</code> at the same array index.
+	 *            the array sizes of <code>ctrlIndices</code> and
+	 *            <code>busses</code> must be equal. whenever a bus is
+	 *            <code>null</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
 	 *
 	 * @see #mapMsg( int[], Bus[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void map(int[] ctrlIndices, Bus[] busses) throws IOException {
 		getServer().sendMsg(mapMsg(ctrlIndices, busses));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_map</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_map</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>busses</code> must be equal. whenever a bus is
-	 *        <code>null</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control index in <code>ctrlIndices</code> at the same array index.
+	 *            the array sizes of <code>ctrlIndices</code> and
+	 *            <code>busses</code> must be equal. whenever a bus is
+	 *            <code>null</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
 	 *
 	 * @see #map( int[], Bus[] )
 	 */
@@ -882,39 +980,48 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_map</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_map</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>busses</code> must be equal. whenever a bus is
-	 *        <code>null</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control name in <code>ctrlNames</code> at the same array index.
+	 *            the array sizes of <code>ctrlNames</code> and <code>busses</code>
+	 *            must be equal. whenever a bus is <code>null</code> the mapping is
+	 *            undone. Mapping is also undone by successive <code>/n_set</code>,
+	 *            <code>/n_setn</code> or <code>/n_fill</code> commands.
 	 *
 	 * @see #mapMsg( String[], Bus[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void map(String[] ctrlNames, Bus[] busses) throws IOException {
 		getServer().sendMsg(mapMsg(ctrlNames, busses));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_map</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_map</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>busses</code> must be equal. whenever a bus is
-	 *        <code>null</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control name in <code>ctrlNames</code> at the same array index.
+	 *            the array sizes of <code>ctrlNames</code> and <code>busses</code>
+	 *            must be equal. whenever a bus is <code>null</code> the mapping is
+	 *            undone. Mapping is also undone by successive <code>/n_set</code>,
+	 *            <code>/n_setn</code> or <code>/n_fill</code> commands.
 	 *
 	 * @see #map( String[], Bus[] )
 	 */
@@ -946,43 +1053,56 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_map</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_map</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the indices of the control busses. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
-	 * @param numControls an array of the number of successive controls to map. this array must have the same size
-	 *        as <code>ctrlIndices</code>.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the indices of the control busses. Each array element
+	 *            corresponds to the control index in <code>ctrlIndices</code> at
+	 *            the same array index. the array sizes of <code>ctrlIndices</code>
+	 *            and <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
+	 * @param numControls
+	 *            an array of the number of successive controls to map. this array
+	 *            must have the same size as <code>ctrlIndices</code>.
 	 *
 	 * @see #mapnMsg( int[], int[], int[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void mapn(int[] ctrlIndices, int[] busIndices, int[] numControls) throws IOException {
 		getServer().sendMsg(mapnMsg(ctrlIndices, busIndices, numControls));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_map</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_map</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the indices of the control busses. Each array element corresponds
-	 *        to the control index in <code>ctrlIndices</code> at the same array index. the array sizes of
-	 *        <code>ctrlIndices</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
-	 * @param numControls an array of the number of successive controls to map. this array must have the same size
-	 *        as <code>ctrlIndices</code>.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the indices of the control busses. Each array element
+	 *            corresponds to the control index in <code>ctrlIndices</code> at
+	 *            the same array index. the array sizes of <code>ctrlIndices</code>
+	 *            and <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
+	 * @param numControls
+	 *            an array of the number of successive controls to map. this array
+	 *            must have the same size as <code>ctrlIndices</code>.
 	 *
 	 * @see #mapn( int[], int[], int[] )
 	 */
@@ -1000,43 +1120,56 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_mapn</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_mapn</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the names of the control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
-	 * @param numControls an array of the number of successive controls to map. this array must have the same size
-	 *        as <code>ctrlNames</code>.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the names of the control busses. Each array element
+	 *            corresponds to the control name in <code>ctrlNames</code> at the
+	 *            same array index. the array sizes of <code>ctrlNames</code> and
+	 *            <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
+	 * @param numControls
+	 *            an array of the number of successive controls to map. this array
+	 *            must have the same size as <code>ctrlNames</code>.
 	 *
 	 * @see #mapnMsg( String[], int[], int[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void mapn(String[] ctrlNames, int[] busIndices, int[] numControls) throws IOException {
 		getServer().sendMsg(mapnMsg(ctrlNames, busIndices, numControls));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_mapn</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_mapn</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busIndices an array of the names of the control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>values</code> must be equal. whenever a bus index is
-	 *        <code>-1</code> the mapping is undone. Mapping is also undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
-	 * @param numControls an array of the number of successive controls to map. this array must have the same size
-	 *        as <code>ctrlNames</code>.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busIndices
+	 *            an array of the names of the control busses. Each array element
+	 *            corresponds to the control name in <code>ctrlNames</code> at the
+	 *            same array index. the array sizes of <code>ctrlNames</code> and
+	 *            <code>values</code> must be equal. whenever a bus index is
+	 *            <code>-1</code> the mapping is undone. Mapping is also undone by
+	 *            successive <code>/n_set</code>, <code>/n_setn</code> or
+	 *            <code>/n_fill</code> commands.
+	 * @param numControls
+	 *            an array of the number of successive controls to map. this array
+	 *            must have the same size as <code>ctrlNames</code>.
 	 *
 	 * @see #mapn( String[], int[], int[] )
 	 */
@@ -1054,39 +1187,50 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_mapn</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_mapn</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>busses</code> must be equal. The number of successive
-	 *        controls is determined by each bus'es numChannels! Mapping is undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control name in <code>ctrlNames</code> at the same array index.
+	 *            the array sizes of <code>ctrlNames</code> and <code>busses</code>
+	 *            must be equal. The number of successive controls is determined by
+	 *            each bus'es numChannels! Mapping is undone by successive
+	 *            <code>/n_set</code>, <code>/n_setn</code> or <code>/n_fill</code>
+	 *            commands.
 	 *
 	 * @see #mapnMsg( int[], Bus[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void mapn(int[] ctrlIndices, Bus[] busses) throws IOException {
 		getServer().sendMsg(mapnMsg(ctrlIndices, busses));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_mapn</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_mapn</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlIndices an array of the indices of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>busses</code> must be equal. The number of successive
-	 *        controls is determined by each bus'es numChannels! Mapping is undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlIndices
+	 *            an array of the indices of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control name in <code>ctrlNames</code> at the same array index.
+	 *            the array sizes of <code>ctrlNames</code> and <code>busses</code>
+	 *            must be equal. The number of successive controls is determined by
+	 *            each bus'es numChannels! Mapping is undone by successive
+	 *            <code>/n_set</code>, <code>/n_setn</code> or <code>/n_fill</code>
+	 *            commands.
 	 *
 	 * @see #mapn( int[], Bus[] )
 	 */
@@ -1104,39 +1248,50 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Maps a list of the node's control parameters to be automatically read from global control busses.
-	 * This sends a <code>/n_mapn</code> message to the server.
-	 * If the node is a <code>Synth</code>, it maps the synth's controls.
-	 * If the node is a <code>Group</code>, it maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Maps a list of the node's control parameters to be automatically read from
+	 * global control busses. This sends a <code>/n_mapn</code> message to the
+	 * server. If the node is a <code>Synth</code>, it maps the synth's controls. If
+	 * the node is a <code>Group</code>, it maps the controls of all synths in this
+	 * group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>busses</code> must be equal. The number of successive
-	 *        controls is determined by each bus'es numChannels! Mapping is undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control name in <code>ctrlNames</code> at the same array index.
+	 *            the array sizes of <code>ctrlNames</code> and <code>busses</code>
+	 *            must be equal. The number of successive controls is determined by
+	 *            each bus'es numChannels! Mapping is undone by successive
+	 *            <code>/n_set</code>, <code>/n_setn</code> or <code>/n_fill</code>
+	 *            commands.
 	 *
 	 * @see #mapnMsg( String[], Bus[] )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void mapn(String[] ctrlNames, Bus[] busses) throws IOException {
 		getServer().sendMsg(mapnMsg(ctrlNames, busses));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_mapn</code> message to map a list of the node's control parameters to
-	 * be automatically read from global control busses.
+	 * Creates an OSC <code>/n_mapn</code> message to map a list of the node's
+	 * control parameters to be automatically read from global control busses.
 	 * Sending this message to a <code>Synth</code> maps the synth's controls.
-	 * Sending this message to a <code>Group</code> maps the controls of
-	 * all synths in this group and subgroups of this group.
+	 * Sending this message to a <code>Group</code> maps the controls of all synths
+	 * in this group and subgroups of this group.
 	 *
-	 * @param ctrlNames an array of the names of the controls (<code>SynthDef</code> arguments)
-	 * @param busses an array of control busses. Each array element corresponds
-	 *        to the control name in <code>ctrlNames</code> at the same array index. the array sizes of
-	 *        <code>ctrlNames</code> and <code>busses</code> must be equal. The number of successive
-	 *        controls is determined by each bus'es numChannels! Mapping is undone by successive <code>/n_set</code>,
-	 *        <code>/n_setn</code> or <code>/n_fill</code> commands.
+	 * @param ctrlNames
+	 *            an array of the names of the controls (<code>SynthDef</code>
+	 *            arguments)
+	 * @param busses
+	 *            an array of control busses. Each array element corresponds to the
+	 *            control name in <code>ctrlNames</code> at the same array index.
+	 *            the array sizes of <code>ctrlNames</code> and <code>busses</code>
+	 *            must be equal. The number of successive controls is determined by
+	 *            each bus'es numChannels! Mapping is undone by successive
+	 *            <code>/n_set</code>, <code>/n_setn</code> or <code>/n_fill</code>
+	 *            commands.
 	 *
 	 * @see #mapn( String[], Bus[] )
 	 */
@@ -1163,24 +1318,27 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Releases a node. This assumes that that the <code>Synth</code>
-	 * represented by the node or the synths in the <code>Group</code> represented
-	 * by the node have specified a control named &quot;gate&quot; (usually used
-	 * by an <code>EnvGen</code> envelope generator UGen). This sends a <code>/n_set</code>
-	 * message for the &quot;gate&quot; control to the server.
+	 * Releases a node. This assumes that that the <code>Synth</code> represented by
+	 * the node or the synths in the <code>Group</code> represented by the node have
+	 * specified a control named &quot;gate&quot; (usually used by an
+	 * <code>EnvGen</code> envelope generator UGen). This sends a
+	 * <code>/n_set</code> message for the &quot;gate&quot; control to the server.
 	 *
-	 * @param releaseTime the time in seconds for the envelope to be released, or <code>0.0f</code>
-	 *        to use the envelope's default release time
+	 * @param releaseTime
+	 *            the time in seconds for the envelope to be released, or
+	 *            <code>0.0f</code> to use the envelope's default release time
 	 *
 	 * @see #releaseMsg( float )
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void release(float releaseTime) throws IOException {
 		getServer().sendMsg(releaseMsg(releaseTime));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_set</code> message to release a node with default release time.
+	 * Creates an OSC <code>/n_set</code> message to release a node with default
+	 * release time.
 	 *
 	 * @see #releaseMsg( float )
 	 */
@@ -1189,13 +1347,15 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Creates an OSC <code>/n_set</code> message to release a node. This assumes that that the <code>Synth</code>
-	 * represented by the node or the synths in the <code>Group</code> represented
-	 * by the node have specified a control named &quot;gate&quot; (usually used
-	 * by an <code>EnvGen</code> envelope generator UGen).
+	 * Creates an OSC <code>/n_set</code> message to release a node. This assumes
+	 * that that the <code>Synth</code> represented by the node or the synths in the
+	 * <code>Group</code> represented by the node have specified a control named
+	 * &quot;gate&quot; (usually used by an <code>EnvGen</code> envelope generator
+	 * UGen).
 	 *
-	 * @param releaseTime the time in seconds for the envelope to be released, or <code>0.0f</code>
-	 *        to use the envelope's default release time
+	 * @param releaseTime
+	 *            the time in seconds for the envelope to be released, or
+	 *            <code>0.0f</code> to use the envelope's default release time
 	 *
 	 * @see #release( float )
 	 */
@@ -1205,24 +1365,26 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Sends an OSC <code>/n_trace</code> message to the server.
-	 * The server will print debugging information about the node into its terminal window.
-	 * If the node is a synth, this information includes the current input and output values for UGens in the synth.
-	 * If the node is a group, this information includes the node IDs inside the group.
+	 * Sends an OSC <code>/n_trace</code> message to the server. The server will
+	 * print debugging information about the node into its terminal window. If the
+	 * node is a synth, this information includes the current input and output
+	 * values for UGens in the synth. If the node is a group, this information
+	 * includes the node IDs inside the group.
 	 *
 	 * @see #traceMsg()
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void trace() throws IOException {
 		getServer().sendMsg(traceMsg());
 	}
 
 	/**
-	 * Creates an OSC <code>/n_trace</code> message for the node.
-	 * When this message is sent to the server, it will print debugging information about the node into its terminal
-	 * window.
-	 * If the node is a synth, this information includes the current input and output values for UGens in the synth.
-	 * If the node is a group, this information includes the node IDs inside the group.
+	 * Creates an OSC <code>/n_trace</code> message for the node. When this message
+	 * is sent to the server, it will print debugging information about the node
+	 * into its terminal window. If the node is a synth, this information includes
+	 * the current input and output values for UGens in the synth. If the node is a
+	 * group, this information includes the node IDs inside the group.
 	 *
 	 * @see #trace()
 	 */
@@ -1231,26 +1393,28 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * A debugging method that prints the results
-	 * of an OSC <code>/n_query</code> message into the server's default
-	 * print stream.
+	 * A debugging method that prints the results of an OSC <code>/n_query</code>
+	 * message into the server's default print stream.
 	 *
 	 * @see #query( PrintStream )
 	 * @see Server#getPrintStream()
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void query() throws IOException {
 		query(Server.getPrintStream());
 	}
 
 	/**
-	 * A debugging method that prints the results
-	 * of an OSC <code>/n_query</code> message into a given print stream.
+	 * A debugging method that prints the results of an OSC <code>/n_query</code>
+	 * message into a given print stream.
 	 *
-	 * @param out the stream to print out, e.g. <code>System.err</code>
+	 * @param out
+	 *            the stream to print out, e.g. <code>System.err</code>
 	 *
 	 * @see #query()
-	 * @throws IOException if an error occurs while sending the OSC message
+	 * @throws IOException
+	 *             if an error occurs while sending the OSC message
 	 */
 	public void query(PrintStream out) throws IOException {
 		final Object nodeIDArg = new Integer(getNodeID());
@@ -1258,7 +1422,7 @@ public abstract class Node implements Constants, TreeNode {
 		final Object parent, prev, next, head, tail;
 		final boolean isGroup;
 
-//		try {
+		// try {
 		reply = getServer().sendMsgSync(queryMsg(), "/n_info", null, 0, nodeIDArg, 4f);
 		if (reply == null) {
 			out.println("[ \"/n_query\", " + nodeIDArg + " ] -> timeout");
@@ -1277,10 +1441,10 @@ public abstract class Node implements Constants, TreeNode {
 			tail = reply.getArg(6);
 			out.println("  head  : " + head + "\n  tail  : " + tail);
 		}
-//		}
-//		catch( IOException e1 ) {
-//			out.println( e1.toString() );
-//		}
+		// }
+		// catch( IOException e1 ) {
+		// out.println( e1.toString() );
+		// }
 	}
 
 	public OSCMessage queryMsg() {
@@ -1299,36 +1463,39 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * Moves the node before another node in the server graph.
 	 *
-	 * @param aNode the node before which this node is moved
+	 * @param aNode
+	 *            the node before which this node is moved
 	 *
-	 * @throws IOException if the OSC message could not be sent
+	 * @throws IOException
+	 *             if the OSC message could not be sent
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveBeforeMsg( Node )
 	 */
 	public void moveBefore(Node aNode) throws IOException {
-// NO
-//	setGroup() is called by moveBeforeMsg()
-//		this.setGroup( aNode.getGroup() );
+		// NO
+		// setGroup() is called by moveBeforeMsg()
+		// this.setGroup( aNode.getGroup() );
 		getServer().sendMsg(moveBeforeMsg(aNode));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_before</code> message. When the message is
-	 * sent to the server, this node is moved before another node in the server graph.
+	 * Creates an OSC <code>/n_before</code> message. When the message is sent to
+	 * the server, this node is moved before another node in the server graph.
 	 *
-	 * @param aNode the node before which this node is moved
+	 * @param aNode
+	 *            the node before which this node is moved
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveBefore( Node )
 	 */
 	public OSCMessage moveBeforeMsg(Node aNode) {
-// removed 02-oct-05
-//		this.setGroup( aNode.getGroup() );
+		// removed 02-oct-05
+		// this.setGroup( aNode.getGroup() );
 		return (new OSCMessage("/n_before",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}
@@ -1336,36 +1503,39 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * Moves the node after another node in the server graph.
 	 *
-	 * @param aNode the node after which this node is moved
+	 * @param aNode
+	 *            the node after which this node is moved
 	 *
-	 * @throws IOException if the OSC message could not be sent
+	 * @throws IOException
+	 *             if the OSC message could not be sent
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveAfterMsg( Node )
 	 */
 	public void moveAfter(Node aNode) throws IOException {
-// NO
-//	setGroup() is called by moveAfterMsg()
-//		this.setGroup( aNode.getGroup() );
+		// NO
+		// setGroup() is called by moveAfterMsg()
+		// this.setGroup( aNode.getGroup() );
 		getServer().sendMsg(moveAfterMsg(aNode));
 	}
 
 	/**
-	 * Creates an OSC <code>/n_after</code> message. When the message is
-	 * sent to the server, this node is moved before another node in the server graph.
+	 * Creates an OSC <code>/n_after</code> message. When the message is sent to the
+	 * server, this node is moved before another node in the server graph.
 	 *
-	 * @param aNode the node before which this node is moved
+	 * @param aNode
+	 *            the node before which this node is moved
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveAfter( Node )
 	 */
 	public OSCMessage moveAfterMsg(Node aNode) {
-// removed 02-oct-05
-//		this.setGroup( aNode.getGroup() );
+		// removed 02-oct-05
+		// this.setGroup( aNode.getGroup() );
 		return (new OSCMessage("/n_after",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}
@@ -1373,13 +1543,15 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * Moves the node to the head of a group in the server graph.
 	 *
-	 * @param aGroup the group to whose head this node is moved.
-	 *        if <code>null</code> the server's default group is used
+	 * @param aGroup
+	 *            the group to whose head this node is moved. if <code>null</code>
+	 *            the server's default group is used
 	 *
-	 * @throws IOException if the OSC message could not be sent
+	 * @throws IOException
+	 *             if the OSC message could not be sent
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveToHeadMsg( Group )
 	 */
@@ -1388,14 +1560,15 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Creates an OSC <code>/g_head</code> message. When the message is
-	 * sent to the server, this node is moved to the head of a group in the server graph.
+	 * Creates an OSC <code>/g_head</code> message. When the message is sent to the
+	 * server, this node is moved to the head of a group in the server graph.
 	 *
-	 * @param aGroup the group to whose head this node is moved.
-	 *        if <code>null</code> the server's default group is used
+	 * @param aGroup
+	 *            the group to whose head this node is moved. if <code>null</code>
+	 *            the server's default group is used
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveToHead( Group )
 	 */
@@ -1406,13 +1579,15 @@ public abstract class Node implements Constants, TreeNode {
 	/**
 	 * Moves the node to the tail of a group in the server graph.
 	 *
-	 * @param aGroup the group to whose tail this node is moved.
-	 *        if <code>null</code> the server's default group is used
+	 * @param aGroup
+	 *            the group to whose tail this node is moved. if <code>null</code>
+	 *            the server's default group is used
 	 *
-	 * @throws IOException if the OSC message could not be sent
+	 * @throws IOException
+	 *             if the OSC message could not be sent
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveToTailMsg( Group )
 	 */
@@ -1421,14 +1596,15 @@ public abstract class Node implements Constants, TreeNode {
 	}
 
 	/**
-	 * Creates an OSC <code>/g_tail</code> message. When the message is
-	 * sent to the server, this node is moved to the tail of a group in the server graph.
+	 * Creates an OSC <code>/g_tail</code> message. When the message is sent to the
+	 * server, this node is moved to the tail of a group in the server graph.
 	 *
-	 * @param aGroup the group to whose tail this node is moved.
-	 *        if <code>null</code> the server's default group is used
+	 * @param aGroup
+	 *            the group to whose tail this node is moved. if <code>null</code>
+	 *            the server's default group is used
 	 *
-	 * @warning this does not set the group field of the node.
-	 *          the group field is only updated by a <code>NodeWatcher</code>
+	 * @warning this does not set the group field of the node. the group field is
+	 *          only updated by a <code>NodeWatcher</code>
 	 *
 	 * @see #moveToTail( Group )
 	 */
@@ -1440,8 +1616,10 @@ public abstract class Node implements Constants, TreeNode {
 		stream.print(this.toString());
 	}
 
-// -------------- TreeNode interface (subclasses need to complete it) --------------
+	// -------------- TreeNode interface (subclasses need to complete it)
+	// --------------
 
+	@Override
 	public TreeNode getParent() {
 		return getGroup();
 	}

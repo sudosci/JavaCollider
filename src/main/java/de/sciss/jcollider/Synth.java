@@ -11,21 +11,20 @@ package de.sciss.jcollider;
 
 import java.io.IOException;
 import java.util.Enumeration;
+
 import javax.swing.tree.TreeNode;
 
 import de.sciss.net.OSCBundle;
 import de.sciss.net.OSCMessage;
 
 /**
- * Mimics SCLang's Synth class,
- * that is, it's a client side
- * representation of a synth in the synthesis graph
+ * Mimics SCLang's Synth class, that is, it's a client side representation of a
+ * synth in the synthesis graph
  *
- * @warning this is a quick direct translation from SClang
- *          which is largely untested. before all methods have been
- *          thoroughly verified, excepted some of them to be wrong
- *          or behave different than expected. what certainly works
- *          is instantiation and new-messages
+ * @warning this is a quick direct translation from SClang which is largely
+ *          untested. before all methods have been thoroughly verified, excepted
+ *          some of them to be wrong or behave different than expected. what
+ *          certainly works is instantiation and new-messages
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 12-Jul-08
@@ -92,9 +91,9 @@ public class Synth extends Node {
 		if (target == null)
 			target = getServer().getDefaultGroup();
 
-// removed 02-oct-05
-//		this.setGroup( addAction == kAddToHead || addAction == kAddToTail ?
-//			(Group) target : target.getGroup() );
+		// removed 02-oct-05
+		// this.setGroup( addAction == kAddToHead || addAction == kAddToTail ?
+		// (Group) target : target.getGroup() );
 
 		final int argNum = argNames == null ? 0 : argNames.length;
 		final Object[] allArgs = new Object[argNum * 2 + 4];
@@ -129,7 +128,7 @@ public class Synth extends Node {
 		return synth;
 	}
 
-	// does not send	(used for bundling)
+	// does not send (used for bundling)
 	public static Synth basicNew(String defName, Server server) {
 		return Synth.basicNew(defName, server, server.nextNodeID());
 	}
@@ -202,10 +201,12 @@ public class Synth extends Node {
 	/**
 	 * Queries the current value of a synth control.
 	 * 
-	 * @param index the index of the control to query
+	 * @param index
+	 *            the index of the control to query
 	 * @return the curresponding control value
-	 * @throws IOException when an error occurs sending the message, or when
-	 *         a timeout or failure occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message, or when a timeout or
+	 *             failure occurs with scsynth processing the message
 	 */
 	public float get(int index) throws IOException {
 		final OSCMessage getMsg = getMsg(index);
@@ -223,10 +224,12 @@ public class Synth extends Node {
 	/**
 	 * Queries different current values of a synth control.
 	 * 
-	 * @param indices the indices of the controls to query
-	 * @return the curresponding control values, or null if
-	 *         a timeout or failure occurs with scsynth processing the message
-	 * @throws IOException when an error occurs sending the message
+	 * @param indices
+	 *            the indices of the controls to query
+	 * @return the curresponding control values, or null if a timeout or failure
+	 *         occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message
 	 */
 	public float[] get(int[] indices) throws IOException {
 		final OSCMessage getMsg = getMsg(indices);
@@ -255,10 +258,12 @@ public class Synth extends Node {
 	/**
 	 * Queries the current value of a synth control.
 	 * 
-	 * @param name the name of the control to query
+	 * @param name
+	 *            the name of the control to query
 	 * @return the curresponding control value
-	 * @throws IOException when an error occurs sending the message, or when
-	 *         a timeout or failure occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message, or when a timeout or
+	 *             failure occurs with scsynth processing the message
 	 */
 	public float get(String name) throws IOException {
 		final OSCMessage getMsg = getMsg(name);
@@ -276,10 +281,12 @@ public class Synth extends Node {
 	/**
 	 * Queries different current values of a synth control.
 	 * 
-	 * @param names the names of the controls to query
-	 * @return the curresponding control values, or null if
-	 *         a timeout or failure occurs with scsynth processing the message
-	 * @throws IOException when an error occurs sending the message
+	 * @param names
+	 *            the names of the controls to query
+	 * @return the curresponding control values, or null if a timeout or failure
+	 *         occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message
 	 */
 	public float[] get(String[] names) throws IOException {
 		final OSCMessage getMsg = getMsg(names);
@@ -332,11 +339,14 @@ public class Synth extends Node {
 	/**
 	 * Queries a range of current values of the synth's controls.
 	 * 
-	 * @param index the start index of the controls to query
-	 * @param count the number of successive controls to query
-	 * @return the curresponding control values or null, when
-	 *         a timeout or failure occurs with scsynth processing the message
-	 * @throws IOException when an error occurs sending the message
+	 * @param index
+	 *            the start index of the controls to query
+	 * @param count
+	 *            the number of successive controls to query
+	 * @return the curresponding control values or null, when a timeout or failure
+	 *         occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message
 	 */
 	public float[] getn(int index, int count) throws IOException {
 		final OSCMessage getnMsg = getnMsg(index, count);
@@ -358,11 +368,14 @@ public class Synth extends Node {
 	/**
 	 * Queries a range of current values of the synth's controls.
 	 * 
-	 * @param name the name of the first control to query
-	 * @param count the number of successive controls to query
-	 * @return the curresponding control values or null, when
-	 *         a timeout or failure occurs with scsynth processing the message
-	 * @throws IOException when an error occurs sending the message
+	 * @param name
+	 *            the name of the first control to query
+	 * @param count
+	 *            the number of successive controls to query
+	 * @return the curresponding control values or null, when a timeout or failure
+	 *         occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message
 	 */
 	public float[] getn(String name, int count) throws IOException {
 		final OSCMessage getnMsg = getnMsg(name, count);
@@ -384,11 +397,14 @@ public class Synth extends Node {
 	/**
 	 * Queries different ranges of current values of the synth's controls.
 	 * 
-	 * @param indices the start indices of the controls to query
-	 * @param counts for each start index, the number of successive controls to query
-	 * @return the curresponding control values, or null if
-	 *         a timeout or failure occurs with scsynth processing the message
-	 * @throws IOException when an error occurs sending the message
+	 * @param indices
+	 *            the start indices of the controls to query
+	 * @param counts
+	 *            for each start index, the number of successive controls to query
+	 * @return the curresponding control values, or null if a timeout or failure
+	 *         occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message
 	 */
 	public float[] getn(int[] indices, int[] counts) throws IOException {
 		// getnMsg() checks indices.length versus counts.length already
@@ -428,11 +444,14 @@ public class Synth extends Node {
 	/**
 	 * Queries different ranges of current values of the synth's controls.
 	 * 
-	 * @param names the start names of the controls to query
-	 * @param counts for each start name, the number of successive controls to query
-	 * @return the curresponding control values, or null if
-	 *         a timeout or failure occurs with scsynth processing the message
-	 * @throws IOException when an error occurs sending the message
+	 * @param names
+	 *            the start names of the controls to query
+	 * @param counts
+	 *            for each start name, the number of successive controls to query
+	 * @return the curresponding control values, or null if a timeout or failure
+	 *         occurs with scsynth processing the message
+	 * @throws IOException
+	 *             when an error occurs sending the message
 	 */
 	public float[] getn(String[] names, int[] counts) throws IOException {
 		// getnMsg() checks indices.length versus counts.length already
@@ -512,7 +531,7 @@ public class Synth extends Node {
 		}
 	}
 
-// -------------- TreeNode interface --------------
+	// -------------- TreeNode interface --------------
 
 	public TreeNode getChildAt(int childIndex) {
 		return null;

@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -25,21 +26,19 @@ import de.sciss.jcollider.NodeListener;
 import de.sciss.jcollider.NodeWatcher;
 
 /**
- * A class that helps to set up a <code>JTree</code> with a view of
- * a node graph. Since <code>Node</code> already implements the
- * <code>TreeNode</code> interface, what we do here is to install
- * a <code>NodeListener</code> on a provided <code>NodeWatcher</code>
- * and keep a <code>TreeModel</code> up-to-date. In many cases
- * you will not need to set up a <code>JTree</code> yourself,
- * but simply create an instance of <code>NodeTreePanel</code>.
+ * A class that helps to set up a <code>JTree</code> with a view of a node
+ * graph. Since <code>Node</code> already implements the <code>TreeNode</code>
+ * interface, what we do here is to install a <code>NodeListener</code> on a
+ * provided <code>NodeWatcher</code> and keep a <code>TreeModel</code>
+ * up-to-date. In many cases you will not need to set up a <code>JTree</code>
+ * yourself, but simply create an instance of <code>NodeTreePanel</code>.
  * <p>
- * Because of the asynchronous nature of node manipulation,
- * we have decided to not use the <code>MutableTreeNode</code> interface
- * which cannot account for method failures, for example. The proposed
- * implementation therefore is, to call the node's methods like
- * <code>free</code> or <code>run</code> directly, and the tree will be
- * updated as soon as the <code>&quot;/n_go&quot;</code>, <code>&quot;/n_off&quot;</code> etc.
- * messages arrive.
+ * Because of the asynchronous nature of node manipulation, we have decided to
+ * not use the <code>MutableTreeNode</code> interface which cannot account for
+ * method failures, for example. The proposed implementation therefore is, to
+ * call the node's methods like <code>free</code> or <code>run</code> directly,
+ * and the tree will be updated as soon as the <code>&quot;/n_go&quot;</code>,
+ * <code>&quot;/n_off&quot;</code> etc. messages arrive.
  *
  * @author Hanns Holger Rutz
  * @version 0.31, 08-Oct-07
@@ -51,8 +50,8 @@ import de.sciss.jcollider.NodeWatcher;
  */
 public class NodeTreeManager implements NodeListener {
 	/**
-	 * Set this to <code>true</code> for debugging
-	 * the incoming node notifications and tree model updates
+	 * Set this to <code>true</code> for debugging the incoming node notifications
+	 * and tree model updates
 	 */
 	public boolean VERBOSE = false;
 
@@ -64,12 +63,14 @@ public class NodeTreeManager implements NodeListener {
 	 * Creates a new <code>NodeTreeManager</code> for a given
 	 * <code>NodeWatcher</code> instance and root <code>Node</code>.
 	 *
-	 * @param nw the nodewatcher to listen to for node updates.
-	 *        the tree manager copies the current list of registered
-	 *        nodes from the watcher and continuously updates the tree
-	 *        when node notfication messages arrive.
-	 * @param rootNode the supposed root element in the tree display.
-	 *        can be something like <code>server.getDefaultGroup()</code>.
+	 * @param nw
+	 *            the nodewatcher to listen to for node updates. the tree manager
+	 *            copies the current list of registered nodes from the watcher and
+	 *            continuously updates the tree when node notfication messages
+	 *            arrive.
+	 * @param rootNode
+	 *            the supposed root element in the tree display. can be something
+	 *            like <code>server.getDefaultGroup()</code>.
 	 */
 	public NodeTreeManager(NodeWatcher nw, Node rootNode) {
 		this.nw = nw;
@@ -94,11 +95,9 @@ public class NodeTreeManager implements NodeListener {
 	}
 
 	/**
-	 * Disposes all resources associated with the tree
-	 * manager. This clears the node backup list and
-	 * stops listening to the node watcher. Call this
-	 * method before calling <code>dispose</code> on
-	 * the node watcher.
+	 * Disposes all resources associated with the tree manager. This clears the node
+	 * backup list and stops listening to the node watcher. Call this method before
+	 * calling <code>dispose</code> on the node watcher.
 	 */
 	public void dispose() {
 		mapNodeBackups.clear();
@@ -107,23 +106,23 @@ public class NodeTreeManager implements NodeListener {
 	}
 
 	/**
-	 * Returns a <code>TreeModel</code> suitable to
-	 * creating a <code>JTree</code> gadget.
+	 * Returns a <code>TreeModel</code> suitable to creating a <code>JTree</code>
+	 * gadget.
 	 *
-	 * @return a tree model that reflects the node graph
-	 *         monitored by this manager
+	 * @return a tree model that reflects the node graph monitored by this manager
 	 */
 	public TreeModel getModel() {
 		return model;
 	}
 
 	/**
-	 * Dumps a list of nodes to the given stream.
-	 * Starts at the provided root node and traverses
-	 * all child elements. Usefull for debugging.
+	 * Dumps a list of nodes to the given stream. Starts at the provided root node
+	 * and traverses all child elements. Usefull for debugging.
 	 *
-	 * @param stream a stream to print on, such as <code>System.err</code>
-	 * @param rootNode the top element of the tree, or <code>null</code> (no action)
+	 * @param stream
+	 *            a stream to print on, such as <code>System.err</code>
+	 * @param rootNode
+	 *            the top element of the tree, or <code>null</code> (no action)
 	 */
 	public static void dumpTree(PrintStream stream, TreeNode rootNode) {
 		if (rootNode == null) {
@@ -140,7 +139,7 @@ public class NodeTreeManager implements NodeListener {
 			stream.println("- " + node.toString());
 		} else {
 			stream.println(node.toString());
-//			stream.println( node.toString() + " : " + node.getChildCount() + " leafs" );
+			// stream.println( node.toString() + " : " + node.getChildCount() + " leafs" );
 			if (++nestCount > 100) {
 				stream.println("\nNest count exceeds 100, probably closed loop. Terminating");
 			}
@@ -155,11 +154,11 @@ public class NodeTreeManager implements NodeListener {
 		}
 	}
 
-// ---------- NodeListener interface ----------
+	// ---------- NodeListener interface ----------
 
 	/**
-	 * This method is part of the <code>NodeListener</code> interface.
-	 * Do not call this method.
+	 * This method is part of the <code>NodeListener</code> interface. Do not call
+	 * this method.
 	 */
 	public void nodeAction(NodeEvent e) {
 		final Node node = e.getNode();

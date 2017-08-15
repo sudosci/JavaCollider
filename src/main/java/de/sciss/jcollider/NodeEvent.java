@@ -9,23 +9,22 @@
 
 package de.sciss.jcollider;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.sciss.app.BasicEvent;
 import de.sciss.net.OSCMessage;
 
 /**
- * These kind of events get delivered by a
- * node watcher to inform listeners about
- * node status changes.
+ * These kind of events get delivered by a node watcher to inform listeners
+ * about node status changes.
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 19-Mar-08
  */
 public class NodeEvent extends BasicEvent {
-// --- ID values ---
+	// --- ID values ---
 	/**
 	 * returned by getID() : the node was created
 	 */
@@ -84,13 +83,11 @@ public class NodeEvent extends BasicEvent {
 	private final int oldParentID;
 	private final int oldPredID;
 	private final int oldSuccID;
-//	private final int	oldHeadID;
-//	private final int	oldTailID;
 
-	private static final List collValidCmds;
+	private static final List<String> collValidCmds;
 
 	static {
-		final List coll = new ArrayList(6);
+		final List<String> coll = new ArrayList<>(6);
 		coll.add("/n_go");
 		coll.add("/n_end");
 		coll.add("/n_on");
@@ -100,61 +97,73 @@ public class NodeEvent extends BasicEvent {
 		collValidCmds = Collections.unmodifiableList(coll);
 	}
 
-//	/**
-//	 *	Constructs a <code>NodeEvent</code> from a valid node.
-//	 *	All list fields of the node must be valid, i.e. parent group,
-//	 *	predecessor, successor etc.
-//	 *
-//	 *	@param	source	who fired the event
-//	 *	@param	ID		the type of status change, e.g. <code>GO</code>
-//	 *	@param	when	timestamp of the event (e.g. <code>System.currentTimeMillis()</code>)
-//	 *	@param	node	the representation of the node whose status changed
-//	 */
-//	protected NodeEvent( Object source, int ID, long when, Node node )
-//	{
-//		super( source, ID, when );
-//	
-//		this.node		= node;
-//		nodeID			= node.getNodeID();
-//		parentID		= node.getGroup().getNodeID();
-//		predID			= node.getPredNode() == null ? -1 : node.getPredNode().getNodeID();
-//		succID			= node.getSuccNode() == null ? -1 : node.getSuccNode().getNodeID();
-//		if( node instanceof Synth ) {
-//			nodeType	= SYNTH;
-//		} else if( node instanceof Group ) {
-//			nodeType	= GROUP;
-//		} else {
-//			nodeType	= UNKNOWN;
-//		}
-//		if( nodeType == GROUP ) {
-//			final Group g = (Group) node;
-//			headID		= g.getHeadNode() == null ? -1 : g.getHeadNode().getNodeID();
-//			tailID		= g.getTailNode() == null ? -1 : g.getTailNode().getNodeID();
-//		} else {
-//			headID		= -1;
-//			tailID		= -1;
-//		}
-//	}
+	// /**
+	// * Constructs a <code>NodeEvent</code> from a valid node.
+	// * All list fields of the node must be valid, i.e. parent group,
+	// * predecessor, successor etc.
+	// *
+	// * @param source who fired the event
+	// * @param ID the type of status change, e.g. <code>GO</code>
+	// * @param when timestamp of the event (e.g.
+	// <code>System.currentTimeMillis()</code>)
+	// * @param node the representation of the node whose status changed
+	// */
+	// protected NodeEvent( Object source, int ID, long when, Node node )
+	// {
+	// super( source, ID, when );
+	//
+	// this.node = node;
+	// nodeID = node.getNodeID();
+	// parentID = node.getGroup().getNodeID();
+	// predID = node.getPredNode() == null ? -1 : node.getPredNode().getNodeID();
+	// succID = node.getSuccNode() == null ? -1 : node.getSuccNode().getNodeID();
+	// if( node instanceof Synth ) {
+	// nodeType = SYNTH;
+	// } else if( node instanceof Group ) {
+	// nodeType = GROUP;
+	// } else {
+	// nodeType = UNKNOWN;
+	// }
+	// if( nodeType == GROUP ) {
+	// final Group g = (Group) node;
+	// headID = g.getHeadNode() == null ? -1 : g.getHeadNode().getNodeID();
+	// tailID = g.getTailNode() == null ? -1 : g.getTailNode().getNodeID();
+	// } else {
+	// headID = -1;
+	// tailID = -1;
+	// }
+	// }
 
 	/**
-	 * Constructs a <code>NodeEvent</code> from a detailed description.
-	 * Note that the provided node (which may be <code>null</code>) is considered
-	 * not to be up-to-date, it is examined to fill in the old-fields (oldParentID,
-	 * oldPredID) etc. It will be returned by
-	 * <code>getNode</code>. The caller is responsible for updating the node's
-	 * fields accordingly, after processing the event.
+	 * Constructs a <code>NodeEvent</code> from a detailed description. Note that
+	 * the provided node (which may be <code>null</code>) is considered not to be
+	 * up-to-date, it is examined to fill in the old-fields (oldParentID, oldPredID)
+	 * etc. It will be returned by <code>getNode</code>. The caller is responsible
+	 * for updating the node's fields accordingly, after processing the event.
 	 *
-	 * @param source who fired the event
-	 * @param ID the type of status change, e.g. <code>GO</code>
-	 * @param when timestamp of the event (e.g. <code>System.currentTimeMillis()</code>)
-	 * @param node the representation of the node whose status changed
-	 * @param nodeID the ID of the node whose status changed
-	 * @param parentID the ID of the node's parent group
-	 * @param predID the node's predecessor or -1
-	 * @param succID the node's successor or -1
-	 * @param nodeType either of <code>GROUP</code> or <code>SYNTH</code>
-	 * @param headID (for groups) ID of the group's head (first) node
-	 * @param tailID (for groups) ID of the group's tail (last) node
+	 * @param source
+	 *            who fired the event
+	 * @param ID
+	 *            the type of status change, e.g. <code>GO</code>
+	 * @param when
+	 *            timestamp of the event (e.g.
+	 *            <code>System.currentTimeMillis()</code>)
+	 * @param node
+	 *            the representation of the node whose status changed
+	 * @param nodeID
+	 *            the ID of the node whose status changed
+	 * @param parentID
+	 *            the ID of the node's parent group
+	 * @param predID
+	 *            the node's predecessor or -1
+	 * @param succID
+	 *            the node's successor or -1
+	 * @param nodeType
+	 *            either of <code>GROUP</code> or <code>SYNTH</code>
+	 * @param headID
+	 *            (for groups) ID of the group's head (first) node
+	 * @param tailID
+	 *            (for groups) ID of the group's tail (last) node
 	 */
 	protected NodeEvent(Object source, int ID, long when, Node node, int nodeID, int parentID, int predID, int succID,
 			int nodeType, int headID, int tailID) {
@@ -174,40 +183,45 @@ public class NodeEvent extends BasicEvent {
 			this.oldParentID = -1;
 			this.oldPredID = -1;
 			this.oldSuccID = -1;
-//			this.oldHeadID		= -1;
-//			this.oldTailID		= -1;
+			// this.oldHeadID = -1;
+			// this.oldTailID = -1;
 		} else {
 			this.oldParentID = node.getGroup() == null ? -1 : node.getGroup().getNodeID();
 			this.oldPredID = node.getPredNode() == null ? -1 : node.getPredNode().getNodeID();
 			this.oldSuccID = node.getSuccNode() == null ? -1 : node.getSuccNode().getNodeID();
-//			if( nodeType == GROUP ) {
-//				final Group	g	= (Group) node;
-//				this.oldHeadID	= g.getHeadNode()    == null ? -1 : g.getHeadNode().getNodeID();
-//				this.oldTailID	= g.getTailNode()    == null ? -1 : g.getTailNode().getNodeID();
-//			} else {
-//				this.oldHeadID	= -1;
-//				this.oldTailID	= -1;
-//			}
+			// if( nodeType == GROUP ) {
+			// final Group g = (Group) node;
+			// this.oldHeadID = g.getHeadNode() == null ? -1 : g.getHeadNode().getNodeID();
+			// this.oldTailID = g.getTailNode() == null ? -1 : g.getTailNode().getNodeID();
+			// } else {
+			// this.oldHeadID = -1;
+			// this.oldTailID = -1;
+			// }
 		}
 	}
 
 	/**
-	 * Constructs a <code>NodeEvent</code> from a valid node
-	 * notification OSC message. The provided node object is simply
-	 * stored for future reference through <code>getNode</code> and must
-	 * be updated by the caller according to the returned event.
+	 * Constructs a <code>NodeEvent</code> from a valid node notification OSC
+	 * message. The provided node object is simply stored for future reference
+	 * through <code>getNode</code> and must be updated by the caller according to
+	 * the returned event.
 	 *
-	 * @param msg OSC message such as <code>/n_go</code>
-	 * @param source who shall be known as the source of the generated event
-	 * @param when what is proposed time of the event generation
-	 * @param node a client side representation node to use for the event,
-	 *        or <code>null</code> if no representation is known. The caller is
-	 *        responsible for updating the node's status from the returned
-	 *        event.
+	 * @param msg
+	 *            OSC message such as <code>/n_go</code>
+	 * @param source
+	 *            who shall be known as the source of the generated event
+	 * @param when
+	 *            what is proposed time of the event generation
+	 * @param node
+	 *            a client side representation node to use for the event, or
+	 *            <code>null</code> if no representation is known. The caller is
+	 *            responsible for updating the node's status from the returned
+	 *            event.
 	 *
-	 * @throws IllegalArgumentException if the message doesn't contain a valid node message; you
-	 *         can use <code>getIDFromOSCMessage</code> to determine if the
-	 *         message is valid.
+	 * @throws IllegalArgumentException
+	 *             if the message doesn't contain a valid node message; you can use
+	 *             <code>getIDFromOSCMessage</code> to determine if the message is
+	 *             valid.
 	 */
 	public static NodeEvent fromOSCMessage(OSCMessage msg, Object source, long when, Node node) {
 		final int eventID = collValidCmds.indexOf(msg.getName());
@@ -222,15 +236,18 @@ public class NodeEvent extends BasicEvent {
 		final int headID = nodeType == GROUP ? ((Number) msg.getArg(5)).intValue() : -1;
 		final int tailID = nodeType == GROUP ? ((Number) msg.getArg(6)).intValue() : -1;
 
-// let's trust the programmer for the sake of speed
-//		if( node != null ) {
-//			if( node.getNodeID() != nodeID ) throw new IllegalArgumentException( "Message and Node have different nodeIDs" );
-//			if( nodeType == SYNTH ) {
-//				if( !(node instanceof Synth) ) throw new IllegalArgumentException( "Message and Node have different nodeTypes" );
-//			} else if( nodeType == GROUP ) {
-//				if( !(node instanceof Group) ) throw new IllegalArgumentException( "Message and Node have different nodeTypes" );
-//			}
-//		}
+		// let's trust the programmer for the sake of speed
+		// if( node != null ) {
+		// if( node.getNodeID() != nodeID ) throw new IllegalArgumentException( "Message
+		// and Node have different nodeIDs" );
+		// if( nodeType == SYNTH ) {
+		// if( !(node instanceof Synth) ) throw new IllegalArgumentException( "Message
+		// and Node have different nodeTypes" );
+		// } else if( nodeType == GROUP ) {
+		// if( !(node instanceof Group) ) throw new IllegalArgumentException( "Message
+		// and Node have different nodeTypes" );
+		// }
+		// }
 
 		return new NodeEvent(source, eventID, when, node, nodeID, parentID, predID, succID, nodeType, headID, tailID);
 	}
@@ -240,10 +257,11 @@ public class NodeEvent extends BasicEvent {
 	}
 
 	/**
-	 * Queries the event ID which would be used if the event was
-	 * generated from a provided OSC message.
+	 * Queries the event ID which would be used if the event was generated from a
+	 * provided OSC message.
 	 * 
-	 * @param msg the message to parse
+	 * @param msg
+	 *            the message to parse
 	 * @return the corresponding event ID or <code>-1</code> if the message command
 	 *         is not in the list of valid notification commands
 	 */
@@ -252,9 +270,9 @@ public class NodeEvent extends BasicEvent {
 	}
 
 	/**
-	 * @return the representation of the node whose status changed. this may return <code>null</code>
-	 *         if the client side object is not known. in this case, use <code>getNodeID</code>
-	 *         to query the node's identifier.
+	 * @return the representation of the node whose status changed. this may return
+	 *         <code>null</code> if the client side object is not known. in this
+	 *         case, use <code>getNodeID</code> to query the node's identifier.
 	 */
 	public Node getNode() {
 		return node;
@@ -268,43 +286,46 @@ public class NodeEvent extends BasicEvent {
 	}
 
 	/**
-	 * @return the ID of the group in which this node sits. Note that if <code>getNode</code>
-	 *         returns a valid node, you can also use <code>getParentGroup</code> on the
-	 *         returned node.
+	 * @return the ID of the group in which this node sits. Note that if
+	 *         <code>getNode</code> returns a valid node, you can also use
+	 *         <code>getParentGroup</code> on the returned node.
 	 */
 	public int getParentGroupID() {
 		return parentID;
 	}
 
 	/**
-	 * @return the ID of the group in which this node was sitting before the modification
-	 *         occurred, or <code>-1</code>, if the node was not placed in a group.
+	 * @return the ID of the group in which this node was sitting before the
+	 *         modification occurred, or <code>-1</code>, if the node was not placed
+	 *         in a group.
 	 */
 	public int getOldParentGroupID() {
 		return oldParentID;
 	}
 
 	/**
-	 * @return the ID of the node sitting just before the modified node in the graph,
-	 *         or <code>-1</code> if there is no predecessor. Note that if <code>getNode</code>
-	 *         returns a valid node, you can also use <code>getPredNode</code> on the
-	 *         returned node.
+	 * @return the ID of the node sitting just before the modified node in the
+	 *         graph, or <code>-1</code> if there is no predecessor. Note that if
+	 *         <code>getNode</code> returns a valid node, you can also use
+	 *         <code>getPredNode</code> on the returned node.
 	 */
 	public int getPredNodeID() {
 		return predID;
 	}
 
 	/**
-	 * @return the ID of the node which was sitting just before the modified node before the
-	 *         modification occured, or <code>-1</code> if there was no predecessor.
+	 * @return the ID of the node which was sitting just before the modified node
+	 *         before the modification occured, or <code>-1</code> if there was no
+	 *         predecessor.
 	 */
 	public int getOldPredNodeID() {
 		return oldPredID;
 	}
 
 	/**
-	 * @return the ID of the node which was sitting just after the modified node before the
-	 *         modification occured, or <code>-1</code> if there was no successor.
+	 * @return the ID of the node which was sitting just after the modified node
+	 *         before the modification occured, or <code>-1</code> if there was no
+	 *         successor.
 	 */
 	public int getOldSuccNodeID() {
 		return oldSuccID;
@@ -312,73 +333,72 @@ public class NodeEvent extends BasicEvent {
 
 	/**
 	 * @return the ID of the node sitting just after the modified node in the graph,
-	 *         or <code>-1</code> if there is no successor. Note that if <code>getNode</code>
-	 *         returns a valid node, you can also use <code>getSuccNode</code> on the
-	 *         returned node.
+	 *         or <code>-1</code> if there is no successor. Note that if
+	 *         <code>getNode</code> returns a valid node, you can also use
+	 *         <code>getSuccNode</code> on the returned node.
 	 */
 	public int getSuccNodeID() {
 		return succID;
 	}
 
 	/**
-	 * @return the type node that was modified, one of <code>SYNTH</code> or <code>GROUP</code>.
-	 *         other values might be returned if a new version of supercollider introduces
-	 *         other node classes.
+	 * @return the type node that was modified, one of <code>SYNTH</code> or
+	 *         <code>GROUP</code>. other values might be returned if a new version
+	 *         of supercollider introduces other node classes.
 	 */
 	public int getNodeType() {
 		return nodeType;
 	}
 
 	/**
-	 * @return if the modified node is a group, returns the ID of the node being the group's
-	 *         head element. otherwise (or when the group is empty) returns
-	 *         <code>-1</code>. Note that if <code>getNode</code>
-	 *         returns a valid group, you can also use <code>getHeadNode</code> on the
-	 *         returned group.
+	 * @return if the modified node is a group, returns the ID of the node being the
+	 *         group's head element. otherwise (or when the group is empty) returns
+	 *         <code>-1</code>. Note that if <code>getNode</code> returns a valid
+	 *         group, you can also use <code>getHeadNode</code> on the returned
+	 *         group.
 	 */
 	public int getHeadNodeID() {
 		return headID;
 	}
 
 	/**
-	 * @return if the modified node is a group, returns the ID of the node being the group's
-	 *         tail element. otherwise (or when the group is empty) returns
-	 *         <code>-1</code>. Note that if <code>getNode</code>
-	 *         returns a valid group, you can also use <code>getTailNode</code> on the
-	 *         returned group.
+	 * @return if the modified node is a group, returns the ID of the node being the
+	 *         group's tail element. otherwise (or when the group is empty) returns
+	 *         <code>-1</code>. Note that if <code>getNode</code> returns a valid
+	 *         group, you can also use <code>getTailNode</code> on the returned
+	 *         group.
 	 */
 	public int getTailNodeID() {
 		return tailID;
 	}
 
 	/**
-	 * Returns a list of strings describing
-	 * all known OSC command names that form
-	 * valid node notification messages, that is
-	 * <code>&quot;/n_go&quot;</code>, <code>&quot;/n_end&quot;</code> etc.
-	 * The returned list is immutable.
+	 * Returns a list of strings describing all known OSC command names that form
+	 * valid node notification messages, that is <code>&quot;/n_go&quot;</code>,
+	 * <code>&quot;/n_end&quot;</code> etc. The returned list is immutable.
 	 *
 	 * @return a list whose elements are of class <code>String</code>, each element
 	 *         corresponding to a valid OSC command. Note that the element index
-	 *         reflects the event IDs, so <code>returnedList.get( GO ) == &quot;/n_go&quot;</code> etc.
+	 *         reflects the event IDs, so
+	 *         <code>returnedList.get( GO ) == &quot;/n_go&quot;</code> etc.
 	 */
-	public static java.util.List getValidOSCCommands() {
+	public static java.util.List<String> getValidOSCCommands() {
 		return collValidCmds;
 	}
 
 	/**
-	 * Used by the <code>EventManager</code> to
-	 * fuse successive events together when they queue.
-	 * Do not call this method.
+	 * Used by the <code>EventManager</code> to fuse successive events together when
+	 * they queue. Do not call this method.
 	 */
+	@Override
 	public boolean incorporate(BasicEvent oldEvent) {
-//		if( (oldEvent instanceof NodeEvent) &&
-//			(this.getSource() == oldEvent.getSource()) &&
-//			(this.getID() == oldEvent.getID()) ) {
-//			
-//			return ((NodeEvent) oldEvent).nodeID == this.nodeID;
-//
-//		} else
+		// if( (oldEvent instanceof NodeEvent) &&
+		// (this.getSource() == oldEvent.getSource()) &&
+		// (this.getID() == oldEvent.getID()) ) {
+		//
+		// return ((NodeEvent) oldEvent).nodeID == this.nodeID;
+		//
+		// } else
 		return false;
 	}
 }

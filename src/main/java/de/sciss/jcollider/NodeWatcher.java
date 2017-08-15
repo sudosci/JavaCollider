@@ -17,9 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
 import javax.swing.Timer;
 
 import de.sciss.app.BasicEvent;
@@ -28,33 +29,32 @@ import de.sciss.net.OSCMessage;
 import de.sciss.net.OSCPacket;
 
 /**
- * A node status managing class which has a similar concept
- * as SCLang's NodeWatcher class, however the implementation is
- * different and the feature set is different.
+ * A node status managing class which has a similar concept as SCLang's
+ * NodeWatcher class, however the implementation is different and the feature
+ * set is different.
  * <p>
- * When a notification message arrives, it is deferred to the
- * event dispatching thread. Interested objects can register
- * a listener to receive <code>NodeEvent</code>s. Right before
- * the listener's <code>nodeAction</code> method is called, the
- * client side <code>Node</code> status is updated, i.e. the node
- * linked to or unlinked from neighbouring nodes, the running
- * playing flags are set etc.
+ * When a notification message arrives, it is deferred to the event dispatching
+ * thread. Interested objects can register a listener to receive
+ * <code>NodeEvent</code>s. Right before the listener's <code>nodeAction</code>
+ * method is called, the client side <code>Node</code> status is updated, i.e.
+ * the node linked to or unlinked from neighbouring nodes, the running playing
+ * flags are set etc.
  * <p>
- * Since these updates occur in the event thread, it is safe to
- * use the <code>Node</code>'s <code>TreeNode</code> interface.
+ * Since these updates occur in the event thread, it is safe to use the
+ * <code>Node</code>'s <code>TreeNode</code> interface.
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 19-Mar-08
  *
- * @synchronization all methods are thread safe unless explicitely noted
- *                  ; however you should avoid to register a node at more than
- *                  one active node watcher at a time
+ * @synchronization all methods are thread safe unless explicitely noted ;
+ *                  however you should avoid to register a node at more than one
+ *                  active node watcher at a time
  */
 public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Action, Constants, Runnable {
 	/**
-	 * Set this to <code>true</code> for debugging
-	 * all relevant actions of the watcher, such as starting,
-	 * stopping, registering nodes, and updating node status.
+	 * Set this to <code>true</code> for debugging all relevant actions of the
+	 * watcher, such as starting, stopping, registering nodes, and updating node
+	 * status.
 	 */
 	public boolean VERBOSE = false;
 
@@ -92,14 +92,13 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Returns a <code>NodeWatcher</code> to
-	 * monitor a given server. Note that the client must
-	 * receive notifications, which is true by default when
-	 * booting a server. By default, events are only fired
-	 * for registered nodes. To change this behaviour, call
-	 * <code>setFireAllNodes( true )</code>
+	 * Returns a <code>NodeWatcher</code> to monitor a given server. Note that the
+	 * client must receive notifications, which is true by default when booting a
+	 * server. By default, events are only fired for registered nodes. To change
+	 * this behaviour, call <code>setFireAllNodes( true )</code>
 	 *
-	 * @param s the server to which the nodes to be watched belong
+	 * @param s
+	 *            the server to which the nodes to be watched belong
 	 *
 	 * @see Server#notify( boolean )
 	 */
@@ -118,8 +117,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Starts the OSC responders that trace incoming
-	 * node notification events.
+	 * Starts the OSC responders that trace incoming node notification events.
 	 */
 	public void start() throws IOException {
 		if (server.isRunning() && !server.isNotified()) {
@@ -142,10 +140,9 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Stops the OSC responders that trace incoming
-	 * node notification events.
+	 * Stops the OSC responders that trace incoming node notification events.
 	 */
-	public void stop() throws IOException {
+	public void stop() {
 		synchronized (sync) {
 			watching = false;
 			if (VERBOSE)
@@ -159,9 +156,9 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	/**
 	 * Queries the watching state
 	 *
-	 * @return <code>true</code> if we are watching for node changes
-	 *         (i.e. after calling <code>start</code>), <code>false</code> otherwise
-	 *         (i.e. after creating the watcher or after calling <code>stop</code>).
+	 * @return <code>true</code> if we are watching for node changes (i.e. after
+	 *         calling <code>start</code>), <code>false</code> otherwise (i.e. after
+	 *         creating the watcher or after calling <code>stop</code>).
 	 */
 	public boolean isWatching() {
 		synchronized (sync) {
@@ -169,21 +166,19 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		}
 	}
 
-//*unregister { arg node;
-//	var watcher;
-//	watcher = this.newFrom(node.server);
-//	watcher.unregister(node);
-//}
+	// *unregister { arg node;
+	// var watcher;
+	// watcher = this.newFrom(node.server);
+	// watcher.unregister(node);
+	// }
 
 	/**
-	 * Adds a node to the list of known nodes.
-	 * The node will be automatically removed, when
-	 * a corresponding <code>&quot;/n_end&quot;</code>
-	 * message arrives. Note that there is a little chance
-	 * that <code>&quot;/n_go&quot;</code> messages are
-	 * missed if you register a node <strong>after</strong> it's new-message
-	 * has been sent to the server. A safe way to register
-	 * nodes is to call the basic-new-commands and send the
+	 * Adds a node to the list of known nodes. The node will be automatically
+	 * removed, when a corresponding <code>&quot;/n_end&quot;</code> message
+	 * arrives. Note that there is a little chance that
+	 * <code>&quot;/n_go&quot;</code> messages are missed if you register a node
+	 * <strong>after</strong> it's new-message has been sent to the server. A safe
+	 * way to register nodes is to call the basic-new-commands and send the
 	 * new-message after the registration. for example:
 	 * 
 	 * <PRE>
@@ -192,7 +187,8 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	 * myServer.sendMsg(mySynth.newMsg(myTarget, myArgNames, myArgValues));
 	 * </PRE>
 	 *
-	 * @param node the node to register
+	 * @param node
+	 *            the node to register
 	 *
 	 * @see #setFireAllNodes( boolean )
 	 */
@@ -215,12 +211,12 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Unregister a node, that is remove it from the list of
-	 * known nodes. Note that you usually need not call this
-	 * because when a node is automatically unregistered
-	 * when a <code>&quot;/n_end&quot;</code> for that node arrives.
+	 * Unregister a node, that is remove it from the list of known nodes. Note that
+	 * you usually need not call this because when a node is automatically
+	 * unregistered when a <code>&quot;/n_end&quot;</code> for that node arrives.
 	 *
-	 * @param node the node to unregister
+	 * @param node
+	 *            the node to unregister
 	 */
 	public void unregister(Node node) {
 		synchronized (sync) {
@@ -233,9 +229,9 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	/**
 	 * Queries a list of all registered nodes.
 	 *
-	 * @return a list whose elements are of class <code>Node</code>. the list
-	 *         itself is a copy and maybe modified. It will not be affected by
-	 *         successive calls to <code>register</code> or <code>unregister</code>
+	 * @return a list whose elements are of class <code>Node</code>. the list itself
+	 *         is a copy and maybe modified. It will not be affected by successive
+	 *         calls to <code>register</code> or <code>unregister</code>
 	 */
 	public List getAllNodes() {
 		synchronized (sync) {
@@ -244,16 +240,14 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Registers a listener to be informed about
-	 * node status changes. Status changes occur
-	 * as of nodes being created, destroyed, paused, resumed,
-	 * moved, or as a result of sending a <code>/n_query</code>
-	 * message to the server. The <code>fireAllNodes</code>
-	 * flag determines whether all status changes are
-	 * forwarded to listeners, or only those for previously
-	 * registered nodes.
+	 * Registers a listener to be informed about node status changes. Status changes
+	 * occur as of nodes being created, destroyed, paused, resumed, moved, or as a
+	 * result of sending a <code>/n_query</code> message to the server. The
+	 * <code>fireAllNodes</code> flag determines whether all status changes are
+	 * forwarded to listeners, or only those for previously registered nodes.
 	 *
-	 * @param l listener to be added
+	 * @param l
+	 *            listener to be added
 	 *
 	 * @see #setFireAllNodes( boolean )
 	 */
@@ -264,10 +258,10 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Unregisters a listener from being informed about
-	 * node status changes.
+	 * Unregisters a listener from being informed about node status changes.
 	 *
-	 * @param l listener to be removed
+	 * @param l
+	 *            listener to be removed
 	 */
 	public void removeListener(NodeListener l) {
 		if (em != null)
@@ -275,8 +269,11 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * @param timeout maximum time to wait for node info replies
-	 * @param doneAction to be executed when the tree has been queried (can be <code>null</code>)
+	 * @param timeout
+	 *            maximum time to wait for node info replies
+	 * @param doneAction
+	 *            to be executed when the tree has been queried (can be
+	 *            <code>null</code>)
 	 */
 	public void queryAllNodes(float timeout, ActionListener doneAction) {
 		setFireAllNodes(true);
@@ -289,6 +286,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		stopQueryTimer = new Timer((int) (timeout * 1000), null);
 
 		nl = new NodeListener() {
+			@Override
 			public void nodeAction(NodeEvent e) {
 				if (e.getID() != NodeEvent.INFO)
 					return;
@@ -317,6 +315,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		};
 
 		stopQueryTimer.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				removeListener(nl);
 			}
@@ -346,23 +345,14 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Disposes any resources
-	 * allocated by this representation.
-	 * This shuts down OSC communication
-	 * and server event dispatching.
-	 * It clear the list of registered nodes.
-	 * Do not use this object any more
-	 * after calling this method.
+	 * Disposes any resources allocated by this representation. This shuts down OSC
+	 * communication and server event dispatching. It clear the list of registered
+	 * nodes. Do not use this object any more after calling this method.
 	 */
 	public void dispose() {
 		synchronized (allInstances) {
 			if (isWatching()) {
-				try {
-					stop();
-				} catch (IOException e1) {
-					System.err.println(
-							"NodeWatcher.dispose : " + e1.getClass().getName() + " : " + e1.getLocalizedMessage());
-				}
+				stop();
 			}
 			if (em != null)
 				em.dispose();
@@ -376,13 +366,13 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Changes the way incoming messages are dumped
-	 * to the console. By default incoming messages are not
-	 * dumped. The server's print stream is used to do
-	 * the dumping
+	 * Changes the way incoming messages are dumped to the console. By default
+	 * incoming messages are not dumped. The server's print stream is used to do the
+	 * dumping
 	 *
-	 * @param dumpMode only <code>kDumpNone</code> and <code>kDumpText</code>
-	 *        are supported at the moment.
+	 * @param dumpMode
+	 *            only <code>kDumpNone</code> and <code>kDumpText</code> are
+	 *            supported at the moment.
 	 *
 	 * @see Server#dumpOSC( int )
 	 */
@@ -391,22 +381,21 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Decides whether node changes for any node
-	 * or only for registered nodes are delivered to
-	 * event listeners.
+	 * Decides whether node changes for any node or only for registered nodes are
+	 * delivered to event listeners.
 	 *
-	 * @param allNodes <code>true</code> to deliver events
-	 *        for all incoming node messages;
-	 *        <code>false</code> to deliver events only
-	 *        if the corresponding node was registered
+	 * @param allNodes
+	 *            <code>true</code> to deliver events for all incoming node
+	 *            messages; <code>false</code> to deliver events only if the
+	 *            corresponding node was registered
 	 */
 	public void setFireAllNodes(boolean allNodes) {
 		fireAllNodes = allNodes;
 	}
 
 	/**
-	 * Queries the event dispatching mode. See <code>setFireAllNodes</code>
-	 * for details
+	 * Queries the event dispatching mode. See <code>setFireAllNodes</code> for
+	 * details
 	 *
 	 * @see #setFireAllNodes( boolean )
 	 */
@@ -415,12 +404,13 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	/**
-	 * Decides whether unknown nodes should be automatically
-	 * added to the node watcher (usefull for debugging).
+	 * Decides whether unknown nodes should be automatically added to the node
+	 * watcher (usefull for debugging).
 	 *
-	 * @param onOff <code>true</code> to have nodes automatically created and
-	 *        registered upon incoming notification events. <code>false</code>
-	 *        to stop automatic registration.
+	 * @param onOff
+	 *            <code>true</code> to have nodes automatically created and
+	 *            registered upon incoming notification events. <code>false</code>
+	 *            to stop automatic registration.
 	 */
 	public void setAutoRegister(boolean onOff) {
 		autoRegister = onOff;
@@ -435,7 +425,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		return autoRegister;
 	}
 
-	// @synchronization	has to be called with sync on sync
+	// @synchronization has to be called with sync on sync
 	private void nodeGo(Node node, NodeEvent e) {
 		final Group group = (Group) mapNodes.get(new Integer(e.getParentGroupID()));
 		final Node pred = (Node) mapNodes.get(new Integer(e.getPredNodeID()));
@@ -465,14 +455,14 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 			System.err.println("NodeWatcher.nodeGo( " + node + " )");
 	}
 
-	// @synchronization	has to be called with sync on mapNodes
+	// @synchronization has to be called with sync on mapNodes
 	private void nodeEnd(Node node, NodeEvent e) {
 		final Group group = node.getGroup();
 		final Node pred = node.getPredNode();
 		final Node succ = node.getSuccNode();
-//System.err.println( "Removing "+node );
-//System.err.println( " ... pred "+pred );
-//System.err.println( " ... succ "+succ );
+		// System.err.println( "Removing "+node );
+		// System.err.println( " ... pred "+pred );
+		// System.err.println( " ... succ "+succ );
 
 		node.setGroup(null);
 		node.setPredNode(null);
@@ -499,7 +489,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 			System.err.println("NodeWatcher.nodeEnd( " + node + " )");
 	}
 
-	// @synchronization	has to be called with sync on sync
+	// @synchronization has to be called with sync on sync
 	private void nodeMove(Node node, NodeEvent e) {
 		final Group oldGroup = node.getGroup();
 		final Node oldPred = node.getPredNode();
@@ -545,12 +535,13 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 			System.err.println("NodeWatcher.nodeMove( " + node + " )");
 	}
 
-// ----------- OSCResponderNode.Action interface -----------
+	// ----------- OSCResponderNode.Action interface -----------
 
 	/**
-	 * This method is part of the implementation of the
-	 * OSCResponderNode.Action interface. Do not call this method.
+	 * This method is part of the implementation of the OSCResponderNode.Action
+	 * interface. Do not call this method.
 	 */
+	@Override
 	public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 		if (dumpMode == kDumpText) {
 			OSCPacket.printTextOn(Server.getPrintStream(), msg);
@@ -578,12 +569,12 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		}
 	}
 
-// ----------- Runnable interface -----------
+	// ----------- Runnable interface -----------
 
 	/**
-	 * Part of internal message queueing.
-	 * Never call this method.
+	 * Part of internal message queueing. Never call this method.
 	 */
+	@Override
 	public void run() {
 		final long when;
 		Integer nodeIDObj;
@@ -662,56 +653,56 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		} // sync
 	} // run
 
-// ----------- EventManager.Processor interface -----------
+	// ----------- EventManager.Processor interface -----------
 
 	/**
-	 * This is used to dispatch
-	 * node events. Do not call this method.
+	 * This is used to dispatch node events. Do not call this method.
 	 */
+	@Override
 	public void processEvent(BasicEvent e) {
-//		NodeListener		listener;
-//		final NodeEvent		nde			= (NodeEvent) e;
-//		final Node			node		= nde.getNode();
-//
-//		synchronized( sync ) {
-//			if( !watching ) return;
-//
-//			if( node != null ) {	// update the node's fields
-//				switch( e.getID() ) {
-//				case NodeEvent.GO:
-//					nodeGo( node, nde );
-//					break;
-//
-//				case NodeEvent.END:
-//					nodeEnd( node, nde );
-//					break;
-//
-//				case NodeEvent.ON:
-//					node.setPlaying( true );
-//					break;
-//
-//				case NodeEvent.OFF:
-//					node.setPlaying( false );
-//					break;
-//
-//				case NodeEvent.MOVE:
-//					nodeMove( node, nde );
-//					break;
-//
-//				case NodeEvent.INFO:
-//					nodeMove( node, nde );
-//					break;
-//				
-//				default:
-//					break;
-//				}
-//			}
-//		
-//			for( int i = 0; i < em.countListeners(); i++ ) {
-//				listener = (NodeListener) em.getListener( i );
-//System.err.println(" --> "+listener );
-//				listener.nodeAction( nde );
-//			}
-//		} // synchronized( sync )
+		// NodeListener listener;
+		// final NodeEvent nde = (NodeEvent) e;
+		// final Node node = nde.getNode();
+		//
+		// synchronized( sync ) {
+		// if( !watching ) return;
+		//
+		// if( node != null ) { // update the node's fields
+		// switch( e.getID() ) {
+		// case NodeEvent.GO:
+		// nodeGo( node, nde );
+		// break;
+		//
+		// case NodeEvent.END:
+		// nodeEnd( node, nde );
+		// break;
+		//
+		// case NodeEvent.ON:
+		// node.setPlaying( true );
+		// break;
+		//
+		// case NodeEvent.OFF:
+		// node.setPlaying( false );
+		// break;
+		//
+		// case NodeEvent.MOVE:
+		// nodeMove( node, nde );
+		// break;
+		//
+		// case NodeEvent.INFO:
+		// nodeMove( node, nde );
+		// break;
+		//
+		// default:
+		// break;
+		// }
+		// }
+		//
+		// for( int i = 0; i < em.countListeners(); i++ ) {
+		// listener = (NodeListener) em.getListener( i );
+		// System.err.println(" --> "+listener );
+		// listener.nodeAction( nde );
+		// }
+		// } // synchronized( sync )
 	}
 }

@@ -10,8 +10,8 @@
 package de.sciss.jcollider.gui;
 
 /**
- * Helper classes for warping a control value.
- * This is a quite direct translation from the SClang classes.
+ * Helper classes for warping a control value. This is a quite direct
+ * translation from the SClang classes.
  *
  * @version 0.28, 29-Jul-06
  * @author Hanns Holger Rutz
@@ -23,8 +23,8 @@ public abstract class Warp {
 	public static Warp exp = new ExponentialWarp();
 	public static Warp sin = new SineWarp();
 	public static Warp cos = new CosineWarp();
-//	public static Warp amp	= new FaderWarp();
-//	public static Warp db	= new DbFaderWarp();
+	// public static Warp amp = new FaderWarp();
+	// public static Warp db = new DbFaderWarp();
 
 	public static Warp curve(double curve) {
 		if (curve == 0.0) {
@@ -39,7 +39,8 @@ public abstract class Warp {
 	public abstract double unmap(double value, ControlSpec spec);
 
 	private static class LinearWarp extends Warp {
-		protected LinearWarp() { /* empty */ }
+		protected LinearWarp() {
+			/* empty */ }
 
 		public double map(double value, ControlSpec spec) {
 			return (value * spec.getRange() + spec.getMinVal());
@@ -58,7 +59,8 @@ public abstract class Warp {
 
 	// minval and maxval must both be non zero and have the same sign.
 	private static class ExponentialWarp extends Warp {
-		protected ExponentialWarp() { /* empty */ }
+		protected ExponentialWarp() {
+			/* empty */ }
 
 		public double map(double value, ControlSpec spec) {
 			return (Math.pow(spec.getRatio(), value) * spec.getMinVal());
@@ -72,7 +74,8 @@ public abstract class Warp {
 	private static class SineWarp extends Warp {
 		private static final double PIH = Math.PI * 0.5;
 
-		protected SineWarp() { /* empty */ }
+		protected SineWarp() {
+			/* empty */ }
 
 		public double map(double value, ControlSpec spec) {
 			return (Math.sin(PIH * value) * spec.getRange() + spec.getMinVal());
@@ -92,7 +95,8 @@ public abstract class Warp {
 	private static class CosineWarp extends Warp {
 		private static final double PIH = Math.PI * 0.5;
 
-		protected CosineWarp() { /* empty */ }
+		protected CosineWarp() {
+			/* empty */ }
 
 		public double map(double value, ControlSpec spec) {
 			return ((0.5 - Math.cos(Math.PI * value) * 0.5) * spec.getRange() + spec.getMinVal());

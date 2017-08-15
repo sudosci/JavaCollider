@@ -16,6 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -24,8 +25,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- * Something similar to SClang's EZSlider: a combo of
- * horizontal slider, number box and label.
+ * Something similar to SClang's EZSlider: a combo of horizontal slider, number
+ * box and label.
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08
@@ -49,9 +50,9 @@ public class EZSlider extends JComponent {
 		final GridBagConstraints con = new GridBagConstraints();
 
 		setLayout(lay);
-//		con.anchor		= GridBagConstraints.WEST;
+		// con.anchor = GridBagConstraints.WEST;
 		con.fill = GridBagConstraints.HORIZONTAL;
-//		con.ipadx		= 2;
+		// con.ipadx = 2;
 		con.insets = new Insets(0, 2, 0, 2);
 
 		setLayout(lay);
@@ -69,16 +70,17 @@ public class EZSlider extends JComponent {
 		lay.setConstraints(ggNumber, con);
 		add(ggNumber);
 		ggUnits = new JLabel();
-//		con.weightx		= 0.0;
+		// con.weightx = 0.0;
 		lay.setConstraints(ggUnits, con);
 		add(ggUnits);
 
-//setBackground( java.awt.Color.red );
-//setBorder( javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, java.awt.Color.blue ));
+		// setBackground( java.awt.Color.red );
+		// setBorder( javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2,
+		// java.awt.Color.blue ));
 
 		setControlSpec(ControlSpec.defaultSpec);
 
-//System.err.println( "kieka" );
+		// System.err.println( "kieka" );
 
 		ggNumber.addListener(new NumberListener() {
 			public void numberChanged(NumberEvent e) {
@@ -110,7 +112,8 @@ public class EZSlider extends JComponent {
 			ez[i].setLabelWidth(maxLabelWidth);
 			ez[i].setNumberWidth(maxNumberWidth);
 			ez[i].setUnitsWidth(maxUnitsWidth);
-//			System.err.println( "Aligning ... "+maxLabelWidth+"; "+maxNumberWidth+"; "+maxUnitsWidth );
+			// System.err.println( "Aligning ... "+maxLabelWidth+"; "+maxNumberWidth+";
+			// "+maxUnitsWidth );
 		}
 	}
 

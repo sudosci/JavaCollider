@@ -10,12 +10,9 @@
 package de.sciss.jcollider;
 
 /**
- * This interface does the dirty
- * job of putting all kinds of different
- * elements under one brand which
- * can be used in UGen graph generation.
- * The <code>GraphElemArray</code> is
- * used in automatic multichannel expansion.
+ * This interface does the dirty job of putting all kinds of different elements
+ * under one brand which can be used in UGen graph generation. The
+ * <code>GraphElemArray</code> is used in automatic multichannel expansion.
  *
  * @see UGen#array( GraphElem, GraphElem )
  *
@@ -45,7 +42,7 @@ public class GraphElemArray implements GraphElem {
 		return elements.length;
 	}
 
-// ----------- GraphElem interface -----------
+	// ----------- GraphElem interface -----------
 
 	public int getNumOutputs() {
 		return elements.length;

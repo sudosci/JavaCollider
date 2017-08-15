@@ -12,15 +12,14 @@ package de.sciss.jcollider;
 import de.sciss.app.BasicEvent;
 
 /**
- * These kind of events get delivered by a
- * server represenation to inform listeners about
- * server status changes
+ * These kind of events get delivered by a server represenation to inform
+ * listeners about server status changes
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 19-Mar-08
  */
 public class ServerEvent extends BasicEvent {
-// --- ID values ---
+	// --- ID values ---
 	/**
 	 * returned by getID() : the server started running
 	 */
@@ -39,10 +38,15 @@ public class ServerEvent extends BasicEvent {
 	private final Server server;
 
 	/**
-	 * @param source who fired the event
-	 * @param ID the type of status change, e.g. <code>RUNNING</code>
-	 * @param when timestamp of the event (e.g. <code>System.currentTimeMillis()</code>)
-	 * @param server the representation of the server whose status changed
+	 * @param source
+	 *            who fired the event
+	 * @param ID
+	 *            the type of status change, e.g. <code>RUNNING</code>
+	 * @param when
+	 *            timestamp of the event (e.g.
+	 *            <code>System.currentTimeMillis()</code>)
+	 * @param server
+	 *            the representation of the server whose status changed
 	 */
 	protected ServerEvent(Object source, int ID, long when, Server server) {
 		super(source, ID, when);
@@ -58,9 +62,8 @@ public class ServerEvent extends BasicEvent {
 	}
 
 	/**
-	 * Used by the <code>EventManager</code> to
-	 * fuse successive events together when they queue.
-	 * Do not call this method.
+	 * Used by the <code>EventManager</code> to fuse successive events together when
+	 * they queue. Do not call this method.
 	 */
 	public boolean incorporate(BasicEvent oldEvent) {
 		if ((oldEvent instanceof ServerEvent) && (this.getSource() == oldEvent.getSource())

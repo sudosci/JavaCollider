@@ -12,20 +12,19 @@ package de.sciss.jcollider;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
+
 import javax.swing.tree.TreeNode;
 
 import de.sciss.net.OSCMessage;
 
 /**
- * Mimics SCLang's Group class,
- * that is, it's a client side
- * representation of a group in the synthesis graph
+ * Mimics SCLang's Group class, that is, it's a client side representation of a
+ * group in the synthesis graph
  *
- * @warning this is a quick direct translation from SClang
- *          which is largely untested. before all methods have been
- *          thoroughly verified, excepted some of them to be wrong
- *          or behave different than expected. what certainly works
- *          is instantiation, new- and free-messages
+ * @warning this is a quick direct translation from SClang which is largely
+ *          untested. before all methods have been thoroughly verified, excepted
+ *          some of them to be wrong or behave different than expected. what
+ *          certainly works is instantiation, new- and free-messages
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08
@@ -77,16 +76,17 @@ public class Group extends Node {
 	/**
 	 * Note: this sets the group!
 	 *
-	 * @throws ClassCastException if target is not a group and addAction
-	 *         is either kAddToHead or kAddToTail
+	 * @throws ClassCastException
+	 *             if target is not a group and addAction is either kAddToHead or
+	 *             kAddToTail
 	 */
 	public OSCMessage newMsg(Node target, int addAction) {
 		if (target == null)
 			target = getServer().getDefaultGroup();
 
-// removed 02-oct-05
-//		this.setGroup( addAction == kAddToHead || addAction == kAddToTail ?
-//			(Group) target : target.getGroup() );
+		// removed 02-oct-05
+		// this.setGroup( addAction == kAddToHead || addAction == kAddToTail ?
+		// (Group) target : target.getGroup() );
 
 		return (new OSCMessage("/g_new", new Object[] { new Integer(this.getNodeID()), new Integer(addAction),
 				new Integer(target.getNodeID()) }));
@@ -143,29 +143,29 @@ public class Group extends Node {
 
 	// move Nodes to this group
 	public void moveNodeToHead(Node aNode) throws IOException {
-// NO
-//	setGroup is called by moveNodeToHeadMsg()
-//		aNode.setGroup( this );
+		// NO
+		// setGroup is called by moveNodeToHeadMsg()
+		// aNode.setGroup( this );
 		getServer().sendMsg(moveNodeToHeadMsg(aNode));
 	}
 
 	public void moveNodeToTail(Node aNode) throws IOException {
-// NO
-//	setGroup is called by moveNodeToTailMsg()
-//		aNode.setGroup( this );
+		// NO
+		// setGroup is called by moveNodeToTailMsg()
+		// aNode.setGroup( this );
 		getServer().sendMsg(moveNodeToTailMsg(aNode));
 	}
 
 	public OSCMessage moveNodeToHeadMsg(Node aNode) {
-// removed 02-oct-05
-//		aNode.setGroup( this );
+		// removed 02-oct-05
+		// aNode.setGroup( this );
 		return (new OSCMessage("/g_head",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}
 
 	public OSCMessage moveNodeToTailMsg(Node aNode) {
-// removed 02-oct-05
-//		aNode.setGroup( this );
+		// removed 02-oct-05
+		// aNode.setGroup( this );
 		return (new OSCMessage("/g_tail",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}
@@ -187,6 +187,7 @@ public class Group extends Node {
 		return new OSCMessage("/g_deepFree", new Object[] { new Integer(this.getNodeID()) });
 	}
 
+	@Override
 	public String toString() {
 		if (getName() == null) {
 			return ("Group(" + getNodeID() + ")");
@@ -195,8 +196,9 @@ public class Group extends Node {
 		}
 	}
 
-// -------------- TreeNode interface --------------
+	// -------------- TreeNode interface --------------
 
+	@Override
 	public TreeNode getChildAt(int childIndex) {
 		final Enumeration children = children();
 		for (int idx = 0; idx < childIndex; idx++) {
@@ -205,6 +207,7 @@ public class Group extends Node {
 		return (TreeNode) children.nextElement();
 	}
 
+	@Override
 	public int getChildCount() {
 		int idx = 0;
 		for (Enumeration children = children(); children.hasMoreElements(); children.nextElement())
@@ -212,6 +215,7 @@ public class Group extends Node {
 		return idx;
 	}
 
+	@Override
 	public int getIndex(TreeNode node) {
 		final Enumeration children = children();
 		for (int idx = 0; children.hasMoreElements(); idx++) {
@@ -222,19 +226,22 @@ public class Group extends Node {
 		return -1;
 	}
 
+	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return false;
 	}
 
+	@Override
 	public Enumeration children() {
 		return new ChildEnumeration(this);
 	}
 
-// -------------- internal classes --------------
+	// -------------- internal classes --------------
 
 	private static class ChildEnumeration implements Enumeration {
 		private Node nextElement;
@@ -243,10 +250,12 @@ public class Group extends Node {
 			nextElement = g.getHeadNode();
 		}
 
+		@Override
 		public boolean hasMoreElements() {
 			return (nextElement != null);
 		}
 
+		@Override
 		public Object nextElement() {
 			final Node result = nextElement;
 			if (nextElement == null) {

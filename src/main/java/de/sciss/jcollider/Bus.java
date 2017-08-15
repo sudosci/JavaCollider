@@ -15,15 +15,13 @@ import java.io.PrintStream;
 import de.sciss.net.OSCMessage;
 
 /**
- * Mimics SCLang's Bus class,
- * that is, it's a client side
- * representation of an audio or control bus
+ * Mimics SCLang's Bus class, that is, it's a client side representation of an
+ * audio or control bus
  *
- * @warning this is a quick direct translation from SClang
- *          which is largely untested. before all methods have been
- *          thoroughly verified, excepted some of them to be wrong
- *          or behave different than expected. what certainly works
- *          is instantiation
+ * @warning this is a quick direct translation from SClang which is largely
+ *          untested. before all methods have been thoroughly verified, excepted
+ *          some of them to be wrong or behave different than expected. what
+ *          certainly works is instantiation
  *
  * @author Hanns Holger Rutz
  * @version 0.31, 08-Oct-07
@@ -38,10 +36,11 @@ public class Bus implements Constants {
 	private int numChannels;
 
 	/**
-	 * Creates an mono audio bus on the server at index 0.
-	 * This does not use the server's allocators.
+	 * Creates an mono audio bus on the server at index 0. This does not use the
+	 * server's allocators.
 	 *
-	 * @param server the <code>Server</code> on which the bus resides
+	 * @param server
+	 *            the <code>Server</code> on which the bus resides
 	 */
 	public Bus(Server server) {
 		this(server, kAudioRate);
@@ -150,9 +149,8 @@ public class Bus implements Constants {
 	}
 
 	/**
-	 * Set the value of a monophonic bus.
-	 * For multichannel busses, use
-	 * setnMsg instead.
+	 * Set the value of a monophonic bus. For multichannel busses, use setnMsg
+	 * instead.
 	 */
 	public OSCMessage setMsg(float value) {
 		return new OSCMessage("/c_set", new Object[] { new Integer(getIndex()), new Float(value) });
@@ -444,14 +442,14 @@ public class Bus implements Constants {
 		alloc();
 	}
 
-//	// alternate syntaxes
-//	setAll { arg value;
-//		this.fill(value,numChannels);
-//	}
-//	
-//	value_ { arg value;
-//		this.fill(value,numChannels);
-//	}
+	// // alternate syntaxes
+	// setAll { arg value;
+	// this.fill(value,numChannels);
+	// }
+	//
+	// value_ { arg value;
+	// this.fill(value,numChannels);
+	// }
 
 	public void printOn(PrintStream stream) {
 		stream.print(this.getClass().getName() + "(" + getServer().getName() + "," + getRate() + "," + getIndex() + ","
@@ -473,50 +471,51 @@ public class Bus implements Constants {
 	}
 
 	/**
-	 * Queries whether this bus is playing audio
-	 * onto the hardware audio interface channels.
+	 * Queries whether this bus is playing audio onto the hardware audio interface
+	 * channels.
 	 *
-	 * @return <code>true</code> if this bus plays audio on audible interface channels,
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if this bus plays audio on audible interface
+	 *         channels, <code>false</code> otherwise
 	 */
 	public boolean isAudioOut() {
 		return ((rate == kAudioRate) && (getIndex() < getServer().getOptions().getFirstPrivateBus()));
 	}
 
-//	ar {
-//		if(rate == \audio,{
-//			^In.ar(index,numChannels)
-//		},{
-//			//"Bus converting control to audio rate".inform;
-//			^K2A.ar( In.kr(index,numChannels) )
-//		})
-//	}
-//	
-//	kr {
-//		if(rate == \audio,{
-//			^A2K.kr(index,numChannels)
-//		},{
-//			^In.kr(index,numChannels)
-//		})
-//	}
+	// ar {
+	// if(rate == \audio,{
+	// ^In.ar(index,numChannels)
+	// },{
+	// //"Bus converting control to audio rate".inform;
+	// ^K2A.ar( In.kr(index,numChannels) )
+	// })
+	// }
+	//
+	// kr {
+	// if(rate == \audio,{
+	// ^A2K.kr(index,numChannels)
+	// },{
+	// ^In.kr(index,numChannels)
+	// })
+	// }
 
-//	play { arg target=0, outbus, fadeTime, addAction=\addToTail;
-//		if(this.isAudioOut.not,{ // returns a Synth
-//			^{ this.ar }.play(target, outbus, fadeTime, addAction);
-//		});
-//	}
+	// play { arg target=0, outbus, fadeTime, addAction=\addToTail;
+	// if(this.isAudioOut.not,{ // returns a Synth
+	// ^{ this.ar }.play(target, outbus, fadeTime, addAction);
+	// });
+	// }
 
 	// ---------- internal classes and interfaces ----------
 
 	/**
-	 * Interface describing an action to take place after
-	 * an asynchronous bus query is completed.
+	 * Interface describing an action to take place after an asynchronous bus query
+	 * is completed.
 	 */
 	public static interface GetCompletionAction {
 		/**
 		 * Executes the completion action.
 		 *
-		 * @param bus the bus whose asynchronous action is completed.
+		 * @param bus
+		 *            the bus whose asynchronous action is completed.
 		 */
 		public void completion(Bus bus, float[] values);
 	}

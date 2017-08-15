@@ -19,8 +19,8 @@ import java.util.Set;
 
 /**
  * Quite a 1:1 translation from the SClang class written by James Harkins, this
- * class is a robust allocator for busses in a dynamic environment.
- * It does not exhibit the fragmentation problem of the PowerOfTwoAllocator.
+ * class is a robust allocator for busses in a dynamic environment. It does not
+ * exhibit the fragmentation problem of the PowerOfTwoAllocator.
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08

@@ -10,25 +10,18 @@
 package de.sciss.jcollider;
 
 /**
- * Class for the Control UGen.
- * This class is recognized by SynthDef
- * in the building process. Controls
- * should be created en bloc per rate
- * (scalar or control), therefore the
- * constructor takes an array of names
- * and corresponding default values.
- * For the sake of clarity, scalar control
- * names should begin with a small 'i'
- * letter, though this is not obligatory.
+ * Class for the Control UGen. This class is recognized by SynthDef in the
+ * building process. Controls should be created en bloc per rate (scalar or
+ * control), therefore the constructor takes an array of names and corresponding
+ * default values. For the sake of clarity, scalar control names should begin
+ * with a small 'i' letter, though this is not obligatory.
  * <p>
- * Individual controls are accessed by
- * calling the <code>getChannel</code> method.
+ * Individual controls are accessed by calling the <code>getChannel</code>
+ * method.
  * <p>
- * Note that when reading a synthdef from
- * harddisc, the <code>SynthDef</code> class
- * (as of version 0.25) will not create <code>Control</code>
- * instances but merely plain <code>UGen</code>
- * objects.
+ * Note that when reading a synthdef from harddisc, the <code>SynthDef</code>
+ * class (as of version 0.25) will not create <code>Control</code> instances but
+ * merely plain <code>UGen</code> objects.
  *
  * @author Hanns Holger Rutz
  * @version 0.33, 21-Apr-09
@@ -88,8 +81,9 @@ public class Control extends UGen {
 	}
 
 	/**
-	 * @warning make sure the <code>defaultValue</code> is <code>float</code> and not <code>int</code>
-	 *          since otherwise a wrong (illegal) signature is called!
+	 * @warning make sure the <code>defaultValue</code> is <code>float</code> and
+	 *          not <code>int</code> since otherwise a wrong (illegal) signature is
+	 *          called!
 	 */
 	public static Control ir(String name, float defaultValue) {
 		return new Control(name, kScalarRate, new float[] { defaultValue });

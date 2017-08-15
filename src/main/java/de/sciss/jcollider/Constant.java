@@ -10,13 +10,10 @@
 package de.sciss.jcollider;
 
 /**
- * A <code>Constant</code> is a wrapper
- * for a constant in a UGen graph. It
- * implements the <code>UGenInput</code>
- * interface and therefore also the
- * <code>GraphElem</code> interface which
- * describes heterogeneous elements of
- * a UGen graph.
+ * A <code>Constant</code> is a wrapper for a constant in a UGen graph. It
+ * implements the <code>UGenInput</code> interface and therefore also the
+ * <code>GraphElem</code> interface which describes heterogeneous elements of a
+ * UGen graph.
  *
  * @see UGen#ir( float )
  *
@@ -34,7 +31,7 @@ public class Constant implements UGenInput, Constants {
 		return value;
 	}
 
-// --------- UGenInput interface ---------
+	// --------- UGenInput interface ---------
 
 	public Object getRate() {
 		return kScalarRate;

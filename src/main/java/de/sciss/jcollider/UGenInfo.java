@@ -12,8 +12,8 @@ package de.sciss.jcollider;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.Collections;
@@ -22,9 +22,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -34,30 +36,28 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * As stated elsewhere, it was decided to not implement separate
- * classes for the different unit generators in JCollider. Instead
- * there is one monolithic <code>UGen</code> class. To facilitate
- * the visual representation of UGens and to allow syntax checking
- * and automatic default value assignment, the <code>UGenInfo</code>
- * class was created which keeps records of all known ugen
- * &quot;classes&quot;. The database needs to be read in once
- * explictly, usually you will do this once your programme launches.
- * The database is merged with the JCollider library .jar file
- * (<code>ugendefs.xml</code>, along with the document type
- * descriptor <code>ugendefs.dtd</code>), and can be easily
- * edited as to provide more ugens newly added to the supercollider
- * application. This database file would also naturally be the
- * place to put new attributes such as icon files if you want
- * to build a graphic synthesis system, or links to help file and such.
+ * As stated elsewhere, it was decided to not implement separate classes for the
+ * different unit generators in JCollider. Instead there is one monolithic
+ * <code>UGen</code> class. To facilitate the visual representation of UGens and
+ * to allow syntax checking and automatic default value assignment, the
+ * <code>UGenInfo</code> class was created which keeps records of all known ugen
+ * &quot;classes&quot;. The database needs to be read in once explictly, usually
+ * you will do this once your programme launches. The database is merged with
+ * the JCollider library .jar file (<code>ugendefs.xml</code>, along with the
+ * document type descriptor <code>ugendefs.dtd</code>), and can be easily edited
+ * as to provide more ugens newly added to the supercollider application. This
+ * database file would also naturally be the place to put new attributes such as
+ * icon files if you want to build a graphic synthesis system, or links to help
+ * file and such.
  * <p>
- * Once you have initialized the database, using the <code>readDefinitions</code>
- * method, you don't deal with <code>UGenInfo</code> any more, since
- * the UGen constructor methods will query the database automatically.
- * This in turn means, you cannot use <code>UGen.ar( ... )</code> for example,
- * unless the database has been initialized. However there is nothing
- * wrong with using JCollider without the UGen constructors (for example
- * using only pre-stored synth defs), and in this case you may skip
- * the database initialization, saving some startup time.
+ * Once you have initialized the database, using the
+ * <code>readDefinitions</code> method, you don't deal with
+ * <code>UGenInfo</code> any more, since the UGen constructor methods will query
+ * the database automatically. This in turn means, you cannot use
+ * <code>UGen.ar( ... )</code> for example, unless the database has been
+ * initialized. However there is nothing wrong with using JCollider without the
+ * UGen constructors (for example using only pre-stored synth defs), and in this
+ * case you may skip the database initialization, saving some startup time.
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08
@@ -75,36 +75,32 @@ public class UGenInfo implements Constants, Comparable {
 	private static final int BINARY_FILE_VERSION = 0;
 
 	/**
-	 * This field contains a read-only map
-	 * which maps String (ugen class names and
-	 * alias names such as the unary/binary operator names)
-	 * to <code>UGenInfo</code> elements).
+	 * This field contains a read-only map which maps String (ugen class names and
+	 * alias names such as the unary/binary operator names) to <code>UGenInfo</code>
+	 * elements).
 	 * <p>
-	 * For example <code>UGenInfo.infos.get( &quot;PlayBuf&quot; )</code>
-	 * will return the dataset for the PlayBuf ugen,
-	 * <code>UGenInfo.infos.get( &quot;reciprocal&quot; )</code>
-	 * will return the dataset for the UnaryOpUGen ugen
-	 * (there is only one dataset for all the operators).
+	 * For example <code>UGenInfo.infos.get( &quot;PlayBuf&quot; )</code> will
+	 * return the dataset for the PlayBuf ugen,
+	 * <code>UGenInfo.infos.get( &quot;reciprocal&quot; )</code> will return the
+	 * dataset for the UnaryOpUGen ugen (there is only one dataset for all the
+	 * operators).
 	 */
 	public static Map infos;
 
 	/**
-	 * Value for <code>outputType</code> : the ugen
-	 * has a fixed number of outputs
+	 * Value for <code>outputType</code> : the ugen has a fixed number of outputs
 	 */
 	public static final int OUTPUT_FIXED = 0; // a constant value
 	/**
-	 * Value for <code>outputType</code> : the ugen
-	 * has a variable number which needs to be
-	 * specified explictly when constructing the
-	 * ugen (example : <code>PanAz</code>)
+	 * Value for <code>outputType</code> : the ugen has a variable number which
+	 * needs to be specified explictly when constructing the ugen (example :
+	 * <code>PanAz</code>)
 	 */
 	public static final int OUTPUT_ARG = 1; // explicitly argument for the constructor
 	/**
-	 * Value for <code>outputType</code> : the ugen
-	 * has a variable number of outputs depending
-	 * on the length of it's array argument
-	 * (example : <code>Demand</code>)
+	 * Value for <code>outputType</code> : the ugen has a variable number of outputs
+	 * depending on the length of it's array argument (example :
+	 * <code>Demand</code>)
 	 */
 	public static final int OUTPUT_ARRAYSIZE = 2; // size of a ugen input array
 
@@ -124,39 +120,34 @@ public class UGenInfo implements Constants, Comparable {
 	 */
 	public final Set rates;
 	/**
-	 * Maps special names (<code>String</code>s) to
-	 * specialIndex values (<code>Integer</code>s).
-	 * For example, the BinaryOpUGen will have mappings
-	 * like &quot;absdif&quot; -> Integer( 38 ) etc.
-	 * For UGens which do not deal with special indices,
-	 * this field is <code>null</code>
+	 * Maps special names (<code>String</code>s) to specialIndex values
+	 * (<code>Integer</code>s). For example, the BinaryOpUGen will have mappings
+	 * like &quot;absdif&quot; -> Integer( 38 ) etc. For UGens which do not deal
+	 * with special indices, this field is <code>null</code>
 	 */
 	public final Map specials; // maps String special name to Integer( specialIndex ) ; may be null
 	/**
-	 * Defines how the number of outputs is
-	 * determined. One of <code>FIXED</code>, <code>ARG</code> or <code>ARRAYSIZE<code>
+	 * Defines how the number of outputs is determined. One of <code>FIXED</code>,
+	 * <code>ARG</code> or <code>ARRAYSIZE<code>
 	 */
 	public final int outputType; // (fixed|arg|arraySize|pre)
 	/**
-	 * For fixed output ugens, the number of outputs.
-	 * For <code>ARG</code> type ugens, the default
-	 * number of outputs (<code>-1</code> if no defaults exist).
-	 * For <code>ARRAYSIZE</code> type ugens, the argument
-	 * index of the array argument to use.
+	 * For fixed output ugens, the number of outputs. For <code>ARG</code> type
+	 * ugens, the default number of outputs (<code>-1</code> if no defaults exist).
+	 * For <code>ARRAYSIZE</code> type ugens, the argument index of the array
+	 * argument to use.
 	 *
-	 * @warning for now, arrays are only allowed as the
-	 *          last argument of the ugen. no more than one
-	 *          array is allowed per ugen. as of september 2005,
+	 * @warning for now, arrays are only allowed as the last argument of the ugen.
+	 *          no more than one array is allowed per ugen. as of september 2005,
 	 *          all known supercollider ugens fulfill this requirement
 	 */
 	public final int outputVal; // FIXED : # of outputs, ARG : default, ARRAYSIZE : arg idx
 	/**
-	 * A tricky workaround invented for <code>LagControl</code> until
-	 * i recognized that this isn't a real ugen. This could be used
-	 * to multiply the array size for <code>ARRAYSIZE</code> output type
-	 * ugens by a constant, say two or one half. So for now, ignore it,
-	 * it will have the value of one for all ugens. This field
-	 * may be deleted in one of the next versions
+	 * A tricky workaround invented for <code>LagControl</code> until i recognized
+	 * that this isn't a real ugen. This could be used to multiply the array size
+	 * for <code>ARRAYSIZE</code> output type ugens by a constant, say two or one
+	 * half. So for now, ignore it, it will have the value of one for all ugens.
+	 * This field may be deleted in one of the next versions
 	 */
 	public final float outputMul;
 
@@ -180,13 +171,11 @@ public class UGenInfo implements Constants, Comparable {
 	}
 
 	/**
-	 * Returns a string ready to display
-	 * to the user. This will return the ugens
-	 * class name or the operator name for
-	 * unary/binary ops
+	 * Returns a string ready to display to the user. This will return the ugens
+	 * class name or the operator name for unary/binary ops
 	 *
-	 * @todo should find a way to present controls better
-	 *       to the user with the different control names accessible
+	 * @todo should find a way to present controls better to the user with the
+	 *       different control names accessible
 	 */
 	public String getDisplayName(UGen ugen) {
 		if (specials == null)
@@ -205,10 +194,9 @@ public class UGenInfo implements Constants, Comparable {
 	}
 
 	/**
-	 * Returns the name for one of the ugens inputs.
-	 * This can be used to visualize the ugen, and furthermore
-	 * to create a keyword constructor for the ugen
-	 * (to be done).
+	 * Returns the name for one of the ugens inputs. This can be used to visualize
+	 * the ugen, and furthermore to create a keyword constructor for the ugen (to be
+	 * done).
 	 */
 	public String getArgNameForInput(UGen ugen, int argIdx) {
 		if (args.length == 0)
@@ -229,22 +217,20 @@ public class UGenInfo implements Constants, Comparable {
 	}
 
 	/**
-	 * Given the number of instantiating arguments,
-	 * returns the number of output channels the
-	 * ugen will have. For fixed type ugens, returns
-	 * simply the <code>outputVal</code>, for array
-	 * type ugens, calculates the number of outputs from
-	 * <code>numArgs</code>, for ugens that require an
-	 * explicit number-of-channels argument, returns
-	 * <code>pre</code> (if given) or the default value
-	 * <code>outputVal</code>) (if specified).
+	 * Given the number of instantiating arguments, returns the number of output
+	 * channels the ugen will have. For fixed type ugens, returns simply the
+	 * <code>outputVal</code>, for array type ugens, calculates the number of
+	 * outputs from <code>numArgs</code>, for ugens that require an explicit
+	 * number-of-channels argument, returns <code>pre</code> (if given) or the
+	 * default value <code>outputVal</code>) (if specified).
 	 *
-	 * @param numArgs the number of arguments which will be used
-	 *        to instantiate the ugen
-	 * @param pre pre-specified number of outputs (or <code>-1</code>)
-	 * @return the number of output channels or <code>-1</code>
-	 *         if this method is unable to determine the number of channels
-	 *         (missing <code>pre</code> argument)
+	 * @param numArgs
+	 *            the number of arguments which will be used to instantiate the ugen
+	 * @param pre
+	 *            pre-specified number of outputs (or <code>-1</code>)
+	 * @return the number of output channels or <code>-1</code> if this method is
+	 *         unable to determine the number of channels (missing <code>pre</code>
+	 *         argument)
 	 */
 	public int getNumOutputs(int numArgs, int pre) {
 		switch (outputType) {
@@ -267,8 +253,7 @@ public class UGenInfo implements Constants, Comparable {
 	}
 
 	/**
-	 * Prints a textual representation of this
-	 * dataset onto the given stream
+	 * Prints a textual representation of this dataset onto the given stream
 	 */
 	public void printOn(PrintStream out) {
 		boolean b = false;
@@ -294,54 +279,57 @@ public class UGenInfo implements Constants, Comparable {
 		out.println(" ]");
 	}
 
-//	public UGen ar( Object[] args )
-//	{
-//		if( !rates.contains( kAudioRate )) throw new IllegalArgumentException( kAudioRate );
-//	}
-//
-//	public UGen kr( Object[] args )
-//	{
-//		if( !rates.contains( kControlRate )) throw new IllegalArgumentException( kControlRate );
-//	}
-//
-//	public UGen ir( Object[] args )
-//	{
-//		if( !rates.contains( kScalarRate )) throw new IllegalArgumentException( kScalarRate );
-//	}
-//
-//	public UGen dr( Object[] args )
-//	{
-//		if( !rates.contains( kDemandRate )) throw new IllegalArgumentException( kDemandRate );
-//	}
+	// public UGen ar( Object[] args )
+	// {
+	// if( !rates.contains( kAudioRate )) throw new IllegalArgumentException(
+	// kAudioRate );
+	// }
+	//
+	// public UGen kr( Object[] args )
+	// {
+	// if( !rates.contains( kControlRate )) throw new IllegalArgumentException(
+	// kControlRate );
+	// }
+	//
+	// public UGen ir( Object[] args )
+	// {
+	// if( !rates.contains( kScalarRate )) throw new IllegalArgumentException(
+	// kScalarRate );
+	// }
+	//
+	// public UGen dr( Object[] args )
+	// {
+	// if( !rates.contains( kDemandRate )) throw new IllegalArgumentException(
+	// kDemandRate );
+	// }
 
 	/**
-	 * Reads in the ugen definition database
-	 * from a text resource inside the libraries jar file
-	 * (<code>ugendefs.xml</code>). Call this method
-	 * once before using the database, i.e. before
-	 * constructing UGens or showing a synth def diagram.
+	 * Reads in the ugen definition database from a text resource inside the
+	 * libraries jar file (<code>ugendefs.xml</code>). Call this method once before
+	 * using the database, i.e. before constructing UGens or showing a synth def
+	 * diagram.
 	 * <p>
-	 * When this method returns, the database is available
-	 * from the static <code>infos</code> field.
+	 * When this method returns, the database is available from the static
+	 * <code>infos</code> field.
 	 * <p>
-	 * A much faster (around 20 times) way is to convert the xml file int
-	 * a binary file, by calling <code>writeBinaryDefinitions</code>
-	 * afterwards (or run JCollider with the <code>--bindefs</code> option).
+	 * A much faster (around 20 times) way is to convert the xml file int a binary
+	 * file, by calling <code>writeBinaryDefinitions</code> afterwards (or run
+	 * JCollider with the <code>--bindefs</code> option).
 	 * <p>
 	 * The binary variant of this method is <code>readBinaryDefinitions</code>.
 	 *
-	 * @throws IOException if the definitions file couldn't be read.
-	 *         this should never happen if you don't touch the
-	 *         library. however, if you modify the xml file as to
-	 *         include new ugens, this error may occur if the xml
-	 *         file is malformed
+	 * @throws IOException
+	 *             if the definitions file couldn't be read. this should never
+	 *             happen if you don't touch the library. however, if you modify the
+	 *             xml file as to include new ugens, this error may occur if the xml
+	 *             file is malformed
 	 *
 	 * @see #infos
 	 * @see #readBinaryDefinitions()
 	 * @see #writeBinaryDefinitions( File )
 	 */
 	public static void readDefinitions() throws IOException {
-//final long t1 = System.currentTimeMillis();
+		// final long t1 = System.currentTimeMillis();
 		final Document domDoc;
 		final DocumentBuilderFactory builderFactory;
 		final DocumentBuilder builder;
@@ -379,21 +367,20 @@ public class UGenInfo implements Constants, Comparable {
 		}
 
 		UGenInfo.infos = map;
-//final long t2 = System.currentTimeMillis();
-//System.out.println( "readDefinitions took " + (t2-t1) + " ms" );
+		// final long t2 = System.currentTimeMillis();
+		// System.out.println( "readDefinitions took " + (t2-t1) + " ms" );
 	}
 
-//	private static void writeP16String( RandomAccessFile raf, String s )
-//	{
-//		raf.writeShort( s.getLength() );
-//		raf.writeChars( str );
-//	}
+	// private static void writeP16String( RandomAccessFile raf, String s )
+	// {
+	// raf.writeShort( s.getLength() );
+	// raf.writeChars( str );
+	// }
 
 	/**
-	 * Writes the infos out as a binary file that
-	 * can be read in again using the <code>readBinaryDefinitions</code>
-	 * method. You will need to move the resulting file into
-	 * the resources folder and re-jar the library in order to
+	 * Writes the infos out as a binary file that can be read in again using the
+	 * <code>readBinaryDefinitions</code> method. You will need to move the
+	 * resulting file into the resources folder and re-jar the library in order to
 	 * use <code>readBinaryDefinitions</code>.
 	 *
 	 * @see #readDefinitions()
@@ -442,9 +429,10 @@ public class UGenInfo implements Constants, Comparable {
 				raf.writeShort(info.outputVal);
 				raf.writeFloat(info.outputMul);
 
-//if( info.className.equals( "DiskOut" )) {
-//	System.out.println( "DiskOut: outputType = " + info.outputType + "; outputVal = " + info.outputVal + "; outputMul = " + info.outputMul );
-//}
+				// if( info.className.equals( "DiskOut" )) {
+				// System.out.println( "DiskOut: outputType = " + info.outputType + "; outputVal
+				// = " + info.outputVal + "; outputMul = " + info.outputMul );
+				// }
 
 				raf.writeShort(info.args.length);
 				for (int j = 0; j < info.args.length; j++) {
@@ -473,24 +461,23 @@ public class UGenInfo implements Constants, Comparable {
 	}
 
 	/**
-	 * Reads in the ugen definition database
-	 * from a binary resource inside the libraries jar file
-	 * (<code>ugendefs.bin</code>). Call this method
-	 * once before using the database, i.e. before
-	 * constructing UGens or showing a synth def diagram.
+	 * Reads in the ugen definition database from a binary resource inside the
+	 * libraries jar file (<code>ugendefs.bin</code>). Call this method once before
+	 * using the database, i.e. before constructing UGens or showing a synth def
+	 * diagram.
 	 * <p>
-	 * When this method returns, the database is available
-	 * from the static <code>infos</code> field.
+	 * When this method returns, the database is available from the static
+	 * <code>infos</code> field.
 	 * <p>
-	 * To update the ugen definitions, edit the <code>ugendefs.xml</code>
-	 * file and run JCollider with the <code>--bindefs</code> option.
-	 * Move the resulting binary file into the <code>resources</code>
-	 * folder and re-jar the library.
+	 * To update the ugen definitions, edit the <code>ugendefs.xml</code> file and
+	 * run JCollider with the <code>--bindefs</code> option. Move the resulting
+	 * binary file into the <code>resources</code> folder and re-jar the library.
 	 * <p>
-	 * Reading the binary file instead of the xml file is
-	 * a lot faster (around 20 times).
+	 * Reading the binary file instead of the xml file is a lot faster (around 20
+	 * times).
 	 *
-	 * @throws IOException if the definitions file couldn't be read.
+	 * @throws IOException
+	 *             if the definitions file couldn't be read.
 	 *
 	 * @see #infos
 	 * @see #readDefinitions()
@@ -512,7 +499,8 @@ public class UGenInfo implements Constants, Comparable {
 		Map specials;
 
 		final InputStream is = UGenInfo.class.getResourceAsStream("ugendefs.bin");
-		// dis = new DataInputStream(new BufferedInputStream(ClassLoader.getSystemClassLoader().getResourceAsStream("de/sciss/jcollider/ugendefs.bin")));
+		// dis = new DataInputStream(new
+		// BufferedInputStream(ClassLoader.getSystemClassLoader().getResourceAsStream("de/sciss/jcollider/ugendefs.bin")));
 		dis = new DataInputStream(new BufferedInputStream(is));
 		try {
 			if (dis.readInt() != BINARY_FILE_COOKIE)
@@ -700,18 +688,16 @@ public class UGenInfo implements Constants, Comparable {
 		 */
 		public final String name;
 		/**
-		 * Allowed range of its value and default value.
-		 * The min/max fields are currently unused and
-		 * are set to <code>Float.NEGATIVE_INFINITY</code>
-		 * and <code>Float.POSITIVE_INFINITY</code>
-		 * respectively. Could be used in a future version.
+		 * Allowed range of its value and default value. The min/max fields are
+		 * currently unused and are set to <code>Float.NEGATIVE_INFINITY</code> and
+		 * <code>Float.POSITIVE_INFINITY</code> respectively. Could be used in a future
+		 * version.
 		 */
 		public final float min, max, def;
 		/**
-		 * If <code>true</code>, this argument requires
-		 * an array of values. As of this version, this flag
-		 * is only allowed once and for the last of all ugen
-		 * input argument.
+		 * If <code>true</code>, this argument requires an array of values. As of this
+		 * version, this flag is only allowed once and for the last of all ugen input
+		 * argument.
 		 */
 		public final boolean isArray;
 
@@ -729,25 +715,28 @@ public class UGenInfo implements Constants, Comparable {
 	}
 
 	private static class DTDResolver implements EntityResolver {
-		protected DTDResolver() { /* empty */ }
+		protected DTDResolver() {
+			/* empty */ }
 
 		/**
-		 * This Resolver can be used for loading documents.
-		 * If the required DTD is the Meloncillo session DTD
-		 * ("ichnogram.dtd"), it will return this DTD from
-		 * a java resource.
+		 * This Resolver can be used for loading documents. If the required DTD is the
+		 * Meloncillo session DTD ("ichnogram.dtd"), it will return this DTD from a java
+		 * resource.
 		 *
-		 * @param publicId ignored
-		 * @param systemId system DTD identifier
-		 * @return the resolved input source for
-		 *         the Meloncillo session DTD or <code>null</code>
+		 * @param publicId
+		 *            ignored
+		 * @param systemId
+		 *            system DTD identifier
+		 * @return the resolved input source for the Meloncillo session DTD or
+		 *         <code>null</code>
 		 *
 		 * @see javax.xml.parsers.DocumentBuilder#setEntityResolver( EntityResolver )
 		 */
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 
 			if (systemId.endsWith(UGENDEFS_DTD)) { // replace our dtd with java resource
-				// InputStream dtdStream = getClass().getClassLoader().getResourceAsStream( UGENDEFS_DTD );
+				// InputStream dtdStream = getClass().getClassLoader().getResourceAsStream(
+				// UGENDEFS_DTD );
 				InputStream dtdStream = getClass().getResourceAsStream(UGENDEFS_DTD0);
 				InputSource is = new InputSource(dtdStream);
 				is.setSystemId(UGENDEFS_DTD);
