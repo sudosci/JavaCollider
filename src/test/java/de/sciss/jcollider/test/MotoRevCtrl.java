@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import de.sciss.jcollider.Control;
@@ -68,15 +69,14 @@ public class MotoRevCtrl implements ServerListener {
 	private EZSlider[] ezs;
 	private boolean defSent = false;
 
-	// public static void main( String args[] )
-	// {
-	// SwingUtilities.invokeLater( new Runnable() {
-	// public void run()
-	// {
-	// new MotoRevCtrl();
-	// }
-	// });
-	// }
+	public static void main(String args[]) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new MotoRevCtrl();
+			}
+		});
+	}
 
 	public MotoRevCtrl() {
 		final String fs = File.separator;
