@@ -101,7 +101,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 	protected final SynthDefTable[] defTables;
 	protected SynthDefTable selectedTable = null;
 
-	protected static final Comparator synthDefNameComp = new SynthDefNameComp();
+	protected static final Comparator<SynthDef> synthDefNameComp = new SynthDefNameComp();
 
 	protected Server server = null;
 	protected NodeWatcher nw = null;
@@ -118,7 +118,6 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 
@@ -155,13 +154,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 					new String[] { fs + "Applications" + fs + "SuperCollider_f", fs + "Applications" + fs + "SC3",
 							fs + "usr" + fs + "local" + fs + "bin", fs + "usr" + fs + "bin", "C:\\Program Files\\SC3",
 							"C:\\Program Files\\SuperCollider_f" });
-			// if( (f == null) && JavaCollider.isMacOS ) {
-			// try {
-			// f = MRJAdapter.findApplication( "SCjm" );
-			// if( f != null ) f = new File( f.getParentFile(), "scsynth" );
-			// }
-			// catch( IOException e1 ) {}
-			// }
+
 			if (f != null)
 				Server.setProgram(f.getAbsolutePath());
 
@@ -185,7 +178,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 				server.startAliveThread();
 			} catch (IOException e1) {
 				/* ignored */ }
-			// if( server.isRunning() ) initServer();
+			
 			spf = ServerPanel.makeWindow(server, ServerPanel.MIMIC | ServerPanel.CONSOLE | ServerPanel.DUMP);
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this,
@@ -229,30 +222,6 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		toFront();
 	}
 
-	// private void loadDefs()
-	// {
-	// final File[] defFiles = new File( "synthdefs" ).listFiles( this );
-	// SynthDef[] defs;
-	// final List collDefs = new ArrayList();
-	//
-	// for( int i = 0; i < defFiles.length; i++ ) {
-	// try {
-	// defs = SynthDef.readDefFile( defFiles[ i ]);
-	// for( int j = 0; j < defs.length; j++ ) {
-	// collDefs.add( defs[ j ]);
-	// }
-	// }
-	// catch( IOException e1 ) {
-	// System.err.println( defFiles[ i ].getName() + " : " + e1.getClass().getName()
-	// +
-	// " : " + e1.getLocalizedMessage() );
-	// }
-	// }
-	//
-	// Collections.sort( collDefs, synthDefNameComp );
-	// defTables[ 0 ].addDefs( collDefs );
-	// }
-
 	private JComponent createButtons() {
 		final Box b = Box.createHorizontalBox();
 		JButton but;
@@ -281,16 +250,13 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 	private void createDefs() {
 		try {
-			// UGenInfo.readDefinitions();
 			UGenInfo.readBinaryDefinitions();
 
-			final List collDefs = DemoDefs.create();
+			final List<SynthDef> collDefs = DemoDefs.create();
 			Collections.sort(collDefs, synthDefNameComp);
-			// defTables[ 1 ].addDefs( collDefs );
 			defTables[0].addDefs(collDefs);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			// reportError( e1 );
 		}
 	}
 
@@ -309,13 +275,13 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 	}
 
 	private void sendDefs() {
-		List defs;
+		List<SynthDef> defs;
 		SynthDef def;
 
 		for (int i = 0; i < defTables.length; i++) {
 			defs = defTables[i].getDefs();
 			for (int j = 0; j < defs.size(); j++) {
-				def = (SynthDef) defs.get(j);
+				def = defs.get(j);
 				try {
 					def.send(server);
 				} catch (IOException e1) {
@@ -339,6 +305,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 	public static void main(String args[]) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@SuppressWarnings("unused")
 			@Override
 			public void run() {
 				new Demo();
@@ -367,7 +334,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			// re-run alive thread
 			final javax.swing.Timer t = new javax.swing.Timer(1000, new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void actionPerformed(ActionEvent ex) {
 					try {
 						if (server != null)
 							server.startAliveThread();
@@ -414,7 +381,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		// tm.addDef( def );
 		// }
 
-		protected void addDefs(List defs) {
+		protected void addDefs(List<SynthDef> defs) {
 			tm.addDefs(defs);
 		}
 
@@ -426,13 +393,13 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 				return null;
 		}
 
-		protected List getDefs() {
+		protected List<SynthDef> getDefs() {
 			return tm.getDefs();
 		}
 	}
 
 	private static class SynthDefTableModel extends AbstractTableModel {
-		private final List collDefs = new ArrayList();
+		private final List<SynthDef> collDefs = new ArrayList<>();
 		private final String name;
 
 		protected SynthDefTableModel(String name) {
@@ -458,7 +425,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		@Override
 		public Object getValueAt(int row, int column) {
 			if (row < collDefs.size()) {
-				return ((SynthDef) collDefs.get(row)).getName();
+				return collDefs.get(row).getName();
 			} else {
 				return null;
 			}
@@ -470,7 +437,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		// fireTableRowsInserted( collDefs.size() - 1, collDefs.size() - 1 );
 		// }
 
-		protected void addDefs(List defs) {
+		protected void addDefs(List<SynthDef> defs) {
 			if (defs.isEmpty())
 				return;
 
@@ -480,16 +447,11 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		}
 
 		protected SynthDef getDef(int idx) {
-			return (SynthDef) collDefs.get(idx);
+			return collDefs.get(idx);
 		}
 
-		// private int getNumDefs()
-		// {
-		// return collDefs.size();
-		// }
-
-		protected List getDefs() {
-			return new ArrayList(collDefs);
+		protected List<SynthDef> getDefs() {
+			return new ArrayList<SynthDef>(collDefs);
 		}
 	}
 
@@ -561,6 +523,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("Def Diagram");
 		}
 
+		@SuppressWarnings("unused")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (selectedTable == null)
@@ -616,7 +579,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 			treeFrame.addWindowListener(new WindowAdapter() {
 				@Override
-				public void windowClosing(WindowEvent e) {
+				public void windowClosing(WindowEvent we) {
 					treeFrame.setVisible(false);
 					treeFrame.dispose();
 					ntp.dispose();
@@ -625,13 +588,13 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		}
 	}
 
-	private static class SynthDefNameComp implements Comparator {
+	private static class SynthDefNameComp implements Comparator<SynthDef> {
 		protected SynthDefNameComp() {
 			/* empty */ }
 
 		@Override
-		public int compare(Object def1, Object def2) {
-			return (((SynthDef) def1).getName().compareTo(((SynthDef) def2).getName()));
+		public int compare(SynthDef def1, SynthDef def2) {
+			return (def1.getName().compareTo(def2.getName()));
 		}
 	}
 
@@ -645,11 +608,12 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		/**
 		 * Overridden to import a Pathname if it is available.
 		 */
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean importData(JComponent c, Transferable t) {
 			final Object o;
-			final List fileList;
-			final List collDefs;
+			final List<File> fileList;
+			final List<SynthDef> collDefs;
 			File f;
 			SynthDef[] defs;
 
@@ -657,10 +621,10 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 				if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 					o = t.getTransferData(DataFlavor.javaFileListFlavor);
 					if (o instanceof List) {
-						fileList = (List) o;
-						collDefs = new ArrayList();
+						fileList = (List<File>) o;
+						collDefs = new ArrayList<SynthDef>();
 						for (int i = 0; i < fileList.size(); i++) {
-							f = (File) fileList.get(i);
+							f = fileList.get(i);
 							try {
 								if (SynthDef.isDefFile(f)) {
 									defs = SynthDef.readDefFile(f);

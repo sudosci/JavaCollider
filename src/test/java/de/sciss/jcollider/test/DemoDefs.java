@@ -2,6 +2,7 @@ package de.sciss.jcollider.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import de.sciss.jcollider.Control;
@@ -22,8 +23,8 @@ import de.sciss.net.OSCBundle;
  * @version 0.32, 24-Feb-08
  */
 public abstract class DemoDefs {
-	public static java.util.List create() {
-		final java.util.List result = new ArrayList();
+	public static List<SynthDef> create() {
+		final List<SynthDef> result = new ArrayList<>();
 		final Random rnd = new Random(System.currentTimeMillis());
 		SynthDef def;
 		GraphElem f, g, h;

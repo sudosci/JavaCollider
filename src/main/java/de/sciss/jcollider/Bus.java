@@ -107,6 +107,7 @@ public class Bus implements Constants {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return ("Bus(" + server.getName() + ", " + getRate() + ", " + getIndex() + ", " + getNumChannels() + ")");
 	}
@@ -291,6 +292,7 @@ public class Bus implements Constants {
 		final OSCMessage m = getMsg(offsets);
 		final int idx = getIndex();
 		final OSCResponderNode resp = new OSCResponderNode(getServer(), "/c_set", new OSCResponderNode.Action() {
+			@Override
 			public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 				final int numVals = msg.getArgCount() >> 1;
 				if (numVals != offsets.length)
@@ -323,6 +325,7 @@ public class Bus implements Constants {
 		final OSCMessage m = getnMsg(offsets, numChans);
 		final int idx = getIndex();
 		final OSCResponderNode resp = new OSCResponderNode(getServer(), "/c_setn", new OSCResponderNode.Action() {
+			@Override
 			public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 				final int numArgs = msg.getArgCount();
 				int numVals = 0;
@@ -340,7 +343,7 @@ public class Bus implements Constants {
 
 				final float[] vals = new float[numVals];
 				for (int i = 0, j = 2, k = 0; i < numEntries; i++, j += 2) {
-					for (int m = 0; m < numChans[i]; m++) {
+					for (int mm = 0; mm < numChans[i]; mm++) {
 						vals[k++] = ((Number) msg.getArg(j++)).floatValue();
 					}
 				}
@@ -456,6 +459,7 @@ public class Bus implements Constants {
 				+ getNumChannels() + ")");
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Bus) {
 			final Bus aBus = (Bus) o;
@@ -466,6 +470,7 @@ public class Bus implements Constants {
 		}
 	}
 
+	@Override
 	public int hashCode() {
 		return (getIndex() ^ -getNumChannels() ^ getRate().hashCode() ^ getServer().hashCode());
 	}

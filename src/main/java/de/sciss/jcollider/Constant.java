@@ -33,22 +33,27 @@ public class Constant implements UGenInput, Constants {
 
 	// --------- UGenInput interface ---------
 
+	@Override
 	public Object getRate() {
 		return kScalarRate;
 	}
 
+	@Override
 	public String dumpName() {
 		return (String.valueOf(value));
 	}
 
+	@Override
 	public UGenInput[] asUGenInputs() {
 		return new UGenInput[] { this };
 	}
 
+	@Override
 	public int getNumOutputs() {
 		return 1;
 	}
 
+	@Override
 	public GraphElem getOutput(int idx) {
 		return this;
 	}
