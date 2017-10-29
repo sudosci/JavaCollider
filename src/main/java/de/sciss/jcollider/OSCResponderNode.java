@@ -28,17 +28,11 @@ import de.sciss.net.OSCMessage;
  * @author Hanns Holger Rutz
  * @version 0.36, 08-Oct-09
  */
-public class OSCResponderNode implements OSCListener // , Runnable
-{
-	// private final InetSocketAddress addr;
-	// private final Server server;
+public class OSCResponderNode implements OSCListener {
 	private final String cmdName;
 	private final Action action;
 	private volatile boolean removeWhenDone = false;
 	private volatile boolean listening = false;
-
-	// private final List collMessages = Collections.synchronizedList( new
-	// ArrayList() ); // elements = IncomingMessage instances
 
 	private final Object sync;
 	private final OSCMultiResponder multi;
@@ -69,6 +63,7 @@ public class OSCResponderNode implements OSCListener // , Runnable
 	 */
 	public OSCResponderNode(final Server s, String cmdName, final OSCListener action) {
 		this(s, cmdName, new Action() {
+			@Override
 			public void respond(OSCResponderNode node, OSCMessage msg, long time) {
 				action.messageReceived(msg, s.getAddr(), time);
 			}
@@ -171,6 +166,7 @@ public class OSCResponderNode implements OSCListener // , Runnable
 	 *
 	 * @see #removeWhenDone()
 	 */
+	@Override
 	public void messageReceived(OSCMessage msg, SocketAddress sender, long time) {
 		if (listening) {
 			try {
@@ -210,17 +206,4 @@ public class OSCResponderNode implements OSCListener // , Runnable
 		public void respond(OSCResponderNode node, OSCMessage msg, long time);
 	}
 
-	// private static class IncomingMessage
-	// {
-	// private final OSCMessage msg;
-	// private final SocketAddress sender;
-	// private final long time;
-	//
-	// private IncomingMessage( OSCMessage msg, SocketAddress sender, long time )
-	// {
-	// this.msg = msg;
-	// this.sender = sender;
-	// this.time = time;
-	// }
-	// }
 }

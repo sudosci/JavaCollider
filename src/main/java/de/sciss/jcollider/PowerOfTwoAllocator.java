@@ -41,6 +41,7 @@ public class PowerOfTwoAllocator implements BlockAllocator {
 		freeBlocks = new Block[32];
 	}
 
+	@Override
 	public int alloc(final int n) {
 		final int result;
 		int np2, sizeClass;
@@ -66,6 +67,7 @@ public class PowerOfTwoAllocator implements BlockAllocator {
 		return result;
 	}
 
+	@Override
 	public void free(int address) {
 		final Block node = allocatedBlocks[address];
 		if (node != null) {
@@ -74,8 +76,9 @@ public class PowerOfTwoAllocator implements BlockAllocator {
 		}
 	}
 
-	public List getAllocatedBlocks() {
-		final List result = new ArrayList();
+	@Override
+	public List<Block> getAllocatedBlocks() {
+		final List<Block> result = new ArrayList<>();
 
 		for (int i = 0; i < allocatedBlocks.length; i++) {
 			if (allocatedBlocks[i] != null)
@@ -86,10 +89,12 @@ public class PowerOfTwoAllocator implements BlockAllocator {
 	}
 
 	public static class Factory implements BlockAllocator.Factory {
+		@Override
 		public BlockAllocator create(int size) {
 			return new PowerOfTwoAllocator(size);
 		}
 
+		@Override
 		public BlockAllocator create(int size, int pos) {
 			return new PowerOfTwoAllocator(size, pos);
 		}
@@ -108,10 +113,12 @@ public class PowerOfTwoAllocator implements BlockAllocator {
 			this.sizeClass = sizeClass;
 		}
 
+		@Override
 		public int getAddress() {
 			return address;
 		}
 
+		@Override
 		public int getSize() {
 			return size;
 		}

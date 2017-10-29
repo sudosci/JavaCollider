@@ -57,7 +57,7 @@ public class NodeTreeManager implements NodeListener {
 
 	private final DefaultTreeModel model;
 	private final NodeWatcher nw;
-	private final Map mapNodeBackups = new HashMap();
+	private final Map<Integer, Node> mapNodeBackups = new HashMap<>();
 
 	/**
 	 * Creates a new <code>NodeTreeManager</code> for a given
@@ -160,6 +160,7 @@ public class NodeTreeManager implements NodeListener {
 	 * This method is part of the <code>NodeListener</code> interface. Do not call
 	 * this method.
 	 */
+	@Override
 	public void nodeAction(NodeEvent e) {
 		final Node node = e.getNode();
 		if (node == null)
@@ -185,7 +186,7 @@ public class NodeTreeManager implements NodeListener {
 
 		case NodeEvent.END:
 			groupBak = (Group) mapNodeBackups.get(new Integer(e.getOldParentGroupID()));
-			predBak = (Node) mapNodeBackups.get(new Integer(e.getOldPredNodeID()));
+			predBak = mapNodeBackups.get(new Integer(e.getOldPredNodeID()));
 			if (groupBak != null) {
 				idx = predBak == null ? 0 : groupBak.getIndex(predBak) + 1;
 				if (VERBOSE)

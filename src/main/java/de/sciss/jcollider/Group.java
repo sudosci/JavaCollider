@@ -200,24 +200,24 @@ public class Group extends Node {
 
 	@Override
 	public TreeNode getChildAt(int childIndex) {
-		final Enumeration children = children();
+		final Enumeration<Node> children = children();
 		for (int idx = 0; idx < childIndex; idx++) {
 			children.nextElement();
 		}
-		return (TreeNode) children.nextElement();
+		return children.nextElement();
 	}
 
 	@Override
 	public int getChildCount() {
 		int idx = 0;
-		for (Enumeration children = children(); children.hasMoreElements(); children.nextElement())
+		for (Enumeration<Node> children = children(); children.hasMoreElements(); children.nextElement())
 			idx++;
 		return idx;
 	}
 
 	@Override
 	public int getIndex(TreeNode node) {
-		final Enumeration children = children();
+		final Enumeration<Node> children = children();
 		for (int idx = 0; children.hasMoreElements(); idx++) {
 			if (children.nextElement().equals(node)) {
 				return idx;
@@ -237,13 +237,13 @@ public class Group extends Node {
 	}
 
 	@Override
-	public Enumeration children() {
+	public Enumeration<Node> children() {
 		return new ChildEnumeration(this);
 	}
 
 	// -------------- internal classes --------------
 
-	private static class ChildEnumeration implements Enumeration {
+	private static class ChildEnumeration implements Enumeration<Node> {
 		private Node nextElement;
 
 		protected ChildEnumeration(Group g) {
@@ -256,7 +256,7 @@ public class Group extends Node {
 		}
 
 		@Override
-		public Object nextElement() {
+		public Node nextElement() {
 			final Node result = nextElement;
 			if (nextElement == null) {
 				throw new NoSuchElementException();

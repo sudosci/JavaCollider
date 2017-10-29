@@ -105,6 +105,7 @@ public class LogTextArea extends JTextArea {
 	 * this method directly will not use the internal print stream and thus not
 	 * appear in a log file.
 	 */
+	@Override
 	public void append(String str) {
 		super.append(str);
 		totalLength += str.length();
@@ -126,6 +127,7 @@ public class LogTextArea extends JTextArea {
 	 *            the new text to replace the gadgets content or <code>null</code>
 	 *            to clear the gadget.
 	 */
+	@Override
 	public void setText(String str) {
 		super.setText(str);
 		totalLength = str == null ? 0 : str.length();
@@ -166,10 +168,12 @@ public class LogTextArea extends JTextArea {
 			super();
 		}
 
+		@Override
 		public void write(byte b[]) throws IOException {
 			this.write(b, 0, b.length);
 		}
 
+		@Override
 		public void write(byte b[], int off, int len) throws IOException {
 			String str = new String(b, off, len);
 			append(str);
@@ -183,6 +187,7 @@ public class LogTextArea extends JTextArea {
 			}
 		}
 
+		@Override
 		public void flush() throws IOException {
 			if (logFileWriter != null) {
 				logFileWriter.flush();
@@ -190,6 +195,7 @@ public class LogTextArea extends JTextArea {
 			super.flush();
 		}
 
+		@Override
 		public void close() throws IOException {
 			if (logFileWriter != null) {
 				logFileWriter.close();
@@ -198,6 +204,7 @@ public class LogTextArea extends JTextArea {
 			super.close();
 		}
 
+		@Override
 		public void write(int b) throws IOException {
 			cheesy[0] = (byte) b;
 			this.write(cheesy);
@@ -211,6 +218,7 @@ public class LogTextArea extends JTextArea {
 		protected ActionClear() {
 			/* empty */ }
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			setText(null);
 		}

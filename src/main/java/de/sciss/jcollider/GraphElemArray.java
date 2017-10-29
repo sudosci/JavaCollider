@@ -44,14 +44,17 @@ public class GraphElemArray implements GraphElem {
 
 	// ----------- GraphElem interface -----------
 
+	@Override
 	public int getNumOutputs() {
 		return elements.length;
 	}
 
+	@Override
 	public GraphElem getOutput(int idx) {
 		return elements[idx];
 	}
 
+	@Override
 	public UGenInput[] asUGenInputs() {
 		switch (getNumOutputs()) {
 		case 0:

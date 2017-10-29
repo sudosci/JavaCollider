@@ -32,7 +32,7 @@ import java.util.Set;
 public class ContiguousBlockAllocator implements BlockAllocator {
 	private final int size;
 	private final Block[] array;
-	private final Map freed;
+	private final Map<Integer, Set<Block>> freed;
 	private final int pos;
 	private int top;
 
@@ -46,7 +46,7 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 
 		array = new Block[size];
 		array[pos] = new Block(pos, size - pos);
-		freed = new HashMap();
+		freed = new HashMap<Integer, Set<Block>>();
 		top = pos;
 	}
 
@@ -54,6 +54,7 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 		return alloc(1);
 	}
 
+	@Override
 	public int alloc(int n) {
 		final Block b = findAvailable(n);
 		if (b == null)
@@ -66,7 +67,7 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 		return reserve(address, 1);
 	}
 
-	public Block reserve(int address, int size) {
+	public Block reserve(int address, int aSize) {
 		Block b;
 
 		if (array[address] != null) {
@@ -75,24 +76,25 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 			b = findNext(address);
 		}
 
-		if ((b != null) && b.used && (address + size > b.start)) {
+		if ((b != null) && b.used && (address + aSize > b.start)) {
 			throw new IllegalStateException(
-					"The block at (" + address + ", " + size + ") is already in use and cannot be reserved.");
+					"The block at (" + address + ", " + aSize + ") is already in use and cannot be reserved.");
 		}
 
-		if (b.start == address) {
-			return reserve(address, size, b, null);
+		if (b != null && b.start == address) {
+			return reserve(address, aSize, b, null);
 		}
 
 		b = findPrevious(address);
 		if ((b != null) && b.used && (b.start + b.size > address)) {
 			throw new IllegalStateException(
-					"The block at (" + address + ", " + size + ") is already in use and cannot be reserved.");
+					"The block at (" + address + ", " + aSize + ") is already in use and cannot be reserved.");
 		}
 
-		return reserve(address, size, null, b);
+		return reserve(address, aSize, null, b);
 	}
 
+	@Override
 	public void free(int address) {
 		Block b, prev, next, temp;
 
@@ -130,13 +132,15 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 					removeFromFreed(next);
 					removeFromFreed(b);
 				}
-				if (top > temp.start) {
+				if (temp != null && top > temp.start) {
 					addToFreed(temp);
 				}
 			}
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	public List getAllocatedBlocks() {
 		final List result = new ArrayList();
 		Block b;
@@ -151,20 +155,20 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 	}
 
 	private Block findAvailable(int n) {
-		Set set;
-		Map.Entry entry;
+		Set<Block> set;
+		Map.Entry<Integer, Set<Block>> entry;
 
-		set = (Set) freed.get(new Integer(n));
+		set = freed.get(new Integer(n));
 
 		if (set != null)
-			return (Block) set.iterator().next();
+			return set.iterator().next();
 
-		for (Iterator iter = freed.entrySet().iterator(); iter.hasNext();) {
-			entry = (Map.Entry) iter.next();
-			if (((Integer) entry.getKey()).intValue() >= n) {
-				set = (Set) entry.getValue();
+		for (Iterator<Map.Entry<Integer, Set<Block>>> iter = freed.entrySet().iterator(); iter.hasNext();) {
+			entry = iter.next();
+			if (entry.getKey().intValue() >= n) {
+				set = entry.getValue();
 				if (set != null)
-					return (Block) set.iterator().next();
+					return set.iterator().next();
 			}
 		}
 
@@ -175,12 +179,12 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 	}
 
 	private void addToFreed(Block b) {
-		final Object key = new Integer(b.size);
-		Set set;
+		final Integer key = new Integer(b.size);
+		Set<Block> set;
 
-		set = (Set) freed.get(key);
+		set = freed.get(key);
 		if (set == null) {
-			set = new HashSet();
+			set = new HashSet<>();
 			freed.put(key, set);
 		}
 		set.add(b);
@@ -188,7 +192,7 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 
 	private void removeFromFreed(Block b) {
 		final Object key = new Integer(b.size);
-		final Set set = (Set) freed.get(key);
+		final Set<Block> set = freed.get(key);
 
 		if (set != null) {
 			set.remove(b);
@@ -220,14 +224,14 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 		return null;
 	}
 
-	private Block reserve(int address, int size, Block availBlock, Block prevBlock) {
+	private Block reserve(int address, int aSize, Block availBlock, Block prevBlock) {
 		if (availBlock == null) {
 			availBlock = prevBlock == null ? findPrevious(address) : prevBlock;
 		}
 		if (availBlock.start < address) {
 			availBlock = split(availBlock, address - availBlock.start, false)[1];
 		}
-		return split(availBlock, size, true)[0];
+		return split(availBlock, aSize, true)[0];
 	}
 
 	private Block[] split(Block availBlock, int n, boolean used) {
@@ -252,7 +256,7 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 	}
 
 	public void debug() {
-		Map.Entry entry;
+		Map.Entry<Integer, Set<Block>> entry;
 
 		System.err.println(this.getClass().getName() + ":\n\nArray:");
 		for (int i = 0; i < array.length; i++) {
@@ -260,10 +264,10 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 				System.err.println(String.valueOf(i) + ": " + array[i]);
 			}
 			System.err.println("\nFree sets:");
-			for (Iterator iter = freed.entrySet().iterator(); iter.hasNext();) {
-				entry = (Map.Entry) iter.next();
+			for (Iterator<Map.Entry<Integer, Set<Block>>> iter = freed.entrySet().iterator(); iter.hasNext();) {
+				entry = iter.next();
 				System.err.print(entry.getKey().toString() + ": [ ");
-				for (Iterator iter2 = ((Set) entry.getValue()).iterator(); iter2.hasNext();) {
+				for (Iterator<Block> iter2 = entry.getValue().iterator(); iter2.hasNext();) {
 					System.err.print(iter2.next().toString() + ", ");
 				}
 				System.err.println("]");
@@ -272,10 +276,12 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 	}
 
 	public static class Factory implements BlockAllocator.Factory {
+		@Override
 		public BlockAllocator create(int size) {
 			return new ContiguousBlockAllocator(size);
 		}
 
+		@Override
 		public BlockAllocator create(int size, int pos) {
 			return new ContiguousBlockAllocator(size, pos);
 		}
@@ -291,10 +297,12 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 			this.size = size;
 		}
 
+		@Override
 		public int getAddress() {
 			return start;
 		}
 
+		@Override
 		public int getSize() {
 			return size;
 		}
@@ -331,6 +339,7 @@ public class ContiguousBlockAllocator implements BlockAllocator {
 			return result;
 		}
 
+		@Override
 		public String toString() {
 			return ("Block( start = " + start + "; size = " + size + "; used = " + used + " )");
 		}

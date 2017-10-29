@@ -10,6 +10,7 @@
 package de.sciss.jcollider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // Arg count statistics :
 // 19 UGens with 0 arguments.
@@ -164,14 +165,17 @@ public class UGen implements Constants, GraphElem {
 
 	// --------- GraphElem interface ---------
 
+	@Override
 	public int getNumOutputs() {
 		return outputRates.length;
 	}
 
+	@Override
 	public GraphElem getOutput(int idx) {
 		return getChannel(idx);
 	}
 
+	@Override
 	public UGenInput[] asUGenInputs() {
 		final UGenInput[] result = new UGenInput[getNumOutputs()];
 		for (int i = 0; i < result.length; i++) {
@@ -184,11 +188,6 @@ public class UGen implements Constants, GraphElem {
 		return new UGenChannel(this, ch);
 	}
 
-	// XXX could be re-implemented using UGenInfo
-	// protected String argNameForInputAt( int argIndex )
-	// {
-	// }
-
 	/**
 	 * Returns the <strong>class name</strong> of the UGen. In the case of unary and
 	 * binary op ugens, this will report &quot;UnaryOpUGen&quot; and
@@ -199,8 +198,6 @@ public class UGen implements Constants, GraphElem {
 	 */
 	public String getName() {
 		return name;
-		// String className = this.getClass().getName();
-		// return className.substring( className.lastIndexOf( '.' ) + 1 );
 	}
 
 	// BinaryOpUGen could do this XXX
@@ -212,7 +209,6 @@ public class UGen implements Constants, GraphElem {
 	 * @todo should report the operator name or unary/binary op
 	 */
 	public String dumpName() {
-		// return( getSynthIndex() + "_" + getName() );
 		if (specialIndex == 0) {
 			return getName();
 		} else {
@@ -364,11 +360,6 @@ public class UGen implements Constants, GraphElem {
 		return UGen.construct(name, kAudioRate, -1, new GraphElem[] { in1, in2, in3, in4, in5, in6 });
 	}
 
-	// public static GraphElem ar( String name, Object[] inputs )
-	// {
-	// return UGen.construct( name, kAudioRate, -1, inputs );
-	// }
-
 	public static GraphElem kr(String name, int numChannels) {
 		return UGen.construct(name, kControlRate, numChannels, NO_ARGS);
 	}
@@ -424,11 +415,6 @@ public class UGen implements Constants, GraphElem {
 		return UGen.construct(name, kControlRate, -1, new GraphElem[] { in1, in2, in3, in4, in5, in6 });
 	}
 
-	// public static GraphElem kr( String name, Object[] inputs )
-	// {
-	// return UGen.construct( name, kControlRate, -1, inputs );
-	// }
-
 	/**
 	 * &quot;dr&quot; stands for demand-rate
 	 */
@@ -481,11 +467,6 @@ public class UGen implements Constants, GraphElem {
 	public static GraphElem dr(String name, GraphElem in1, GraphElem in2, GraphElem in3, GraphElem in4, GraphElem in5) {
 		return UGen.construct(name, kDemandRate, -1, new GraphElem[] { in1, in2, in3, in4, in5 });
 	}
-
-	// public static GraphElem dr( String name, Object[] inputs )
-	// {
-	// return UGen.construct( name, kDemandRate, -1, inputs );
-	// }
 
 	/**
 	 * A shorthand method for creating a constant in the ugen graph. This is
@@ -545,16 +526,11 @@ public class UGen implements Constants, GraphElem {
 		return UGen.construct(name, kScalarRate, -1, new GraphElem[] { in1, in2, in3, in4, in5 });
 	}
 
-	// public static GraphElem ir( String name, Object[] inputs )
-	// {
-	// return UGen.construct( name, kScalarRate, -1, inputs );
-	// }
-
 	private static GraphElem construct(String name, Object rate, int numChannels, GraphElem[] inputs) {
-		final UGenInfo ui = (UGenInfo) UGenInfo.infos.get(name);
+		final UGenInfo ui = UGenInfo.infos.get(name);
 		final GraphElem[] ugens;
 		final UGenInput[][] ugenIns;
-		final java.util.List args;
+		final List<UGenInput[]> args;
 		final boolean hasArray;
 		final int outChan;
 		final Object[] outRates;
@@ -581,10 +557,10 @@ public class UGen implements Constants, GraphElem {
 			hasArray = true;
 			numArgs--;
 			numIns--;
-			args = new ArrayList(numArgs + inputs[numIns].getNumOutputs());
+			args = new ArrayList<>(numArgs + inputs[numIns].getNumOutputs());
 		} else {
 			hasArray = false;
-			args = new ArrayList(numArgs);
+			args = new ArrayList<>(numArgs);
 		}
 
 		// fill in the non-array args
@@ -633,7 +609,7 @@ public class UGen implements Constants, GraphElem {
 
 		// fill in and expand the ugen inputs
 		for (i = 0; i < numArgs; i++) {
-			ins = (UGenInput[]) args.get(i);
+			ins = args.get(i);
 			for (j = 0; j < chanExp; j++) {
 				ugenIns[j][i] = ins[j % ins.length];
 			}
@@ -655,34 +631,6 @@ public class UGen implements Constants, GraphElem {
 
 		return (chanExp == 1 ? ugens[0] : new GraphElemArray(ugens));
 	}
-
-	// public static GraphElem mulAdd( GraphElem in, float mul, float add )
-	// {
-	// return mulAdd( in, ir( mul ), ir( add ));
-	// }
-	//
-	// public static GraphElem mulAdd( GraphElem in, GraphElem mul, GraphElem add )
-	// {
-	// UGenInput[] uins = in.asUGenInputs()
-	// Object highestRate = kScalarRate;
-	// Object rate;
-	//
-	// for( int i = 0; i < uins.length; i++ ) {
-	// if( uins[ i ] instanceof UGenChannel ) {
-	// rate = ((UGenChannel) uins[ i ]).getRate();
-	// if( rate == kAudioRate ) {
-	// highestRate = kAudioRate;
-	// break;
-	// } else if( rate == kControlRate ) {
-	// highestRate = kControlRate;
-	// } else if( rate == kDemandRate ) {
-	// throw new IllegalArgumentException( "MulAdd : illegal rate " + rate );
-	// }
-	// }
-	// }
-	//
-	// return construct( "MulAdd", highestRate, -1, in, mul, add );
-	// }
 
 	/**
 	 * Assembles two graph elements (such as UGens, or Constants) into one array

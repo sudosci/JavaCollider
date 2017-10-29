@@ -65,6 +65,7 @@ public class ServerEvent extends BasicEvent {
 	 * Used by the <code>EventManager</code> to fuse successive events together when
 	 * they queue. Do not call this method.
 	 */
+	@Override
 	public boolean incorporate(BasicEvent oldEvent) {
 		if ((oldEvent instanceof ServerEvent) && (this.getSource() == oldEvent.getSource())
 				&& (this.getID() == oldEvent.getID())) {

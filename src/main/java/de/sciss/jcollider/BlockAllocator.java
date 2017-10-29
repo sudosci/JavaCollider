@@ -47,6 +47,7 @@ public interface BlockAllocator {
 	 *
 	 * @return a list whose elements are instances of <code>Block</code>
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getAllocatedBlocks();
 
 	/**

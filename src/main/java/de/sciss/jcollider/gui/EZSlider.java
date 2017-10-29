@@ -83,6 +83,7 @@ public class EZSlider extends JComponent {
 		// System.err.println( "kieka" );
 
 		ggNumber.addListener(new NumberListener() {
+			@Override
 			public void numberChanged(NumberEvent e) {
 				value = e.getNumber().doubleValue();
 				ggSlider.setValue((int) (spec.unmap(value) * 0x10000));
@@ -91,6 +92,7 @@ public class EZSlider extends JComponent {
 		});
 
 		ggSlider.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				value = spec.map((double) ggSlider.getValue() / 0x10000);
 				ggNumber.setNumber(new Double(value));

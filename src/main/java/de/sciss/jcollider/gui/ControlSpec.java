@@ -125,38 +125,4 @@ public class ControlSpec {
 		return warp.unmap(Math.max(clipLo, Math.min(clipHi, value)), this);
 	}
 
-	// *initClass {
-	// specs = specs.addAll([
-	// // set up some ControlSpecs for common mappings
-	// // you can add your own after the fact.
-	//
-	// unipolar -> ControlSpec(0, 1),
-	// bipolar -> ControlSpec(-1, 1, default: 0),
-	//
-	// \\freq -> ControlSpec(20, 20000, \\exp, 0, 440, units: " Hz"),
-	// \\lofreq -> ControlSpec(0.1, 100, \\exp, 0, 6, units: " Hz"),
-	// \\midfreq -> ControlSpec(25, 4200, \\exp, 0, 440, units: " Hz"),
-	// \\widefreq -> ControlSpec(0.1, 20000, \\exp, 0, 440, units: " Hz"),
-	// \\phase -> ControlSpec(0, 2pi),
-	// \\rq -> ControlSpec(0.001, 2, \\exp, 0, 0.707),
-	//
-	// \\audiobus -> ControlSpec(0, 128, step: 1),
-	// \\controlbus -> ControlSpec(0, 4096, step: 1),
-	//
-	// \\midi -> ControlSpec(0, 127, default: 64),
-	// \\midinote -> ControlSpec(0, 127, default: 60),
-	// \\midivelocity -> ControlSpec(1, 127, default: 64),
-	//
-	// \\db -> ControlSpec(0.ampdb, 1.ampdb, \\db, units: " dB"),
-	// \\amp -> ControlSpec(0, 1, \\amp, 0, 0),
-	// \\boostcut -> ControlSpec(-20, 20, units: " dB"),
-	//
-	// \\pan -> ControlSpec(-1, 1, default: 0),
-	// \\detune -> ControlSpec(-20, 20, default: 0, units: " Hz"),
-	// \\rate -> ControlSpec(0.125, 8, \\exp, 0, 1),
-	// \\beats -> ControlSpec(0, 20, units: " Hz"),
-	//
-	// \\delay -> ControlSpec(0.0001, 1, \\exp, 0, 0.3, units: " secs")
-	// ]);
-	// }
 }

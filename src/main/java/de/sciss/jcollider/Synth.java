@@ -91,10 +91,6 @@ public class Synth extends Node {
 		if (target == null)
 			target = getServer().getDefaultGroup();
 
-		// removed 02-oct-05
-		// this.setGroup( addAction == kAddToHead || addAction == kAddToTail ?
-		// (Group) target : target.getGroup() );
-
 		final int argNum = argNames == null ? 0 : argNames.length;
 		final Object[] allArgs = new Object[argNum * 2 + 4];
 
@@ -523,6 +519,7 @@ public class Synth extends Node {
 		return new OSCMessage("/s_getn", args);
 	}
 
+	@Override
 	public String toString() {
 		if (getName() == null) {
 			return ("Synth(" + getNodeID() + ",\"" + defName + "\")");
@@ -533,27 +530,33 @@ public class Synth extends Node {
 
 	// -------------- TreeNode interface --------------
 
+	@Override
 	public TreeNode getChildAt(int childIndex) {
 		return null;
 	}
 
+	@Override
 	public int getChildCount() {
 		return 0;
 	}
 
+	@Override
 	public int getIndex(TreeNode node) {
 		return -1;
 	}
 
+	@Override
 	public boolean getAllowsChildren() {
 		return false;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return true;
 	}
 
-	public Enumeration children() {
+	@Override
+	public Enumeration<TreeNode> children() {
 		return null; // XXX allowed?
 	}
 }

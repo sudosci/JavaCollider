@@ -65,7 +65,7 @@ import org.xml.sax.SAXParseException;
  * @see #readDefinitions
  * @see UGen#ar( String )
  */
-public class UGenInfo implements Constants, Comparable {
+public class UGenInfo implements Constants, Comparable<UGenInfo> {
 	private static final String UGENDEFS_DTD0 = "ugendefs.dtd";
 	private static final String UGENDEFS_DTD = "de/sciss/jcollider/" + UGENDEFS_DTD0;
 
@@ -85,7 +85,7 @@ public class UGenInfo implements Constants, Comparable {
 	 * dataset for the UnaryOpUGen ugen (there is only one dataset for all the
 	 * operators).
 	 */
-	public static Map infos;
+	public static Map<String, UGenInfo> infos;
 
 	/**
 	 * Value for <code>outputType</code> : the ugen has a fixed number of outputs
@@ -118,14 +118,14 @@ public class UGenInfo implements Constants, Comparable {
 	 * @see Constants#kAudioRate
 	 * @see Constants#kControlRate
 	 */
-	public final Set rates;
+	public final Set<Object> rates;
 	/**
 	 * Maps special names (<code>String</code>s) to specialIndex values
 	 * (<code>Integer</code>s). For example, the BinaryOpUGen will have mappings
 	 * like &quot;absdif&quot; -> Integer( 38 ) etc. For UGens which do not deal
 	 * with special indices, this field is <code>null</code>
 	 */
-	public final Map specials; // maps String special name to Integer( specialIndex ) ; may be null
+	public final Map<String, Integer> specials; // maps String special name to Integer( specialIndex ) ; may be null
 	/**
 	 * Defines how the number of outputs is determined. One of <code>FIXED</code>,
 	 * <code>ARG</code> or <code>ARRAYSIZE<code>
@@ -151,7 +151,7 @@ public class UGenInfo implements Constants, Comparable {
 	 */
 	public final float outputMul;
 
-	private UGenInfo(String className, Arg[] args, Set rates, Map specials, int outputType, int outputVal,
+	private UGenInfo(String className, Arg[] args, Set<Object> rates, Map<String, Integer> specials, int outputType, int outputVal,
 			float outputMul) {
 		this.className = className;
 		this.args = args;
@@ -162,12 +162,9 @@ public class UGenInfo implements Constants, Comparable {
 		this.outputMul = outputMul;
 	}
 
-	public int compareTo(Object o) {
-		if (o instanceof UGenInfo) {
-			return this.className.compareTo(((UGenInfo) o).className);
-		} else {
-			throw new ClassCastException();
-		}
+	@Override
+	public int compareTo(UGenInfo ugi) {
+			return this.className.compareTo(ugi.className);
 	}
 
 	/**
@@ -184,8 +181,8 @@ public class UGenInfo implements Constants, Comparable {
 		final Integer specialIndex = new Integer(ugen.getSpecialIndex());
 		String specialName;
 
-		for (Iterator iter = specials.keySet().iterator(); iter.hasNext();) {
-			specialName = iter.next().toString();
+		for (Iterator<String> iter = specials.keySet().iterator(); iter.hasNext();) {
+			specialName = iter.next();
 			if (specials.get(specialName).equals(specialIndex))
 				return specialName;
 		}
@@ -198,7 +195,8 @@ public class UGenInfo implements Constants, Comparable {
 	 * the ugen, and furthermore to create a keyword constructor for the ugen (to be
 	 * done).
 	 */
-	public String getArgNameForInput(UGen ugen, int argIdx) {
+	@SuppressWarnings("unused")
+	public String getArgNameForInput(UGen ug, int argIdx) {
 		if (args.length == 0)
 			return null;
 		if (argIdx < args.length) {
@@ -259,7 +257,7 @@ public class UGenInfo implements Constants, Comparable {
 		boolean b = false;
 
 		out.print("UGenInfo(\"" + className + "\")\n rates: ");
-		for (Iterator iter = rates.iterator(); iter.hasNext(); b = true) {
+		for (Iterator<Object> iter = rates.iterator(); iter.hasNext(); b = true) {
 			if (b)
 				out.print(", ");
 			out.print(iter.next());
@@ -278,30 +276,6 @@ public class UGenInfo implements Constants, Comparable {
 		}
 		out.println(" ]");
 	}
-
-	// public UGen ar( Object[] args )
-	// {
-	// if( !rates.contains( kAudioRate )) throw new IllegalArgumentException(
-	// kAudioRate );
-	// }
-	//
-	// public UGen kr( Object[] args )
-	// {
-	// if( !rates.contains( kControlRate )) throw new IllegalArgumentException(
-	// kControlRate );
-	// }
-	//
-	// public UGen ir( Object[] args )
-	// {
-	// if( !rates.contains( kScalarRate )) throw new IllegalArgumentException(
-	// kScalarRate );
-	// }
-	//
-	// public UGen dr( Object[] args )
-	// {
-	// if( !rates.contains( kDemandRate )) throw new IllegalArgumentException(
-	// kDemandRate );
-	// }
 
 	/**
 	 * Reads in the ugen definition database from a text resource inside the
@@ -334,7 +308,7 @@ public class UGenInfo implements Constants, Comparable {
 		final DocumentBuilderFactory builderFactory;
 		final DocumentBuilder builder;
 		final NodeList ugenList;
-		final Map map = new HashMap();
+		final Map<String, UGenInfo> map = new HashMap<>();
 		Element node, elem;
 		UGenInfo info;
 
@@ -350,10 +324,10 @@ public class UGenInfo implements Constants, Comparable {
 
 			for (int i = 0; i < ugenList.getLength(); i++) {
 				elem = (Element) ugenList.item(i);
-				info = decodeUGenNode(domDoc, elem);
+				info = decodeUGenNode(elem);
 				map.put(info.className, info);
 				if (info.specials != null) {
-					for (Iterator iter = info.specials.keySet().iterator(); iter.hasNext();) {
+					for (Iterator<String> iter = info.specials.keySet().iterator(); iter.hasNext();) {
 						map.put(iter.next(), info); // alias entry
 					}
 				}
@@ -391,7 +365,7 @@ public class UGenInfo implements Constants, Comparable {
 		final UGenInfo[] infos2 = new UGenInfo[infos.size()];
 		UGenInfo info;
 		int numInfos, iRates, flags, numSpecials;
-		Map.Entry me;
+		Map.Entry<String, UGenInfo> me;
 
 		if (path.exists()) {
 			if (!path.delete())
@@ -399,9 +373,9 @@ public class UGenInfo implements Constants, Comparable {
 		}
 		raf = new RandomAccessFile(path, "rw");
 		numInfos = 0;
-		for (Iterator iter = infos.entrySet().iterator(); iter.hasNext();) {
-			me = (Map.Entry) iter.next();
-			info = (UGenInfo) me.getValue();
+		for (Iterator<Map.Entry<String, UGenInfo>> iter = infos.entrySet().iterator(); iter.hasNext();) {
+			me = iter.next();
+			info = me.getValue();
 			if (me.getKey().equals(info.className)) {
 				infos2[numInfos++] = info;
 			}
@@ -429,11 +403,6 @@ public class UGenInfo implements Constants, Comparable {
 				raf.writeShort(info.outputVal);
 				raf.writeFloat(info.outputMul);
 
-				// if( info.className.equals( "DiskOut" )) {
-				// System.out.println( "DiskOut: outputType = " + info.outputType + "; outputVal
-				// = " + info.outputVal + "; outputMul = " + info.outputMul );
-				// }
-
 				raf.writeShort(info.args.length);
 				for (int j = 0; j < info.args.length; j++) {
 					raf.writeUTF(info.args[j].name);
@@ -448,10 +417,11 @@ public class UGenInfo implements Constants, Comparable {
 				numSpecials = info.specials == null ? 0 : info.specials.size();
 				raf.writeShort(numSpecials);
 				if (numSpecials > 0) {
-					for (Iterator iter = info.specials.entrySet().iterator(); iter.hasNext();) {
-						me = (Map.Entry) iter.next();
-						raf.writeUTF(me.getKey().toString());
-						raf.writeShort(((Number) me.getValue()).shortValue());
+					Map.Entry<String, Integer> me2 = null;
+					for (Iterator<Map.Entry<String, Integer>> iter = info.specials.entrySet().iterator(); iter.hasNext();) {
+						me2 = iter.next();
+						raf.writeUTF(me2.getKey());
+						raf.writeShort(((Number) me2.getValue()).shortValue());
 					}
 				}
 			}
@@ -485,9 +455,9 @@ public class UGenInfo implements Constants, Comparable {
 	 */
 	public static void readBinaryDefinitions() throws IOException {
 		final DataInputStream dis;
-		final Map map;
+		final Map<String, UGenInfo> map;
 		final int numInfos;
-		final UGenInfo[] infos;
+		final UGenInfo[] nfos;
 		String className, name;
 		int mapSize, iRates, outputType, outputVal;
 		int numArgs, flags, specialValue, numSpecials;
@@ -495,12 +465,10 @@ public class UGenInfo implements Constants, Comparable {
 		boolean isArray;
 		UGenInfo info;
 		Arg[] args;
-		Set rates;
-		Map specials;
+		Set<Object> rates;
+		Map<String, Integer> specials;
 
 		final InputStream is = UGenInfo.class.getResourceAsStream("ugendefs.bin");
-		// dis = new DataInputStream(new
-		// BufferedInputStream(ClassLoader.getSystemClassLoader().getResourceAsStream("de/sciss/jcollider/ugendefs.bin")));
 		dis = new DataInputStream(new BufferedInputStream(is));
 		try {
 			if (dis.readInt() != BINARY_FILE_COOKIE)
@@ -508,12 +476,12 @@ public class UGenInfo implements Constants, Comparable {
 			if (dis.readShort() > BINARY_FILE_VERSION)
 				throw new IOException("Unsupported binary ugen file version");
 			numInfos = dis.readShort();
-			infos = new UGenInfo[numInfos];
+			nfos = new UGenInfo[numInfos];
 			mapSize = numInfos;
 			for (int i = 0; i < numInfos; i++) {
 				className = dis.readUTF();
 				iRates = dis.readByte();
-				rates = new HashSet(4);
+				rates = new HashSet<>(4);
 				if ((iRates & 0x01) != 0)
 					rates.add(kScalarRate);
 				if ((iRates & 0x02) != 0)
@@ -538,7 +506,7 @@ public class UGenInfo implements Constants, Comparable {
 				}
 				numSpecials = dis.readShort();
 				if (numSpecials > 0) {
-					specials = new HashMap(numSpecials);
+					specials = new HashMap<>(numSpecials);
 					for (int j = 0; j < numSpecials; j++) {
 						name = dis.readUTF();
 						specialValue = dis.readShort();
@@ -547,14 +515,14 @@ public class UGenInfo implements Constants, Comparable {
 				} else {
 					specials = null;
 				}
-				infos[i] = new UGenInfo(className, args, rates, specials, outputType, outputVal, outputMul);
+				nfos[i] = new UGenInfo(className, args, rates, specials, outputType, outputVal, outputMul);
 			}
-			map = new HashMap(mapSize);
+			map = new HashMap<>(mapSize);
 			for (int i = 0; i < numInfos; i++) {
-				info = infos[i];
+				info = nfos[i];
 				map.put(info.className, info);
 				if (info.specials != null) {
-					for (Iterator iter = info.specials.keySet().iterator(); iter.hasNext();) {
+					for (Iterator<String> iter = info.specials.keySet().iterator(); iter.hasNext();) {
 						map.put(iter.next(), info); // alias entry
 					}
 				}
@@ -566,14 +534,14 @@ public class UGenInfo implements Constants, Comparable {
 		UGenInfo.infos = map;
 	}
 
-	private static UGenInfo decodeUGenNode(Document domDoc, Element node) {
-		final Set rates = new HashSet();
+	private static UGenInfo decodeUGenNode(Element node) {
+		final Set<Object> rates = new HashSet<>();
 		final String className = node.getAttribute("class");
 		final NodeList argList = node.getElementsByTagName("arg");
 		final NodeList outList = node.getElementsByTagName("outputs");
 		final NodeList specialList = node.getElementsByTagName("special");
 		final Arg[] args = new Arg[argList.getLength()];
-		final Map specials;
+		final Map<String, Integer> specials;
 
 		Element elem;
 		String val, name;
@@ -659,7 +627,7 @@ public class UGenInfo implements Constants, Comparable {
 			outputVal = 1; // default
 
 		if (specialList.getLength() > 0) {
-			specials = new HashMap();
+			specials = new HashMap<>();
 			for (int i = 0; i < specialList.getLength(); i++) {
 				elem = (Element) specialList.item(i);
 				name = elem.getAttribute("name");
@@ -732,11 +700,10 @@ public class UGenInfo implements Constants, Comparable {
 		 *
 		 * @see javax.xml.parsers.DocumentBuilder#setEntityResolver( EntityResolver )
 		 */
+		@Override
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 
-			if (systemId.endsWith(UGENDEFS_DTD)) { // replace our dtd with java resource
-				// InputStream dtdStream = getClass().getClassLoader().getResourceAsStream(
-				// UGENDEFS_DTD );
+			if (systemId.endsWith(UGENDEFS_DTD)) { 
 				InputStream dtdStream = getClass().getResourceAsStream(UGENDEFS_DTD0);
 				InputSource is = new InputSource(dtdStream);
 				is.setSystemId(UGENDEFS_DTD);

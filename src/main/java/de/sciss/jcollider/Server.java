@@ -69,8 +69,8 @@ public class Server implements Constants, EventManager.Processor {
 	 */
 	public static final int DEFAULT_PORT = 57110;
 
-	private static final Set setServers = Collections.synchronizedSet(new HashSet());
-	private static final Map mapServerNames = Collections.synchronizedMap(new HashMap());
+	private static final Set<Server> setServers = Collections.synchronizedSet(new HashSet<>());
+	private static final Map<String, Server> mapServerNames = Collections.synchronizedMap(new HashMap<>());
 
 	private final String name;
 	private final InetSocketAddress addr;
@@ -94,14 +94,11 @@ public class Server implements Constants, EventManager.Processor {
 	private static boolean inform = true;
 	protected static volatile PrintStream printStream = System.err;
 
-	// protected static final Timer appClock = new Timer(); // nice work-around, eh?
 	private StatusWatcher aliveThread = null;
 
 	// OSC communication
 	protected final OSCClient c;
 	private final OSCMultiResponder multi;
-	// private final OSCTransmitter trns;
-	// private final DatagramChannel dch;
 	private int dumpMode = kDumpOff;
 
 	private final Group defaultGroup;
@@ -111,7 +108,7 @@ public class Server implements Constants, EventManager.Processor {
 
 	// messaging
 	private final EventManager em = new EventManager(this);
-	private final List collBootCompletion = new ArrayList();
+	private final List<CompletionAction> collBootCompletion = new ArrayList<>();
 
 	protected BootThread bootThread = null;
 
@@ -166,9 +163,6 @@ public class Server implements Constants, EventManager.Processor {
 		this.options = options;
 		this.clientID = clientID;
 
-		// this doesn't work XXX
-		// isLocal = addr.getAddress().isAnyLocalAddress();
-		// isLocal = true;
 		final InetAddress host = addr.getAddress();
 		if (host == null)
 			throw new IOException("Server.new : unresolved network address " + addr);
@@ -177,7 +171,6 @@ public class Server implements Constants, EventManager.Processor {
 		Server.mapServerNames.put(name, this);
 		Server.setServers.add(this);
 
-		// defaultGroup = Group.basicNew( this, 1 ); // XXX should be changed
 		defaultGroup = Group.basicNew(this, 0);
 
 		try {
@@ -186,12 +179,9 @@ public class Server implements Constants, EventManager.Processor {
 			// sendMsg/sendBundle in order for responders to get the replies!!
 
 			c = OSCClient.newUsing(options.getProtocol(), 0, host.isLoopbackAddress());
-			// c.start();
 			c.setBufferSize(0x10000);
 			multi = new OSCMultiResponder(c);
-			// dch = (DatagramChannel) multi.getChannel(); // XXX
-			// trns = new OSCTransmitter( dch, addr );
-			// trns = OSCTransmitter.newUsing( dch );
+			
 			c.setTarget(addr);
 
 			createNewAllocators();
@@ -208,31 +198,6 @@ public class Server implements Constants, EventManager.Processor {
 		// at the moment, also it's not too useful anyway
 		// Server.changed(\serverAdded, this);
 	}
-
-	// // when SC quits, the DatagramChannel is closed
-	// // ; if we continue to use it, we might end up with
-	// // java.nio.channels.ClosedChannelException s.
-	// // hence, we re-create the responders
-	// // ; NO WE DON'T XXX
-	// private void initCommunication()
-	// throws IOException
-	// {
-	//// System.err.println( "initCommunication" );
-	// if( multi != null ) {
-	//// System.err.println( " dipose "+multi.hashCode() );
-	// multi.dispose();
-	//// multi = null;
-	// }
-	//// System.err.println( " recreate multi" );
-	// multi = new OSCMultiResponder( addr );
-	// dch = multi.getChannel();
-	//// System.err.println( " recreate trns; multi = "+multi.hashCode() );
-	// trns = new OSCTransmitter( dch, addr );
-	//// System.err.println( " recreate done" );
-	//
-	// createNewAllocators();
-	// resetBufferAutoInfo();
-	// }
 
 	/**
 	 * Creates a server representation for the default client (<code>0</code>).
@@ -278,23 +243,7 @@ public class Server implements Constants, EventManager.Processor {
 		c.start();
 	}
 
-	/**
-	 * Returns the socket address that the client (that's us) is using to send
-	 * messages to the server
-	 *
-	 * @return the socket address which is used to send messages to the server (i.e.
-	 *         the sender of <code>sendMsg</code> and <code>sendBundle</code>)
-	 *
-	 * @see AbstractOSCCommunicator#getChannel()
-	 */
-	// public InetSocketAddress getClientAddr()
-	// {
-	// final DatagramSocket ds = ((DatagramChannel) multi.getChannel()).socket(); //
-	// XXX
-	//
-	// return new InetSocketAddress( ds.getLocalAddress(), ds.getLocalPort() );
-	// }
-
+	
 	/**
 	 * Queries the server representation's name
 	 *
@@ -430,7 +379,6 @@ public class Server implements Constants, EventManager.Processor {
 	}
 
 	protected void setRunning(boolean serverRunning) {
-		// System.err.println( "ici : "+serverRunning );
 		synchronized (syncBootThread) {
 			if (this.serverRunning != serverRunning) {
 				this.serverRunning = serverRunning;
@@ -445,9 +393,8 @@ public class Server implements Constants, EventManager.Processor {
 							/* empty */ }
 					}
 				} else {
-					// System.err.println( "ici" );
 					while (!collBootCompletion.isEmpty()) {
-						((CompletionAction) collBootCompletion.remove(0)).completion(this);
+						collBootCompletion.remove(0).completion(this);
 					}
 					changed(ServerEvent.RUNNING);
 				}
@@ -620,6 +567,7 @@ public class Server implements Constants, EventManager.Processor {
 			throw new IllegalStateException("Server.boot() : only allowed for local servers!");
 
 		final CompletionAction whenBooted = new CompletionAction() {
+			@Override
 			public void completion(Server s) {
 				try {
 					s.setBooting(false);
@@ -641,11 +589,7 @@ public class Server implements Constants, EventManager.Processor {
 
 		setBooting(true);
 		try {
-			// if( startAliveThread ) startAliveThread();
-
-			// XXX inefficient since it was created already in constructor, should use reset
-			// instead
-			// (serverOptions is immutable here)
+			
 			createNewAllocators();
 			resetBufferAutoInfo();
 
@@ -676,7 +620,7 @@ public class Server implements Constants, EventManager.Processor {
 	/**
 	 * Sends a message to the server requesting OSC dumping being turned on or off
 	 *
-	 * @param dumpMode
+	 * @param dm
 	 *            either of <code>kDumpOff</code> (do not dump),
 	 *            <code>kDumpText</code> (dump text format), <code>kDumpHex</code>
 	 *            (hexadecimal printout), <code>kDumpBoth</code> (both text + hex)
@@ -686,22 +630,22 @@ public class Server implements Constants, EventManager.Processor {
 	 * @throws IOException
 	 *             if the message failed to be sent
 	 */
-	public void dumpOSC(int dumpMode) throws IOException {
-		sendMsg(dumpOSCMsg(dumpMode));
+	public void dumpOSC(int dm) throws IOException {
+		sendMsg(dumpOSCMsg(dm));
 	}
 
 	/**
 	 * Creates the OSC message which will ask the server to turn on or off OSC
 	 * dumping
 	 *
-	 * @param dumpMode
+	 * @param dm
 	 *            see <code>dumpOSC( int )</code> for details
 	 *
 	 * @see #dumpOSC( int )
 	 */
-	public OSCMessage dumpOSCMsg(int dumpMode) {
-		this.dumpMode = dumpMode;
-		return new OSCMessage("/dumpOSC", new Object[] { new Integer(dumpMode) });
+	public OSCMessage dumpOSCMsg(int dm) {
+		this.dumpMode = dm;
+		return new OSCMessage("/dumpOSC", new Object[] { new Integer(dm) });
 	}
 
 	/**
@@ -710,14 +654,13 @@ public class Server implements Constants, EventManager.Processor {
 	 * client from the server, before they get delivered to registered
 	 * <code>OSCResponderNode</code>s.
 	 *
-	 * @param dumpMode
+	 * @param dm
 	 *            see <code>dumpOSC( int )</code> for details
 	 *
 	 * @see #dumpOSC( int )
 	 */
-	public void dumpIncomingOSC(int dumpMode) {
-		// multi.dumpOSC( dumpMode, printStream );
-		c.dumpIncomingOSC(dumpMode, printStream);
+	public void dumpIncomingOSC(int dm) {
+		c.dumpIncomingOSC(dm, printStream);
 	}
 
 	/**
@@ -725,14 +668,13 @@ public class Server implements Constants, EventManager.Processor {
 	 * outgoing messages are not dumped. Outgoing messages are those send via
 	 * <code>sendMsg</code> or <code>sendBundle</code>.
 	 *
-	 * @param dumpMode
+	 * @param dm
 	 *            see <code>dumpOSC( int )</code> for details
 	 *
 	 * @see #dumpOSC( int )
 	 */
-	public void dumpOutgoingOSC(int dumpMode) {
-		// trns.dumpOSC( dumpMode, printStream );
-		c.dumpOutgoingOSC(dumpMode, printStream);
+	public void dumpOutgoingOSC(int dm) {
+		c.dumpOutgoingOSC(dm, printStream);
 	}
 
 	/**
@@ -745,7 +687,7 @@ public class Server implements Constants, EventManager.Processor {
 	 * By default (when creating a new instance of <code>Server</code>), the
 	 * notification flag is <code>true</code>.
 	 *
-	 * @param notified
+	 * @param notif
 	 *            <code>true</code> to turn notification on, <code>false</code> to
 	 *            turn it off
 	 *
@@ -759,9 +701,9 @@ public class Server implements Constants, EventManager.Processor {
 	 * @throws IOException
 	 *             if the message failed to be sent
 	 */
-	public void notify(boolean notified) throws IOException {
-		this.notified = notified;
-		sendMsg(new OSCMessage("/notify", new Object[] { new Integer(notified ? 1 : 0) }));
+	public void notify(boolean notif) throws IOException {
+		this.notified = notif;
+		sendMsg(new OSCMessage("/notify", new Object[] { new Integer(notif ? 1 : 0) }));
 	}
 
 	/**
@@ -781,12 +723,13 @@ public class Server implements Constants, EventManager.Processor {
 	 * default group. This is automatically called after booting, but not
 	 * automatically when starting the ping-thread manually. this behaviour will
 	 * change in a future version.
+	 * 
+	 * @throws IOException but not really ;)
 	 *
 	 * @synchronization must be called in the event thread
 	 */
 	public void initTree() throws IOException {
 		nodeAllocator = new NodeIDAllocator(getClientID());
-		// sendMsg( new OSCMessage( "/g_new", new Object[] { new Integer( 1 )}));
 	}
 
 	/**
@@ -843,14 +786,12 @@ public class Server implements Constants, EventManager.Processor {
 
 	private void bootServerApp(boolean startAliveThread) {
 		final int port = getAddr().getPort();
-		final List cmdList = getOptions().toOptionList(port);
+		final List<String> cmdList = getOptions().toOptionList(port);
 		cmdList.add(0, Server.program);
 		final String[] cmdArray = ServerOptions.optionListToStringArray(cmdList);
 
 		Server.inform("Booting SuperCollider server at " + getOptions().getProtocol().toUpperCase() + " port " + port
 				+ " ...");
-		// bootThread = new BootThread( this, cmdArray, getOptions().getEnvMap(),
-		// startAliveThread );
 		synchronized (syncBootThread) {
 			bootThread = new BootThread(this, cmdArray, startAliveThread);
 		}
@@ -944,18 +885,6 @@ public class Server implements Constants, EventManager.Processor {
 		}
 	}
 
-	// private static void resumeThreads()
-	// throws IOException
-	// {
-	// Server server;
-	//
-	// for( Iterator iter = setServers.iterator(); iter.hasNext(); ) {
-	// server = (Server) iter.next();
-	// server.stopAliveThread();
-	// server.startAliveThread( 0.7f, 0.7f);
-	// }
-	// }
-
 	protected void status() throws IOException {
 		sendMsg(statusMsg);
 	}
@@ -972,7 +901,6 @@ public class Server implements Constants, EventManager.Processor {
 	 *             buffer overflow (message exceeding 8K)
 	 */
 	public void sendMsg(OSCMessage msg) throws IOException {
-		// trns.send( msg );
 		c.send(msg);
 	}
 
@@ -988,7 +916,6 @@ public class Server implements Constants, EventManager.Processor {
 	 *             because of a buffer overflow (bundle exceeding 8K)
 	 */
 	public void sendBundle(OSCBundle bndl) throws IOException {
-		// trns.send( bndl );
 		c.send(bndl);
 	}
 
@@ -1258,6 +1185,7 @@ public class Server implements Constants, EventManager.Processor {
 		// needed
 		if (!waitingForBufInfo) {
 			bufInfoResponder = new OSCResponderNode(this, "/b_info", new OSCResponderNode.Action() {
+				@Override
 				public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 					if (msg.getArgCount() < 4)
 						return;
@@ -1286,6 +1214,10 @@ public class Server implements Constants, EventManager.Processor {
 		waitingBufs++;
 	}
 
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	private void resetBufferAutoInfo() throws IOException {
 		bufferArray = new Buffer[options.getNumBuffers()];
 		waitingBufs = 0;
@@ -1337,20 +1269,10 @@ public class Server implements Constants, EventManager.Processor {
 	private void cleanUpAfterQuit() {
 		try {
 			stopAliveThread();
-			// alive = false;
 			dumpMode = 0;
 			setBooting(false);
 			setRunning(false);
-			// if(scopeWindow.notNil) { scopeWindow.quit };
-			// new RootNode( this ).freeAll();
-			//
-			// sendMsg( new OSCMessage( "/g_freeAll", new Object[] { new Integer( 0 )}));
-			// try {
-			// Thread.sleep( 1000 );
-			// }
-			// catch( InterruptedException e1 ) {}
-
-			// initCommunication();
+			
 			createNewAllocators();
 			resetBufferAutoInfo();
 		} catch (IOException e1) {
@@ -1432,8 +1354,8 @@ public class Server implements Constants, EventManager.Processor {
 	public static void quitAll() {
 		Server s;
 
-		for (Iterator iter = setServers.iterator(); iter.hasNext();) {
-			s = (Server) iter.next();
+		for (Iterator<Server> iter = setServers.iterator(); iter.hasNext();) {
+			s = iter.next();
 			if (s.isLocal) {
 				try {
 					s.quitAndWait();
@@ -1446,8 +1368,6 @@ public class Server implements Constants, EventManager.Processor {
 	}
 
 	protected static void printError(String name, Throwable t) {
-		// printStream.println( name + " : " + t.getClass().getName() + " : " +
-		// t.getLocalizedMessage() );
 		printStream.print(name + " : ");
 		t.printStackTrace(printStream);
 	}
@@ -1457,6 +1377,7 @@ public class Server implements Constants, EventManager.Processor {
 	/**
 	 * This is used to dispatch server events. Do not call this method.
 	 */
+	@Override
 	public void processEvent(BasicEvent e) {
 		ServerListener listener;
 		final ServerEvent sce = (ServerEvent) e;
@@ -1489,13 +1410,10 @@ public class Server implements Constants, EventManager.Processor {
 
 	private class BootThread extends Thread {
 		private final String[] cmdArray;
-		// private final String[] envArray;
 		protected volatile boolean keepScRunning = true;
 		protected final Server server;
 		private final boolean startAliveThread;
 
-		// private BootThread( Server server, String[] cmdArray, Map envMap, boolean
-		// startAliveThread )
 		protected BootThread(Server server, String[] cmdArray, boolean startAliveThread) {
 			super(server.getName());
 
@@ -1503,22 +1421,11 @@ public class Server implements Constants, EventManager.Processor {
 			this.server = server;
 			this.startAliveThread = startAliveThread;
 
-			// if( envMap != null ) {
-			// Map.Entry me;
-			// final Iterator iter = envMap.entrySet().iterator();
-			// envArray = new String[ envMap.size() ];
-			// for( int i = 0; iter.hasNext(); i++ ) {
-			// me = (Map.Entry) iter.next();
-			// envArray[ i ] = me.getKey().toString() + "=" + me.getValue().toString();
-			// }
-			// } else {
-			// envArray = null;
-			// }
-
 			setDaemon(true);
 			start();
 		}
 
+		@Override
 		public void run() {
 			Process p = null;
 			int resultCode = -1;
@@ -1536,7 +1443,6 @@ public class Server implements Constants, EventManager.Processor {
 				// because they seem to rely on some environment variables that get lost this
 				// way
 				// (providing a null argument preserves the current environment variables)
-				// p = Runtime.getRuntime().exec( cmdArray, envArray, cwd );
 				p = Runtime.getRuntime().exec(cmdArray, null, cwd);
 				// "Implementation note: It is a good idea for the input stream to be buffered."
 				inStream = new BufferedInputStream(p.getInputStream());
@@ -1545,9 +1451,7 @@ public class Server implements Constants, EventManager.Processor {
 				while (keepScRunning && pRunning) {
 					if (!cStarted) {
 						try {
-							// System.err.println( "...try" );
 							server.start();
-							// System.err.println( "...succeeded" );
 							cStarted = true;
 							if (startAliveThread)
 								server.startAliveThread(2.0f, 0.7f, 8); // allow really long unresponsiveness as a real
@@ -1566,7 +1470,9 @@ public class Server implements Constants, EventManager.Processor {
 					handleConsole(inStream, inBuf);
 					handleConsole(errStream, errBuf);
 					try {
-						resultCode = p.exitValue();
+						if (p != null)
+							resultCode = p.exitValue();
+						
 						pRunning = false;
 						p = null;
 						printStream.println("scsynth terminated (" + resultCode + ")");
@@ -1574,12 +1480,11 @@ public class Server implements Constants, EventManager.Processor {
 					// gets thrown if we call exitValue() while sc still running
 					catch (IllegalThreadStateException e1) {
 						/* ignored */ }
-				} // while( keepScRunning && pRunning )
+				} 
 			} catch (IOException e3) {
 				printError("BootThread.run", e3);
 			} finally {
 				if (p != null) {
-					// printStream.println( "scsynth didn't quit. we're killing it!" );
 					p.destroy();
 				}
 				synchronized (syncBootThread) {
@@ -1607,7 +1512,7 @@ public class Server implements Constants, EventManager.Processor {
 					printStream.write(buf, 0, i);
 				}
 			} catch (IOException e1) {
-				/* ignored XXX */ }
+				/* ignored  */ }
 		}
 	}
 
@@ -1644,7 +1549,6 @@ public class Server implements Constants, EventManager.Processor {
 	}
 
 	private class StatusWatcher
-			// extends TimerTask
 			implements OSCResponderNode.Action, ActionListener {
 		private int alive = 0;
 		private final int delayMillis;
@@ -1653,11 +1557,6 @@ public class Server implements Constants, EventManager.Processor {
 		private final int deathBounces;
 		private final Timer timer;
 
-		// private StatusWatcher( float delay, float period )
-		// {
-		// this( delay, period, 4 );
-		// }
-		//
 		protected StatusWatcher(float delay, float period, int deathBounces) {
 			delayMillis = (int) (delay * 1000);
 			periodMillis = (int) (period * 1000);
@@ -1668,23 +1567,21 @@ public class Server implements Constants, EventManager.Processor {
 		}
 
 		protected void start() throws IOException {
-			// System.err.println( "start" );
-			// new Throwable().printStackTrace();
 			resp.add();
 			timer.restart();
-			// appClock.schedule( this, delayMillis, periodMillis );
 		}
 
+		/**
+		 * 
+		 * @throws IOException
+		 */
 		protected void stop() throws IOException {
-			// System.err.println( "stop" );
-			// new Throwable().printStackTrace();
-			// this.cancel();
 			timer.stop();
 			resp.remove();
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
-			// System.err.println( "setRunning( "+alive+" )" );
 			if (alive > 0) {
 				setRunning(true);
 				alive--;
@@ -1693,7 +1590,6 @@ public class Server implements Constants, EventManager.Processor {
 			}
 			if (serverBooting && getOptions().getProtocol().equals(OSCChannel.TCP) && !c.isConnected()) {
 				try {
-					// c.connect();
 					c.start();
 				} catch (IOException e1) {
 					printError("Server.status", e1);
@@ -1707,7 +1603,8 @@ public class Server implements Constants, EventManager.Processor {
 			}
 		}
 
-		// XXX create specific osc message decoder
+		//  create specific osc message decoder
+		@Override
 		public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 			if (msg.getArgCount() < 9)
 				return;
@@ -1715,7 +1612,6 @@ public class Server implements Constants, EventManager.Processor {
 			alive = deathBounces;
 
 			try {
-				// msg.at( 0 ) == 1
 				synchronized (status) {
 					status.numUGens = ((Number) msg.getArg(1)).intValue();
 					status.numSynths = ((Number) msg.getArg(2)).intValue();
@@ -1726,7 +1622,6 @@ public class Server implements Constants, EventManager.Processor {
 					status.sampleRate = ((Number) msg.getArg(7)).doubleValue();
 					status.actualSampleRate = ((Number) msg.getArg(8)).doubleValue();
 				}
-				// setRunning( true ); // should be thread safe ?
 				changed(ServerEvent.COUNTS);
 			} catch (ClassCastException e1) {
 				printError("StatusWatcher.messageReceived", e1);
@@ -1750,14 +1645,16 @@ public class Server implements Constants, EventManager.Processor {
 		private final Object[] failArgMatches;
 		private final int failMinArgNum;
 
-		// protected SyncResponder( String doneCmdName, String failCmdName, int argIdx,
-		// Object argMatch )
-		// throws IOException
-		// {
-		// this( doneCmdName, failCmdName, new int[] { argIdx }, new Object[] { argMatch
-		// });
-		// }
-
+		/**
+		 * 
+		 * @param doneCmdName
+		 * @param failCmdName
+		 * @param doneArgIndices
+		 * @param doneArgMatches
+		 * @param failArgIndices
+		 * @param failArgMatches
+		 * @throws IOException
+		 */
 		protected SyncResponder(String doneCmdName, String failCmdName, int[] doneArgIndices, Object[] doneArgMatches,
 				int[] failArgIndices, Object[] failArgMatches) throws IOException {
 			this.doneCmdName = doneCmdName;
@@ -1797,6 +1694,7 @@ public class Server implements Constants, EventManager.Processor {
 				failResp.remove();
 		}
 
+		@Override
 		public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 			if (msg.getName().equals(doneCmdName)) {
 				doneMessageReceived(msg);
