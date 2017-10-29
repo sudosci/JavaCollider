@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
-import de.sciss.jcollider.JCollider;
+import de.sciss.jcollider.JavaCollider;
 import de.sciss.jcollider.UGenInfo;
 
 public class Main {
@@ -50,8 +50,8 @@ public class Main {
 			});
 
 		} else {
-			System.err.println("\nJCollider v" + JCollider.VERSION + "\n" + JCollider.getCopyrightString() + "\n\n"
-					+ JCollider.getCreditsString() + "\n\n  " + JCollider.getResourceString("errIsALibrary"));
+			System.err.println("\nJCollider v" + JavaCollider.VERSION + "\n" + JavaCollider.getCopyrightString() + "\n\n"
+					+ JavaCollider.getCreditsString() + "\n\n  " + JavaCollider.getResourceString("errIsALibrary"));
 
 			System.out.println("\nThe following options are available:\n" + "--test1    SynthDef demo\n"
 					+ "--test2    MotoRev Control Demo\n" + "--test3    Bus Tests\n"

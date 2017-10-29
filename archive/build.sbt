@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "de.sciss" % "scisslib" % "1.0.0"
 )
 
-mainClass in (Compile, run) := Some("de.sciss.jcollider.JCollider")
+mainClass in (Compile, run) := Some("de.sciss.jcollider.JavaCollider")
 
 // ---- publishing ----
 

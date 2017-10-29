@@ -1,6 +1,6 @@
 /*
  * SynthDef.java
- * (JCollider)
+ * (JavaCollider)
  * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
  * This software is published under the GNU Lesser General Public License v2.1+
  * For further information, please contact Hanns Holger Rutz at
@@ -58,10 +58,10 @@ import de.sciss.net.OSCMessage;
  * <code>java.lang.reflect</code> was used to dynamically load UGen subclasses.
  * This concept was dropped because it would imply
  * <UL>
- * <LI>that the JCollider java source is modified whenever new UGens are
+ * <LI>that the JavaCollider java source is modified whenever new UGens are
  * introduced to supercollider</LI>
  * <LI>a tree of some hundred classes would have to be created with all the
- * memory requirements and time consumption when the VM loads the JCollider
+ * memory requirements and time consumption when the VM loads the JavaCollider
  * package</LI>
  * <LI>having to deal with all the smalltalk idiosyncratic stuff in the UGen
  * representations which often are different from the actual UGens objects as
@@ -154,12 +154,12 @@ import de.sciss.net.OSCMessage;
  * resonance value of the synth at certain times.
  * <p>
  * You will probably want to use SClang to prototype the synthesizers and then
- * just port them to JCollider which shouldn't be too difficult after some
+ * just port them to JavaCollider which shouldn't be too difficult after some
  * practising. See the JColliderDemo for more examples of UGen graphs.
  *
- * @todo for the same synth def, the graphs produced by SClang and JCollider can
+ * @todo for the same synth def, the graphs produced by SClang and JavaCollider can
  *       look slightly different regarding the ordering of the topology. this
- *       should be reviewed more thoroughly. It doesn't seem that JCollider is
+ *       should be reviewed more thoroughly. It doesn't seem that JavaCollider is
  *       less efficient (from the CPU loads point of view), but it makes
  *       comparison and debugging a bit tricky
  *

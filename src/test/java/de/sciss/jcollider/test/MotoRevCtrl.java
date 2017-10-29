@@ -29,7 +29,7 @@ import javax.swing.WindowConstants;
 
 import de.sciss.jcollider.Control;
 import de.sciss.jcollider.GraphElem;
-import de.sciss.jcollider.JCollider;
+import de.sciss.jcollider.JavaCollider;
 import de.sciss.jcollider.LagControl;
 import de.sciss.jcollider.Server;
 import de.sciss.jcollider.ServerEvent;
@@ -47,7 +47,7 @@ import de.sciss.net.OSCMessage;
 /**
  * Provides a control enabled version of MotoRev with simple GUI.
  * <p>
- * To compile, be sure to add JCollider.jar to your classpath.
+ * To compile, be sure to add JavaCollider.jar to your classpath.
  *
  * @author Hanns Holger Rutz
  * @version 0.32, 25-Feb-08
@@ -86,7 +86,7 @@ public class MotoRevCtrl implements ServerListener {
 			// UGenInfo.readDefinitions(); // necessary if we build our own synth defs
 			UGenInfo.readBinaryDefinitions(); // necessary if we build our own synth defs
 			server = new Server("myServer");
-			File f = findFile(JCollider.isWindows ? "scsynth.exe" : "scsynth",
+			File f = findFile(JavaCollider.isWindows ? "scsynth.exe" : "scsynth",
 					new String[] { fs + "Applications" + fs + "SuperCollider_f", fs + "Applications" + fs + "SC3",
 							fs + "usr" + fs + "local" + fs + "bin", fs + "usr" + fs + "bin", "C:\\Program Files\\SC3",
 							"C:\\Program Files\\SuperCollider_f" });

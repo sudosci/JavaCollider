@@ -1,6 +1,6 @@
 /*
  * Server.java
- * (JCollider)
+ * (JavaCollider)
  * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
  * This software is published under the GNU Lesser General Public License v2.1+
  * For further information, please contact Hanns Holger Rutz at
@@ -52,7 +52,7 @@ import de.sciss.net.OSCMessage;
  *       the tree, whenever the running status becomes true!
  *
  * @warning don't rely on the default group's node ID. it is planned to use a
- *          client specific ID in the next version, so JCollider and SClang can
+ *          client specific ID in the next version, so JavaCollider and SClang can
  *          peacefully coexist on the same server without killing each other's
  *          groups (which happens at the moment if you press cmd+period in
  *          sclang)

@@ -1,7 +1,7 @@
 //
 //  Demo.java
 //
-//	This demonstrates some features of JCollider. This demo
+//	This demonstrates some features of JavaCollider. This demo
 //	class is absolutely free and comes with absolutely no
 //	warranties. JColider itself is released under the GNU GPL
 //	(see separate license file).
@@ -46,13 +46,15 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import de.sciss.jcollider.Constants;
 import de.sciss.jcollider.Group;
-import de.sciss.jcollider.JCollider;
+import de.sciss.jcollider.JavaCollider;
 import de.sciss.jcollider.NodeWatcher;
 import de.sciss.jcollider.Server;
 import de.sciss.jcollider.ServerEvent;
@@ -65,13 +67,13 @@ import de.sciss.jcollider.gui.ServerPanel;
 import de.sciss.jcollider.gui.SynthDefDiagram;
 
 /**
- * This class demonstrates some of JCollider's features, namely loading and
+ * This class demonstrates some of JavaCollider's features, namely loading and
  * building synth defs, along with instantiating and controlling a server,
  * showing GUI elements like a server window and a synthdef diagram.
  * <p>
  * A frame is opened with three tables, the leftmost showing all synthdefs found
  * in the folder &quot;synthdefs&quot; inside the cwd. The middle table shows a
- * list of synthdefs that have been internally build using JCollider. The right
+ * list of synthdefs that have been internally build using JavaCollider. The right
  * most table will carry defs which have been drag-and-dropped from the finder.
  * <p>
  * A GUI server window is opened for the localhost, using default server
@@ -105,12 +107,20 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 	protected NodeWatcher nw = null;
 	protected Group grpAll;
 
-	private static final String[] tableNames = { "JCollider", "Drop Zone" };
+	private static final String[] tableNames = { "JavaCollider", "Drop Zone" };
 
 	protected final Demo enc_this = this;
 
 	public Demo() {
-		super("JCollider Demo");
+		super("JavaCollider Demo");
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		final Box b = Box.createHorizontalBox();
 		final Box b2 = Box.createHorizontalBox();
@@ -141,11 +151,11 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			// loadDefs();
 			createDefs();
 
-			File f = findFile(JCollider.isWindows ? "scsynth.exe" : "scsynth",
+			File f = findFile(JavaCollider.isWindows ? "scsynth.exe" : "scsynth",
 					new String[] { fs + "Applications" + fs + "SuperCollider_f", fs + "Applications" + fs + "SC3",
 							fs + "usr" + fs + "local" + fs + "bin", fs + "usr" + fs + "bin", "C:\\Program Files\\SC3",
 							"C:\\Program Files\\SuperCollider_f" });
-			// if( (f == null) && JCollider.isMacOS ) {
+			// if( (f == null) && JavaCollider.isMacOS ) {
 			// try {
 			// f = MRJAdapter.findApplication( "SCjm" );
 			// if( f != null ) f = new File( f.getParentFile(), "scsynth" );
@@ -157,6 +167,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 			ggAppPath.setText(Server.getProgram());
 			ggAppPath.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					Server.setProgram(ggAppPath.getText());
 				}
@@ -182,9 +193,10 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 					this.getTitle(), JOptionPane.ERROR_MESSAGE);
 		}
 
-		JCollider.setDeepFont(cp, fntGUI);
+		JavaCollider.setDeepFont(cp, fntGUI);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				if (nw != null) {
 					nw.dispose();
@@ -327,6 +339,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 	public static void main(String args[]) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				new Demo();
 			}
@@ -339,6 +352,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 	// ------------- ServerListener interface -------------
 
+	@Override
 	public void serverAction(ServerEvent e) {
 		switch (e.getID()) {
 		case ServerEvent.RUNNING:
@@ -352,6 +366,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		case ServerEvent.STOPPED:
 			// re-run alive thread
 			final javax.swing.Timer t = new javax.swing.Timer(1000, new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
 						if (server != null)
@@ -372,6 +387,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 
 	// ------------- FileFilter interface -------------
 
+	@Override
 	public boolean accept(File f) {
 		try {
 			return SynthDef.isDefFile(f);
@@ -424,18 +440,22 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			this.name = name;
 		}
 
+		@Override
 		public String getColumnName(int col) {
 			return name;
 		}
 
+		@Override
 		public int getRowCount() {
 			return collDefs.size();
 		}
 
+		@Override
 		public int getColumnCount() {
 			return 1;
 		}
 
+		@Override
 		public Object getValueAt(int row, int column) {
 			if (row < collDefs.size()) {
 				return ((SynthDef) collDefs.get(row)).getName();
@@ -478,6 +498,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("Play");
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (selectedTable == null)
 				return;
@@ -492,7 +513,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 						nw.register(synth);
 					server.sendMsg(synth.newMsg(grpAll));
 				} catch (IOException e1) {
-					JCollider.displayError(enc_this, e1, "Play");
+					JavaCollider.displayError(enc_this, e1, "Play");
 				}
 			}
 		}
@@ -503,12 +524,13 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("Stop All");
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (grpAll != null) {
 				try {
 					grpAll.freeAll();
 				} catch (IOException e1) {
-					JCollider.displayError(enc_this, e1, "Stop");
+					JavaCollider.displayError(enc_this, e1, "Stop");
 				}
 			}
 		}
@@ -521,6 +543,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			this.idx = idx;
 		}
 
+		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if (defTables[idx].getSelectedRowCount() > 0) {
 				selectedTable = defTables[idx];
@@ -538,6 +561,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("Def Diagram");
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (selectedTable == null)
 				return;
@@ -554,6 +578,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("Def Dump");
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (selectedTable == null)
 				return;
@@ -570,6 +595,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("API Ex");
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			DemoDefs.synthDefApiExample(server); // doesn't inform nodewatcher though
 		}
@@ -580,6 +606,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			super("Node Tree");
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if ((server == null) || (nw == null) || (grpAll == null))
 				return;
@@ -588,6 +615,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 			final JFrame treeFrame = ntp.makeWindow();
 
 			treeFrame.addWindowListener(new WindowAdapter() {
+				@Override
 				public void windowClosing(WindowEvent e) {
 					treeFrame.setVisible(false);
 					treeFrame.dispose();
@@ -601,6 +629,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		protected SynthDefNameComp() {
 			/* empty */ }
 
+		@Override
 		public int compare(Object def1, Object def2) {
 			return (((SynthDef) def1).getName().compareTo(((SynthDef) def2).getName()));
 		}
@@ -616,6 +645,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 		/**
 		 * Overridden to import a Pathname if it is available.
 		 */
+		@Override
 		public boolean importData(JComponent c, Transferable t) {
 			final Object o;
 			final List fileList;
@@ -641,7 +671,7 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 									System.err.println("Not a synth def file : " + f.getName());
 								}
 							} catch (IOException e1) {
-								JCollider.displayError(enc_this, e1, "Drop File");
+								JavaCollider.displayError(enc_this, e1, "Drop File");
 							}
 						}
 						if (!collDefs.isEmpty()) {
@@ -653,12 +683,13 @@ public class Demo extends JFrame implements FileFilter, ServerListener, Constant
 				}
 			} catch (UnsupportedFlavorException e1) {
 				/* ignored */ } catch (IOException e2) {
-				JCollider.displayError(enc_this, e2, "Drop File");
+				JavaCollider.displayError(enc_this, e2, "Drop File");
 			}
 
 			return false;
 		}
 
+		@Override
 		public boolean canImport(JComponent c, DataFlavor[] flavors) {
 			for (int i = 0; i < flavors.length; i++) {
 				if (flavors[i].equals(DataFlavor.javaFileListFlavor))

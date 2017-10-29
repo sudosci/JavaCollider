@@ -1,6 +1,6 @@
 /*
- * JCollider.java
- * (JCollider)
+ * JavaCollider.java
+ * (JavaCollider)
  * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
  * This software is published under the GNU Lesser General Public License v2.1+
  * For further information, please contact Hanns Holger Rutz at
@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 /**
  * This is a helper class containing utility static functions
  */
-public abstract class JCollider {
+public abstract class JavaCollider {
 	public static final String VERSION = "1.0.0";
 	private static final ResourceBundle resBundle = ResourceBundle.getBundle("JColliderStrings");
 
@@ -55,7 +55,7 @@ public abstract class JCollider {
 	/**
 	 * Returns the library's version.
 	 *
-	 * @return the current version of JCollider
+	 * @return the current version of JavaCollider
 	 */
 	public static String getVersion() {
 		return VERSION;
@@ -67,7 +67,7 @@ public abstract class JCollider {
 	 * @return text string which can be displayed in an about box
 	 */
 	public static String getCopyrightString() {
-		return JCollider.getResourceString("copyright");
+		return JavaCollider.getResourceString("copyright");
 	}
 
 	/**
@@ -76,7 +76,7 @@ public abstract class JCollider {
 	 * @return text string which can be displayed in an about box
 	 */
 	public static String getCreditsString() {
-		return JCollider.getResourceString("credits");
+		return JavaCollider.getResourceString("credits");
 	}
 
 	public static String getResourceString(String key) {

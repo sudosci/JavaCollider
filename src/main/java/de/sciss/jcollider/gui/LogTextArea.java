@@ -1,6 +1,6 @@
 /*
  * LogTextArea.java
- * (JCollider)
+ * (JavaCollider)
  * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
  * This software is published under the GNU Lesser General Public License v2.1+
  * For further information, please contact Hanns Holger Rutz at
@@ -46,7 +46,7 @@ public class LogTextArea extends JTextArea {
 	protected FileWriter logFileWriter = null;
 	// private final JTextArea textArea = this;
 	private int totalLength = 0;
-	// XXX JCollider
+	// XXX JavaCollider
 	// private MenuAction actionClear = null;
 	private AbstractAction actionClear = null;
 
@@ -136,7 +136,7 @@ public class LogTextArea extends JTextArea {
 	// append( (String) o );
 	// }
 
-	// XXX JCollider
+	// XXX JavaCollider
 	// public MenuAction getClearAction()
 	public AbstractAction getClearAction() {
 		if (actionClear == null) {
@@ -205,7 +205,7 @@ public class LogTextArea extends JTextArea {
 	}
 
 	private class ActionClear
-			// XXX JCollider
+			// XXX JavaCollider
 			// extends MenuAction
 			extends AbstractAction {
 		protected ActionClear() {

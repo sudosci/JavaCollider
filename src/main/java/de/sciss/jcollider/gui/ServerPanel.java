@@ -1,6 +1,6 @@
 /*
  * ServerWindow.java
- * (JCollider)
+ * (JavaCollider)
  * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
  * This software is published under the GNU Lesser General Public License v2.1+
  * For further information, please contact Hanns Holger Rutz at
@@ -41,7 +41,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
 import de.sciss.jcollider.Constants;
-import de.sciss.jcollider.JCollider;
+import de.sciss.jcollider.JavaCollider;
 import de.sciss.jcollider.Server;
 import de.sciss.jcollider.ServerEvent;
 import de.sciss.jcollider.ServerListener;
@@ -125,7 +125,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 	private static final Color colrStopped = new Color(0x60, 0x60, 0x60);
 
 	static {
-		fntConsole = JCollider.isMacOS ? new Font("Monaco", Font.PLAIN, 10) : new Font("Monospaced", Font.PLAIN, 11);
+		fntConsole = JavaCollider.isMacOS ? new Font("Monaco", Font.PLAIN, 10) : new Font("Monospaced", Font.PLAIN, 11);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			add(createCountsPanel());
 		}
 
-		// JCollider.setDeepFont( this, fntGUI );
+		// JavaCollider.setDeepFont( this, fntGUI );
 
 		server.addListener(this);
 	}
@@ -227,21 +227,21 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 		lbCntGroups = new JLabel();
 		lbCntSynthDefs = new JLabel();
 
-		p.add(new JLabel(JCollider.getResourceString("countsAvgCPU") + " : ", SwingConstants.RIGHT));
+		p.add(new JLabel(JavaCollider.getResourceString("countsAvgCPU") + " : ", SwingConstants.RIGHT));
 		p.add(lbCntAvgCPU);
-		p.add(new JLabel(JCollider.getResourceString("countsPeakCPU") + " : ", SwingConstants.RIGHT));
+		p.add(new JLabel(JavaCollider.getResourceString("countsPeakCPU") + " : ", SwingConstants.RIGHT));
 		p.add(lbCntPeakCPU);
-		p.add(new JLabel(JCollider.getResourceString("countsUGens") + " : ", SwingConstants.RIGHT));
+		p.add(new JLabel(JavaCollider.getResourceString("countsUGens") + " : ", SwingConstants.RIGHT));
 		p.add(lbCntUGens);
-		p.add(new JLabel(JCollider.getResourceString("countsSynths") + " : ", SwingConstants.RIGHT));
+		p.add(new JLabel(JavaCollider.getResourceString("countsSynths") + " : ", SwingConstants.RIGHT));
 		p.add(lbCntSynths);
-		p.add(new JLabel(JCollider.getResourceString("countsGroups") + " : ", SwingConstants.RIGHT));
+		p.add(new JLabel(JavaCollider.getResourceString("countsGroups") + " : ", SwingConstants.RIGHT));
 		p.add(lbCntGroups);
-		p.add(new JLabel(JCollider.getResourceString("countsSynthDefs") + " : ", SwingConstants.RIGHT));
+		p.add(new JLabel(JavaCollider.getResourceString("countsSynthDefs") + " : ", SwingConstants.RIGHT));
 		p.add(lbCntSynthDefs);
 
 		p.setBorder(BorderFactory.createEmptyBorder(2, 8, 8, 8));
-		JCollider.setDeepFont(p, fntGUI);
+		JavaCollider.setDeepFont(p, fntGUI);
 
 		p.setMaximumSize(p.getPreferredSize());
 		updateCounts();
@@ -432,7 +432,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 		private boolean booted;
 
 		protected ActionBoot() {
-			super(JCollider.getResourceString("buttonBoot"));
+			super(JavaCollider.getResourceString("buttonBoot"));
 
 			booted = server.isRunning() || server.isBooting();
 		}
@@ -447,19 +447,19 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 					showHideConsole(true);
 				}
 			} catch (IOException e1) {
-				JCollider.displayError(enc_this, e1, getValue(NAME).toString());
+				JavaCollider.displayError(enc_this, e1, getValue(NAME).toString());
 			}
 		}
 
 		protected void terminated() {
 			booted = false;
-			putValue(NAME, JCollider.getResourceString("buttonBoot"));
+			putValue(NAME, JavaCollider.getResourceString("buttonBoot"));
 			showHideConsole(false);
 		}
 
 		protected void booted() {
 			booted = true;
-			putValue(NAME, JCollider.getResourceString("buttonQuit"));
+			putValue(NAME, JavaCollider.getResourceString("buttonQuit"));
 		}
 	} // class actionBootClass
 
@@ -467,7 +467,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 		private boolean dumping;
 
 		protected ActionDump() {
-			super(JCollider.getResourceString("buttonDumpOSC"));
+			super(JavaCollider.getResourceString("buttonDumpOSC"));
 
 			dumping = server.getDumpMode() != kDumpOff;
 		}
@@ -479,7 +479,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			try {
 				server.dumpOSC(dumping ? kDumpText : kDumpOff);
 			} catch (IOException e1) {
-				JCollider.displayError(enc_this, e1, getValue(NAME).toString());
+				JavaCollider.displayError(enc_this, e1, getValue(NAME).toString());
 			}
 		}
 	} // class actionDumpClass

@@ -1,6 +1,6 @@
 /*
  * UGenInfo.java
- * (JCollider)
+ * (JavaCollider)
  * Copyright (c) 2004-2015 Hanns Holger Rutz. All rights reserved.
  * This software is published under the GNU Lesser General Public License v2.1+
  * For further information, please contact Hanns Holger Rutz at
@@ -37,13 +37,13 @@ import org.xml.sax.SAXParseException;
 
 /**
  * As stated elsewhere, it was decided to not implement separate classes for the
- * different unit generators in JCollider. Instead there is one monolithic
+ * different unit generators in JavaCollider. Instead there is one monolithic
  * <code>UGen</code> class. To facilitate the visual representation of UGens and
  * to allow syntax checking and automatic default value assignment, the
  * <code>UGenInfo</code> class was created which keeps records of all known ugen
  * &quot;classes&quot;. The database needs to be read in once explictly, usually
  * you will do this once your programme launches. The database is merged with
- * the JCollider library .jar file (<code>ugendefs.xml</code>, along with the
+ * the JavaCollider library .jar file (<code>ugendefs.xml</code>, along with the
  * document type descriptor <code>ugendefs.dtd</code>), and can be easily edited
  * as to provide more ugens newly added to the supercollider application. This
  * database file would also naturally be the place to put new attributes such as
@@ -55,7 +55,7 @@ import org.xml.sax.SAXParseException;
  * <code>UGenInfo</code> any more, since the UGen constructor methods will query
  * the database automatically. This in turn means, you cannot use
  * <code>UGen.ar( ... )</code> for example, unless the database has been
- * initialized. However there is nothing wrong with using JCollider without the
+ * initialized. However there is nothing wrong with using JavaCollider without the
  * UGen constructors (for example using only pre-stored synth defs), and in this
  * case you may skip the database initialization, saving some startup time.
  *
@@ -314,7 +314,7 @@ public class UGenInfo implements Constants, Comparable {
 	 * <p>
 	 * A much faster (around 20 times) way is to convert the xml file int a binary
 	 * file, by calling <code>writeBinaryDefinitions</code> afterwards (or run
-	 * JCollider with the <code>--bindefs</code> option).
+	 * JavaCollider with the <code>--bindefs</code> option).
 	 * <p>
 	 * The binary variant of this method is <code>readBinaryDefinitions</code>.
 	 *
@@ -470,7 +470,7 @@ public class UGenInfo implements Constants, Comparable {
 	 * <code>infos</code> field.
 	 * <p>
 	 * To update the ugen definitions, edit the <code>ugendefs.xml</code> file and
-	 * run JCollider with the <code>--bindefs</code> option. Move the resulting
+	 * run JavaCollider with the <code>--bindefs</code> option. Move the resulting
 	 * binary file into the <code>resources</code> folder and re-jar the library.
 	 * <p>
 	 * Reading the binary file instead of the xml file is a lot faster (around 20
