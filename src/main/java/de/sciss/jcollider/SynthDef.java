@@ -179,19 +179,19 @@ public class SynthDef implements Constants {
 
 	private static final int SCGF_MAGIC = 0x53436766; // 'SCgf'
 
-	private List controlDescs = new ArrayList();
-	private List ugens = new ArrayList();
-	private Set ugenSet = new HashSet();
-	private List constants = new ArrayList();
-	private Set constantSet = new HashSet();
+	private List<ControlDesc> controlDescs = new ArrayList<ControlDesc>();
+	private List<UGen> ugens = new ArrayList<UGen>();
+	private Set<UGen> ugenSet = new HashSet<>();
+	private List<Constant> constants = new ArrayList<>();
+	private Set<Constant> constantSet = new HashSet<>();
 	private final String name;
-	private List variants = new ArrayList();
+	private List<Object> variants = new ArrayList<>();
 
 	private static final Object[] RATES = { kScalarRate, kControlRate, kAudioRate, kDemandRate };
 
-	private static final Comparator synthIdxComp = new SynthIndexComparator();
+	private static final Comparator<UGenEnv> synthIdxComp = new SynthIndexComparator();
 
-	private static final Set ctrlUGensSet = new HashSet();
+	private static final Set<String> ctrlUGensSet = new HashSet<>();
 
 	static {
 		ctrlUGensSet.add("Control");
@@ -237,31 +237,14 @@ public class SynthDef implements Constants {
 		// collectUGens)
 
 		collectUGens(graphArray);
-		// optimizeGraph();
 
 		// collects only those in used UGens,
 		// therefore we do not pass graphArray as an argument
 		collectConstants();
 
-		// XXX should do this conditionally
-		// (using a static boolean)
-		// checkInputs();
-
 		// re-sort graph. reindex.
 		topologicalSort();
-		// indexUGens();
 	}
-
-	// private void addUGenInput( UGenInput ui )
-	// {
-	// if( ui instanceof UGenChannel ) {
-	// addUGen( ((UGenChannel) ui).getUGen() );
-	// } else if( ui instanceof Constant ) {
-	// addConstant( (Constant) ui );
-	// } else {
-	// assert false : ui.getClass().getName();
-	// }
-	// }
 
 	private void addControlDesc(ControlDesc desc) {
 		// System.err.print( "me add dem desc " );
@@ -272,7 +255,6 @@ public class SynthDef implements Constants {
 	// includes check for Controls !
 	private void addUGen(UGen ugen) {
 		if (ugenSet.add(ugen)) {
-			// ugen.initSetSynthIndex( ugens.size() );
 			ugens.add(ugen);
 			if (ugen instanceof Control) {
 				final Control ctrl = (Control) ugen;
@@ -325,7 +307,7 @@ public class SynthDef implements Constants {
 		UGenInput ui;
 
 		for (int i = 0; i < ugens.size(); i++) {
-			ugen = (UGen) ugens.get(i);
+			ugen = ugens.get(i);
 			for (int j = 0; j < ugen.getNumInputs(); j++) {
 				ui = ugen.getInput(j);
 				if (ui instanceof Constant) {
@@ -339,7 +321,7 @@ public class SynthDef implements Constants {
 		// initializes the inlet/outlet lists
 		// and collects the ugens that do not
 		// rely on other ugens
-		final List available = initTopoSort();
+		final List<UGenEnv> available = initTopoSort();
 
 		// now all ugens are collected as ugen-environments
 		// and will be re-added according to the tree structure
@@ -348,9 +330,9 @@ public class SynthDef implements Constants {
 		UGenEnv env, env2;
 
 		while (!available.isEmpty()) {
-			env = (UGenEnv) available.remove(available.size() - 1);
+			env = available.remove(available.size() - 1);
 			for (int i = env.collDe.size() - 1; i >= 0; i--) {
-				env2 = (UGenEnv) env.collDe.get(i);
+				env2 = env.collDe.get(i);
 				env2.collAnte.remove(env);
 				if (env2.collAnte.isEmpty())
 					available.add(env2); // treated in next loop
@@ -358,14 +340,13 @@ public class SynthDef implements Constants {
 			ugens.add(env.ugen);
 		}
 
-		// cleanupTopoSort();
 	}
 
-	private List initTopoSort() {
+	private List<UGenEnv> initTopoSort() {
 		final int numUGens = ugens.size();
 
-		final List available = new ArrayList();
-		final Map mapEnv = new HashMap();
+		final List<UGenEnv> available = new ArrayList<>();
+		final Map<UGen, UGenEnv> mapEnv = new HashMap<>();
 		final UGenEnv[] envs = new UGenEnv[numUGens];
 
 		UGen ugen;
@@ -373,7 +354,7 @@ public class SynthDef implements Constants {
 		UGenInput ui;
 
 		for (int i = 0; i < numUGens; i++) {
-			ugen = (UGen) ugens.get(i);
+			ugen = ugens.get(i);
 			env = new UGenEnv(ugen, i);
 			mapEnv.put(ugen, env);
 			envs[i] = env;
@@ -382,11 +363,10 @@ public class SynthDef implements Constants {
 		for (int i = 0; i < numUGens; i++) {
 			env = envs[i];
 			ugen = env.ugen;
-			// ugen.initTopoSort(); // this populates the descendants and antecedents
 			for (int j = 0; j < ugen.getNumInputs(); j++) {
 				ui = ugen.getInput(j);
 				if (ui instanceof UGenChannel) {
-					env2 = (UGenEnv) mapEnv.get(((UGenChannel) ui).getUGen());
+					env2 = mapEnv.get(((UGenChannel) ui).getUGen());
 					env.collAnte.add(env2);
 					env2.collDe.add(env);
 				}
@@ -395,9 +375,7 @@ public class SynthDef implements Constants {
 		for (int i = numUGens - 1; i >= 0; i--) {
 			env = envs[i];
 			// ugen.descendants = ugen.descendants.asArray.sort(
-			// { arg a, b; a.synthIndex < b.synthIndex }
 			Collections.sort(env.collDe, synthIdxComp);
-			// ugen.makeAvailable(); // all ugens with no antecedents are made available
 			if (env.collAnte.isEmpty()) {
 				available.add(env);
 			}
@@ -649,7 +627,7 @@ public class SynthDef implements Constants {
 			out.println("\n ugens:");
 		for (int i = 0; i < ugens.size(); i++) {
 			out.print("  #" + i + " : ");
-			ugen = (UGen) ugens.get(i);
+			ugen = ugens.get(i);
 			out.print(ugen.dumpName() + " @ " + ugen.getRate());
 			if (ugen.getNumOutputs() != 1)
 				out.print(", numOuts: " + ugen.getNumOutputs());
@@ -662,8 +640,8 @@ public class SynthDef implements Constants {
 						out.print("#" + ugens.indexOf(uch.getUGen()) + '_');
 						if (uch.getUGen().getName().equals("Control")) {
 							out.print("Control(\""
-									+ ((ControlDesc) controlDescs
-											.get(uch.getUGen().getSpecialIndex() + uch.getChannel())).getName()
+									+ controlDescs
+											.get(uch.getUGen().getSpecialIndex() + uch.getChannel()).getName()
 									+ "\")");
 						} else {
 							out.print(uch.dumpName());
@@ -683,7 +661,7 @@ public class SynthDef implements Constants {
 			out.println("\n controls:");
 		for (int i = 0; i < controlDescs.size(); i++) {
 			out.print("  #" + i + " : ");
-			((ControlDesc) controlDescs.get(i)).printOn(out);
+			controlDescs.get(i).printOn(out);
 		}
 	}
 
@@ -693,8 +671,8 @@ public class SynthDef implements Constants {
 	 *
 	 * @return list whose elements are of class <code>UGen</code>
 	 */
-	public List getUGens() {
-		return new ArrayList(ugens);
+	public List<UGen> getUGens() {
+		return new ArrayList<UGen>(ugens);
 	}
 
 	/**
@@ -793,13 +771,13 @@ public class SynthDef implements Constants {
 
 		dos.writeShort(controlDescs.size());
 		for (int i = 0; i < controlDescs.size(); i++) {
-			desc = (ControlDesc) controlDescs.get(i);
+			desc = controlDescs.get(i);
 			dos.writeFloat(desc.getDefaultValue());
 		}
 
 		dos.writeShort(controlDescs.size());
 		for (int i = 0; i < controlDescs.size(); i++) {
-			desc = (ControlDesc) controlDescs.get(i);
+			desc = controlDescs.get(i);
 			if (desc.getName() != null) {
 				SynthDef.writePascalString(dos, desc.getName());
 				// dos.writeShort( desc.getIndex() );
@@ -811,7 +789,7 @@ public class SynthDef implements Constants {
 
 		dos.writeShort(ugens.size());
 		for (int i = 0; i < ugens.size(); i++) {
-			writeUGenSpec(dos, (UGen) ugens.get(i));
+			writeUGenSpec(dos, ugens.get(i));
 		}
 
 		dos.writeShort(variants.size());
@@ -823,7 +801,7 @@ public class SynthDef implements Constants {
 	private void writeConstants(DataOutputStream dos) throws IOException {
 		dos.writeShort(constants.size());
 		for (int i = 0; i < constants.size(); i++) {
-			dos.writeFloat(((Constant) constants.get(i)).getValue());
+			dos.writeFloat(constants.get(i).getValue());
 		}
 	}
 
@@ -993,13 +971,9 @@ public class SynthDef implements Constants {
 		UGen ugen;
 		String str;
 
-		// UGen.buildSynthDef = def;
-
 		numConstants = dis.readShort();
 		constants = new Constant[numConstants];
 
-		// inputs.clear();
-		// outputs.clear();
 
 		for (int i = 0; i < numConstants; i++) {
 			constants[i] = new Constant(dis.readFloat());
@@ -1010,11 +984,8 @@ public class SynthDef implements Constants {
 		controlDescs = new ControlDesc[numParams];
 
 		for (int i = 0; i < numParams; i++) {
-			// def.controls[ i ] = dis.readFloat();
 			controlDefaults[i] = dis.readFloat();
 
-			// this.controlDescs[ i ] = new ControlDesc( null, i, UGen.UNKNOWN_RATE,
-			// def.controls[ i ]); // XXX
 		}
 
 		numParamNames = dis.readShort();
@@ -1022,8 +993,6 @@ public class SynthDef implements Constants {
 		for (int i = 0; i < numParamNames; i++) {
 			str = readPascalString(dis);
 			paramName[dis.readShort()] = str;
-			// this.controlDescs[ dis.readShort() ].name = str;
-			// System.err.println( "name[ "+x+" ] == "+str );
 		}
 
 		numUGens = dis.readShort();
@@ -1034,19 +1003,9 @@ public class SynthDef implements Constants {
 			// the controlDescs manually, while a user instantiated
 			// Control will behave differently!
 			def.addUGen(ugen);
-			// ugen.addToSynth();
-			// ugen.initFinished();
-
-			// if( ugen instanceof ControlUGen ) {
-			// if( ugen.getName().equals( "Control" )) {
+			
 			if (ctrlUGensSet.contains(ugen.getName())) {
-				// System.err.println( "special index "+ugen.getSpecialIndex()+"; numoutputs
-				// "+ugen.getNumOutputs()+"; controlDescs.length"+controlDescs.length+";
-				// paramName.length "+paramName.length+"; controlDefaults.length
-				// "+controlDefaults.length );
 				for (int k = 0, j = ugen.getSpecialIndex(); k < ugen.getNumOutputs(); k++, j++) {
-					// controlDescs[ j ] = new ControlDesc( paramName[ j ], j, ugen.getRate(),
-					// def.controls[ j ]);
 					controlDescs[j] = new ControlDesc(j < paramName.length ? paramName[j] : "?", ugen.getRate(),
 							controlDefaults[j]);
 				}
@@ -1055,8 +1014,6 @@ public class SynthDef implements Constants {
 
 		for (int i = 0; i < controlDescs.length; i++) {
 			// this is a bug in sclang
-			// if( controlDescs[ i ].getName() != null ) def.controlDescs.add( controlDescs[
-			// i ]);
 			if (controlDescs[i] != null) {
 				if (controlDescs[i].getName() != null) {
 					def.addControlDesc(controlDescs[i]);
@@ -1069,20 +1026,13 @@ public class SynthDef implements Constants {
 		}
 		for (int i = 0; i < constants.length; i++) {
 			// this is a bug in sclang
-			// def.constants.put( constants[ i ], new Integer( i ));
 			def.addConstant(constants[i]);
 		}
-
-		// if( !keepDef ) {
-		// def = null;
-		// constants = null;
-		// }
-		// makeMsgFunc();
-		// UGen.buildSynthDef = null;
 
 		return def;
 	}
 
+	@SuppressWarnings("unused")
 	private static UGen readUGenSpec(DataInputStream dis, SynthDef def, String[] paramName, Constant[] constants)
 			throws IOException {
 		final String name = readPascalString(dis);
@@ -1107,12 +1057,7 @@ public class SynthDef implements Constants {
 			if (ugenIndex < 0) { // constant input
 				ugenInputs[i] = constants[outputIndex];
 			} else { // input from another ugen's output
-				// if( ugen instanceof MultiOutUGen ) {
-				// ugenInputs[ i ] = ((MultiOutUGen) ugen).channels[ outputIndex ];
-				// } else {
-				// ugenInputs[ i ] = ugen;
-				// }
-				ugenInputs[i] = new UGenChannel((UGen) def.ugens.get(ugenIndex), outputIndex);
+				ugenInputs[i] = new UGenChannel(def.ugens.get(ugenIndex), outputIndex);
 			}
 		}
 
@@ -1137,24 +1082,25 @@ public class SynthDef implements Constants {
 
 	private static class UGenEnv {
 		protected final UGen ugen;
-		protected final List collAnte;
-		protected final List collDe;
+		protected final List<UGenEnv> collAnte;
+		protected final List<UGenEnv> collDe;
 		protected int synthIndex;
 
 		protected UGenEnv(UGen ugen, int synthIndex) {
 			this.ugen = ugen;
 			this.synthIndex = synthIndex;
-			collAnte = new ArrayList(ugen.getNumInputs());
-			collDe = new ArrayList();
+			collAnte = new ArrayList<UGenEnv>(ugen.getNumInputs());
+			collDe = new ArrayList<UGenEnv>();
 		}
 	}
 
-	private static class SynthIndexComparator implements Comparator {
+	private static class SynthIndexComparator implements Comparator<UGenEnv> {
 		protected SynthIndexComparator() {
 			/* empty */ }
 
-		public int compare(Object env1, Object env2) {
-			return (((UGenEnv) env1).synthIndex - ((UGenEnv) env2).synthIndex);
+		@Override
+		public int compare(UGenEnv env1, UGenEnv env2) {
+			return (env1.synthIndex - env2.synthIndex);
 		}
 	}
 }
