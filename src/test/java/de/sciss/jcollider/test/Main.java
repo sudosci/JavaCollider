@@ -38,9 +38,10 @@ public class Main {
 
 		if (demoClass != null) {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					try {
-						final Class c = Class.forName(demoClass);
+						final Class<?> c = Class.forName(demoClass);
 						c.newInstance();
 					} catch (Exception e1) {
 						System.err.println(e1);

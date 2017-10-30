@@ -71,7 +71,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	protected boolean selectionContainsGroups = false;
 	protected boolean selectionContainsPlaying = false;
 	protected boolean selectionContainsPausing = false;
-	protected final List collSelectedNodes = new ArrayList();
+	protected final List<Node> collSelectedNodes = new ArrayList<>();
 
 	private ActionPauseResume actionPauseResume = null;
 	private ActionFree actionFree = null;
@@ -103,8 +103,6 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 		ggTree = new JTree(ntm.getModel());
 		ggTree.setShowsRootHandles(true);
 		ggTree.setCellRenderer(new TreeNodeRenderer());
-		// ggTree.getSelectionModel().setSelectionMode(
-		// TreeSelectionModel.SINGLE_TREE_SELECTION );
 		ggTree.addTreeSelectionListener(this);
 		ntm.getModel().addTreeModelListener(this);
 
@@ -113,7 +111,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 
 		add(ggScroll, BorderLayout.CENTER);
 		if ((flags & BUTTONS) != 0) {
-			add(createButtons(flags), BorderLayout.SOUTH);
+			add(createButtons(), BorderLayout.SOUTH);
 		}
 	}
 
@@ -128,30 +126,25 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 		return ntm;
 	}
 
-	private JComponent createButtons(int flags) {
+	private JComponent createButtons() {
 		final JToolBar tb = new JToolBar();
 		AbstractButton but;
 
 		tb.setFloatable(false);
 		actionPauseResume = new ActionPauseResume();
 		but = new JButton(actionPauseResume);
-		// but.setFont( fntGUI );
 		tb.add(but);
 		actionFree = new ActionFree();
 		but = new JButton(actionFree);
-		// but.setFont( fntGUI );
 		tb.add(but);
 		actionFreeAll = new ActionFreeAll();
 		but = new JButton(actionFreeAll);
-		// but.setFont( fntGUI );
 		tb.add(but);
 		actionDeepFree = new ActionDeepFree();
 		but = new JButton(actionDeepFree);
-		// but.setFont( fntGUI );
 		tb.add(but);
 		actionTrace = new ActionTrace();
 		but = new JButton(actionTrace);
-		// but.setFont( fntGUI );
 		tb.add(but);
 
 		return tb;
@@ -181,6 +174,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 
 		f.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		f.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosed(WindowEvent e) {
 				dispose();
 			}
@@ -236,6 +230,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	 * This method is part of the <code>TreeSelectionListener</code> interface. Do
 	 * not call this method.
 	 */
+	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		updateActions();
 	}
@@ -246,6 +241,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	 * This method is part of the <code>TreeModelListener</code> interface. Do not
 	 * call this method.
 	 */
+	@Override
 	public void treeNodesChanged(TreeModelEvent e) {
 		updateActions(); // some actions change behaviour when nodes are paused/ resumed
 	}
@@ -254,6 +250,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	 * This method is part of the <code>TreeModelListener</code> interface. Do not
 	 * call this method.
 	 */
+	@Override
 	public void treeNodesInserted(TreeModelEvent e) {
 		// updateActions(); // not necessary i think XXX
 	}
@@ -262,6 +259,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	 * This method is part of the <code>TreeModelListener</code> interface. Do not
 	 * call this method.
 	 */
+	@Override
 	public void treeNodesRemoved(TreeModelEvent e) {
 		updateActions(); // because corresponding deselections are not fired
 	}
@@ -270,6 +268,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 	 * This method is part of the <code>TreeModelListener</code> interface. Do not
 	 * call this method.
 	 */
+	@Override
 	public void treeStructureChanged(TreeModelEvent e) {
 		updateActions(); // necessary? XXX
 	}
@@ -283,20 +282,21 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 
 		// bisschen aufwendig, aber evtl. wird es
 		// NodeWatcher geben, die mehrere Server abhoeren
+		@Override
 		public void actionPerformed(ActionEvent e) {
-			final HashMap mapServersToBundles = new HashMap();
+			final HashMap<Server, OSCBundle> mapServersToBundles = new HashMap<>();
 			OSCBundle bndl;
 			OSCMessage msg;
 			Server server;
 			Node node;
 
 			for (int i = 0; i < collSelectedNodes.size(); i++) {
-				node = (Node) collSelectedNodes.get(i);
+				node = collSelectedNodes.get(i);
 				msg = createMessage(node);
 				if (msg == null)
 					continue;
 				server = node.getServer();
-				bndl = (OSCBundle) mapServersToBundles.get(server);
+				bndl = mapServersToBundles.get(server);
 				if (bndl == null) {
 					bndl = new OSCBundle();
 					mapServersToBundles.put(server, bndl);
@@ -304,10 +304,10 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 				bndl.addPacket(msg);
 			}
 
-			for (Iterator iter = mapServersToBundles.keySet().iterator(); iter.hasNext();) {
-				server = (Server) iter.next();
+			for (Iterator<Server> iter = mapServersToBundles.keySet().iterator(); iter.hasNext();) {
+				server = iter.next();
 				try {
-					server.sendBundle((OSCBundle) mapServersToBundles.get(server));
+					server.sendBundle(mapServersToBundles.get(server));
 				} catch (IOException e1) {
 					System.err.println(e1.getClass().getName() + " : " + e1.getLocalizedMessage());
 				}
@@ -330,10 +330,12 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			setEnabled(false);
 		}
 
+		@Override
 		protected OSCMessage createMessage(Node node) {
 			return node.runMsg(runFlag);
 		}
 
+		@Override
 		protected void update() {
 			runFlag = selectionContainsPausing;
 			setEnabled((selectionContainsSynths || selectionContainsGroups)
@@ -348,10 +350,12 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			setEnabled(false);
 		}
 
+		@Override
 		protected OSCMessage createMessage(Node node) {
 			return node.freeMsg();
 		}
 
+		@Override
 		protected void update() {
 			setEnabled(selectionContainsSynths || selectionContainsGroups);
 		}
@@ -363,6 +367,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			setEnabled(false);
 		}
 
+		@Override
 		protected OSCMessage createMessage(Node node) {
 			if (node instanceof Group) {
 				return ((Group) node).freeAllMsg();
@@ -371,6 +376,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			}
 		}
 
+		@Override
 		protected void update() {
 			setEnabled(!selectionContainsSynths && selectionContainsGroups);
 		}
@@ -382,6 +388,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			setEnabled(false);
 		}
 
+		@Override
 		protected OSCMessage createMessage(Node node) {
 			if (node instanceof Group) {
 				return ((Group) node).deepFreeMsg();
@@ -390,6 +397,7 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			}
 		}
 
+		@Override
 		protected void update() {
 			setEnabled(!selectionContainsSynths && selectionContainsGroups);
 		}
@@ -401,10 +409,12 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			setEnabled(false);
 		}
 
+		@Override
 		protected OSCMessage createMessage(Node node) {
 			return node.traceMsg();
 		}
 
+		@Override
 		protected void update() {
 			setEnabled(selectionContainsSynths || selectionContainsGroups);
 		}
@@ -412,7 +422,6 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 
 	private static class TreeNodeRenderer extends DefaultTreeCellRenderer {
 		// doch 'n bisschen krass
-		// private static final Color colrPlaying = new Color( 0x00, 0x50, 0x30 );
 		private static final Color colrPlaying = Color.black;
 		private static final Color colrPausing = new Color(0x90, 0x90, 0x90);
 		private static final Color colrDied = new Color(0x90, 0x00, 0x30);
@@ -421,6 +430,8 @@ public class NodeTreePanel extends JPanel implements TreeSelectionListener, Tree
 			super();
 		}
 
+		@SuppressWarnings("hiding")
+		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
 				boolean leaf, int row, boolean hasFocus) {
 			// DefaultTreeCellRenderer will set up the JLabel properties

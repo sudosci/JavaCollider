@@ -95,12 +95,10 @@ public class SynthDefDiagram extends JFrame {
 		super("SynthDef(\"" + def.getName() + "\")");
 
 		final Container cp = getContentPane();
-		// frame.getRootPane().setBorder( BorderFactory.createEmptyBorder( 8, 8, 8, 8
-		// ));
 		final SynthDefView synthDefView = new SynthDefView(def);
 		final JScrollPane scroll = new JScrollPane(synthDefView);
 		final Box box = Box.createHorizontalBox();
-		final JComboBox ggZoom = new JComboBox();
+		final JComboBox<String> ggZoom = new JComboBox<>();
 
 		for (int i = 0; i < ZOOMS.length; i++) {
 			ggZoom.addItem(ZOOMS[i]);
@@ -109,6 +107,7 @@ public class SynthDefDiagram extends JFrame {
 		ggZoom.setEditable(true);
 		ggZoom.setFont(fntGUI);
 		ggZoom.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				final String text = ggZoom.getSelectedItem().toString();
 				Number num = null;
@@ -143,8 +142,8 @@ public class SynthDefDiagram extends JFrame {
 		return frmtConst.format(new Float(value));
 	}
 
-	protected static final Font fntUGen = new Font("Lucida Grande", Font.PLAIN, 10); // XXX bad for non-macos
-	protected static final Font fntToolTip = new Font("Gill Sans", Font.ITALIC, 12); // XXX bad for non-macos
+	protected static final Font fntUGen = new Font("Lucida Grande", Font.PLAIN, 10); 
+	protected static final Font fntToolTip = new Font("Gill Sans", Font.ITALIC, 12);
 	private static final NumberFormat frmtConst = NumberFormat.getInstance(Locale.US);
 
 	static {
@@ -159,10 +158,10 @@ public class SynthDefDiagram extends JFrame {
 		private static final double VPAD = 12.0;
 		private static final int MAX_WIDTH = 640; // linebreak after exceeding this width
 
-		private final List collUGenViews = new ArrayList();
-		private final List collSelectedViews = new ArrayList();
-		private final List collWires = new ArrayList();
-		private final Map mapUGensToViews = new HashMap();
+		private final List<UGenView> collUGenViews = new ArrayList<>();
+		private final List<UGenView> collSelectedViews = new ArrayList<>();
+		private final List<Wire> collWires = new ArrayList<>();
+		private final Map<UGen, UGenView> mapUGensToViews = new HashMap<>();
 
 		private boolean recalc = true;
 
@@ -183,19 +182,17 @@ public class SynthDefDiagram extends JFrame {
 			this.def = def;
 
 			this.setFont(fntUGen);
-			// this.setBackground( null );
-			// this.setOpaque( false );
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
 			this.setFocusable(true);
 		}
 
 		private void createBoxes(Graphics2D g2, FontMetrics fm, FontMetrics fm2) {
-			final List children = def.getUGens();
-			final List verbaut = new ArrayList();
-			final List neuVerbaut = new ArrayList();
-			final List constRects = new ArrayList();
-			final List ugenRects = new ArrayList();
+			final List<UGen> children = def.getUGens();
+			final List<UGen> verbaut = new ArrayList<>();
+			final List<UGen> neuVerbaut = new ArrayList<>();
+			final List<Rectangle2D> constRects = new ArrayList<>();
+			final List<Rectangle2D> ugenRects = new ArrayList<>();
 
 			final double h = fm.getHeight() + VPAD;
 
@@ -207,7 +204,7 @@ public class SynthDefDiagram extends JFrame {
 			UGen ugen;
 			UGenView uv, uv2;
 			UGenInput inp;
-			UGenInfo ui;
+			UGenInfo ugi;
 			Wire wire;
 			String name;
 
@@ -215,14 +212,11 @@ public class SynthDefDiagram extends JFrame {
 			mapUGensToViews.clear();
 			collWires.clear();
 
-			// ugenRects.add( new Rectangle( 0, -10, 65536, 10 )); // simulates top window
-			// border
-
 			do {
 				x = 0;
 				childLp: for (int i = 0; i < children.size(); i++) {
-					ugen = (UGen) children.get(i);
-					ui = UGenInfo.infos == null ? null : (UGenInfo) UGenInfo.infos.get(ugen.getName());
+					ugen = children.get(i);
+					ugi = UGenInfo.infos == null ? null : (UGenInfo) UGenInfo.infos.get(ugen.getName());
 					hpadMax = HPAD;
 					for (int j = 0; j < ugen.getNumInputs(); j++) {
 						inp = ugen.getInput(j);
@@ -236,11 +230,11 @@ public class SynthDefDiagram extends JFrame {
 					}
 					// all right, all inputs ready
 					children.remove(i--);
-					name = ui == null ? ugen.getName() : ui.getDisplayName(ugen);
+					name = ugi == null ? ugen.getName() : ugi.getDisplayName(ugen);
 					rect = fm.getStringBounds(name, g2);
 					cons = Math.max(ugen.getNumInputs(), ugen.getNumOutputs());
 					w = Math.max(cons * (2 + hpadMax), rect.getWidth() + HPAD);
-					uv = new UGenView(ugen, ui, name, new Rectangle2D.Double(x, y, w, h), fm, fm2);
+					uv = new UGenView(ugen, ugi, name, new Rectangle2D.Double(x, y, w, h), fm, fm2);
 
 					collUGenViews.add(uv);
 					mapUGensToViews.put(ugen, uv);
@@ -250,7 +244,7 @@ public class SynthDefDiagram extends JFrame {
 					for (int j = 0; j < ugen.getNumInputs(); j++) {
 						inp = ugen.getInput(j);
 						if (inp instanceof UGenChannel) {
-							uv2 = (UGenView) mapUGensToViews.get(((UGenChannel) inp).getUGen());
+							uv2 = mapUGensToViews.get(((UGenChannel) inp).getUGen());
 							wire = new Wire(uv2, ((UGenChannel) inp).getChannel(), uv, j);
 							collWires.add(wire);
 						}
@@ -264,16 +258,10 @@ public class SynthDefDiagram extends JFrame {
 				// shift line downwards if there are vertical overlappings
 				incY = 0.0;
 				for (int i = 0; i < constRects.size(); i++) {
-					rect = (Rectangle2D) constRects.get(i);
+					rect = constRects.get(i);
 					for (int j = 0; j < ugenRects.size(); j++) {
-						rect2 = (Rectangle2D) ugenRects.get(j);
-						// System.err.println( "const
-						// "+rect.getX()+","+rect.getY()+","+rect.getWidth()+","+rect.getHeight()+";
-						// ugen "+
-						// rect2.getX()+","+rect2.getY()+","+rect2.getWidth()+","+rect2.getHeight() );
+						rect2 = ugenRects.get(j);
 						if (rect.intersects(rect2)) {
-							// System.err.println( "intersects. dy = "+ (rect.getY() - (rect2.getY() +
-							// rect2.getHeight()) + 4) );
 							incY = Math.max(incY, (rect2.getY() + rect2.getHeight()) - rect.getY() + 6);
 						}
 					}
@@ -282,7 +270,7 @@ public class SynthDefDiagram extends JFrame {
 				ugenRects.clear();
 				constRects.clear();
 				for (int i = 0; i < neuVerbaut.size(); i++) {
-					uv = (UGenView) mapUGensToViews.get(neuVerbaut.get(i));
+					uv = mapUGensToViews.get(neuVerbaut.get(i));
 					if (incY > 0.0) {
 						pt = uv.getLocation();
 						uv.setLocation(new Point2D.Double(pt.getX(), pt.getY() + incY));
@@ -292,7 +280,7 @@ public class SynthDefDiagram extends JFrame {
 
 				verbaut.addAll(neuVerbaut);
 				for (int i = 0; i < neuVerbaut.size(); i++) {
-					uv = (UGenView) mapUGensToViews.get(neuVerbaut.get(i));
+					uv = mapUGensToViews.get(neuVerbaut.get(i));
 					ugenRects.add(uv.getContainer());
 				}
 				neuVerbaut.clear();
@@ -316,22 +304,19 @@ public class SynthDefDiagram extends JFrame {
 			final Dimension newSize = new Dimension((int) (boundingBox.getMaxX() * zoom + 4),
 					(int) (boundingBox.getMaxY() * zoom + 4));
 
-			// if( !oldSize.equals( newSize )) {
 			setPreferredSize(newSize);
 			revalidate();
-			// }
-			// repaint();
 		}
 
 		private void recalcBoundingBox() {
 			if (collUGenViews.isEmpty())
 				return;
 
-			UGenView uv = (UGenView) collUGenViews.get(0);
+			UGenView uv = collUGenViews.get(0);
 			boundingBox = uv.getBoundingBox();
 
 			for (int i = 1; i < collUGenViews.size(); i++) {
-				uv = (UGenView) collUGenViews.get(i);
+				uv = collUGenViews.get(i);
 				Rectangle2D.union(boundingBox, uv.getBoundingBox(), boundingBox);
 			}
 
@@ -339,30 +324,24 @@ public class SynthDefDiagram extends JFrame {
 			final Dimension newSize = new Dimension((int) (boundingBox.getMaxX() * zoom + 4),
 					(int) (boundingBox.getMaxY() * zoom + 4));
 
-			// System.err.println( "bounding box:
-			// "+box.getX()+","+box.getY()+","+box.getWidth()+","+box.getHeight() );
-
 			if ((boundingBox.getX() < 4) || (boundingBox.getY() < 4)) {
 				final int dx = Math.max(0, (int) (5 - boundingBox.getX()));
 				final int dy = Math.max(0, (int) (5 - boundingBox.getY()));
 				Point2D pt;
 				for (int i = 0; i < collUGenViews.size(); i++) {
-					uv = (UGenView) collUGenViews.get(i);
+					uv = collUGenViews.get(i);
 					pt = uv.getLocation();
 					uv.setLocation(new Point2D.Double(pt.getX() + dx, pt.getY() + dy));
 				}
-				// final Point viewPt = viewport.getViewPosition();
-				// viewport.setViewPosition( new Point( viewPt.x - dx, viewPt.y - dy ));
 			}
 
 			if (!oldSize.equals(newSize)) {
-				// System.err.println( "setting new size
-				// "+newSize.getWidth()+","+newSize.getHeight() );
 				setPreferredSize(newSize);
 				revalidate();
 			}
 		}
 
+		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
@@ -384,18 +363,18 @@ public class SynthDefDiagram extends JFrame {
 			Wire wire;
 
 			for (int i = 0; i < collUGenViews.size(); i++) {
-				uv = (UGenView) collUGenViews.get(i);
+				uv = collUGenViews.get(i);
 				uv.paint(g2, fm, false);
 			}
 
 			for (int i = 0; i < collWires.size(); i++) {
-				wire = (Wire) collWires.get(i);
+				wire = collWires.get(i);
 				wire.paint(g2);
 			}
 
 			g2.setFont(fntToolTip);
 			for (int i = 0; i < collUGenViews.size(); i++) {
-				uv = (UGenView) collUGenViews.get(i);
+				uv = collUGenViews.get(i);
 				if (uv.isShowingToolTips())
 					uv.paintToolTips(g2, fm2);
 			}
@@ -404,7 +383,7 @@ public class SynthDefDiagram extends JFrame {
 			if (dragStarted) {
 				g2.translate(dragCurrentPt.getX() - dragStartPt.getX(), dragCurrentPt.getY() - dragStartPt.getY());
 				for (int i = 0; i < collSelectedViews.size(); i++) {
-					uv = (UGenView) collSelectedViews.get(i);
+					uv = collSelectedViews.get(i);
 					uv.paint(g2, fm, true);
 				}
 			}
@@ -416,6 +395,7 @@ public class SynthDefDiagram extends JFrame {
 			return new Point2D.Double(screenPt.x / zoom, screenPt.y / zoom);
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
 
@@ -426,7 +406,7 @@ public class SynthDefDiagram extends JFrame {
 			UGenView uv;
 
 			for (int i = 0; i < collUGenViews.size(); i++) {
-				uv = (UGenView) collUGenViews.get(i);
+				uv = collUGenViews.get(i);
 				if (uv.contains(mousePt)) {
 					hitView = uv;
 					break;
@@ -437,7 +417,7 @@ public class SynthDefDiagram extends JFrame {
 																													  // all
 
 				for (int i = 0; i < collSelectedViews.size(); i++) {
-					uv = (UGenView) collSelectedViews.get(i);
+					uv = collSelectedViews.get(i);
 					uv.setSelected(false);
 				}
 				collSelectedViews.clear();
@@ -468,7 +448,7 @@ public class SynthDefDiagram extends JFrame {
 			} else {
 				if (e.getClickCount() == 2) {
 					for (int i = 0; i < collUGenViews.size(); i++) {
-						uv = (UGenView) collUGenViews.get(i);
+						uv = collUGenViews.get(i);
 						uv.showToolTips(false);
 					}
 					repaint = true;
@@ -485,6 +465,7 @@ public class SynthDefDiagram extends JFrame {
 				repaint();
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			UGenView uv;
 			Point2D pt;
@@ -495,7 +476,7 @@ public class SynthDefDiagram extends JFrame {
 				dx = dragCurrentPt.getX() - dragStartPt.getX();
 				dy = dragCurrentPt.getY() - dragStartPt.getY();
 				for (int i = 0; i < collSelectedViews.size(); i++) {
-					uv = (UGenView) collSelectedViews.get(i);
+					uv = collSelectedViews.get(i);
 					pt = uv.getLocation();
 					uv.setLocation(new Point2D.Double(pt.getX() + dx, pt.getY() + dy));
 				}
@@ -506,6 +487,7 @@ public class SynthDefDiagram extends JFrame {
 			dragStartPt = null;
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (dragStartPt != null) {
 				if (!dragStarted) {
@@ -521,15 +503,19 @@ public class SynthDefDiagram extends JFrame {
 			}
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			/* ignored */ }
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			/* ignored */ }
 
+		@Override
 		public void mouseEntered(MouseEvent e) {
 			/* ignored */ }
 
+		@Override
 		public void mouseExited(MouseEvent e) {
 			/* ignored */ }
 	}
@@ -581,38 +567,29 @@ public class SynthDefDiagram extends JFrame {
 
 		protected void paint(Graphics2D g2) {
 			final Stroke strkOrig = g2.getStroke();
-			// final AffineTransform atOrig = g2.getTransform();
-			//
-			// g2.translate( -1, -1 ); // account for symmetric stroke width
 
 			g2.setPaint(pntWire);
 			g2.setStroke(strkWire);
 			g2.draw(shpWire);
 
 			g2.setStroke(strkOrig);
-			// g2.setTransform( atOrig );
 		}
 	}
 
 	private static class UGenView implements Constants {
 		private final UGen ugen;
-		// private final UGenInfo ui;
-		// private final String name;
 		private final Shape shpContainer;
 		private final Shape shpCons;
 		private final Shape shpConsts;
 		private final Shape shpToolTips;
-		private final List collConsts = new ArrayList(); // elements = PositionedString
-		private final List collConstBounds = new ArrayList(); // elements = Rectangle2D
-		private final List collToolTips = new ArrayList(); // elements = PositionedString
+		private final List<PositionedString> collConsts = new ArrayList<>();
+		private final List<Rectangle2D> collConstBounds = new ArrayList<>();
+		private final List<PositionedString> collToolTips = new ArrayList<>();
 		private final Rectangle2D bounds;
 
 		private static final Stroke strkCons = new BasicStroke(2.0f);
 		private static final Paint pntConst = new Color(0x00, 0x00, 0x00, 0xC0);
 		private static final Paint pntConstD = new Color(0x00, 0x00, 0x00, 0x60);
-		// private static final Paint pntToolTips = new GradientPaint( 0, 0, new Color(
-		// 0xFF, 0xFF, 0x00, 0xA0 ),
-		// 0, 20, new Color( 0xFF, 0xFF, 0x00, 0x00 ));
 		private static final Paint pntToolTips = new Color(0xFF, 0xFF, 0x00, 0xB0);
 		private static final Paint pntToolTipTxt = new Color(0x00, 0x00, 0x00, 0xD8);
 
@@ -632,8 +609,8 @@ public class SynthDefDiagram extends JFrame {
 
 		private final Point2D[] inletLocations, outletLocations;
 
-		private final List inletWires = new ArrayList(); // elements = Wire
-		private final List outletWires = new ArrayList(); // elements = Wire
+		private final List<Wire> inletWires = new ArrayList<>();
+		private final List<Wire> outletWires = new ArrayList<>();
 
 		private boolean selected = false;
 		private boolean toolTips = false;
@@ -642,8 +619,6 @@ public class SynthDefDiagram extends JFrame {
 
 		protected UGenView(UGen ugen, UGenInfo ui, String name, Rectangle2D bounds, FontMetrics fm, FontMetrics fm2) {
 			this.ugen = ugen;
-			// this.ui = ui;
-			// this.name = name;
 			this.bounds = bounds;
 
 			inletLocations = new Point2D[ugen.getNumInputs()];
@@ -693,10 +668,8 @@ public class SynthDefDiagram extends JFrame {
 			pntLabelD = new Color(r >> 2, g >> 2, b >> 2, 0x80);
 
 			// inlets
-			// x = SynthDefView.HPAD / 2 + 1 + bounds.getX();
 			x = SynthDefView.HPAD / 2 + 1;
 			dx = (bounds.getWidth() - 2 - SynthDefView.HPAD) / (ugen.getNumInputs() - 1);
-			// y = bounds.getY() + 1.0;
 			y = 1.0;
 			h = SynthDefView.VPAD / 4;
 
@@ -721,8 +694,6 @@ public class SynthDefDiagram extends JFrame {
 					if (str != null) {
 						collToolTips.add(new PositionedString(str, x + fm2.getAscent() - 4, y2 - 4));
 						x2 = fm2.stringWidth(str) + 8;
-						// a.add( new Area( new Rectangle2D.Double( x - 2, y2 - x2 - 2, fm2.getHeight(),
-						// x2 )));
 						a.add(new Area(new RoundRectangle2D.Double(x - 2.5, y2 - x2 - 2, fm2.getHeight(), x2, 6, 6)));
 					}
 				}
@@ -731,10 +702,8 @@ public class SynthDefDiagram extends JFrame {
 			}
 
 			// outlets
-			// x = SynthDefView.HPAD / 2 + 1 + bounds.getX();
 			x = SynthDefView.HPAD / 2 + 1;
 			dx = (bounds.getWidth() - 2 - SynthDefView.HPAD) / (ugen.getNumOutputs() - 1);
-			// y = bounds.getY() + bounds.getHeight() - 1;
 			y = bounds.getHeight() - 1;
 
 			for (int i = 0; i < ugen.getNumOutputs(); i++) {
@@ -746,14 +715,10 @@ public class SynthDefDiagram extends JFrame {
 			shpCons = gp;
 			shpConsts = gp2;
 			shpToolTips = a;
-			// label = new PositionedString( ugen.getName(), SynthDefView.HPAD / 2 +
-			// bounds.getX(),
-			// SynthDefView.VPAD / 2 + bounds.getY() + fm.getAscent() );
 			label = new PositionedString(name, SynthDefView.HPAD / 2, SynthDefView.VPAD / 2 + fm.getAscent());
 
 			shpContainer = new Rectangle2D.Double(0.0, 0.0, bounds.getWidth(), bounds.getHeight());
 
-			// System.err.println( "# consts : " +collConsts.size() );
 		}
 
 		protected void setSelected(boolean selected) {
@@ -787,20 +752,20 @@ public class SynthDefDiagram extends JFrame {
 		protected void setLocation(Point2D topLeft) {
 			bounds.setFrame(topLeft.getX(), topLeft.getY(), bounds.getWidth(), bounds.getHeight());
 			for (int i = 0; i < inletWires.size(); i++) {
-				((Wire) inletWires.get(i)).recalcPositions();
+				inletWires.get(i).recalcPositions();
 			}
 			for (int i = 0; i < outletWires.size(); i++) {
-				((Wire) outletWires.get(i)).recalcPositions();
+				outletWires.get(i).recalcPositions();
 			}
 		}
 
-		protected List getConstBounds() {
-			final List result = new ArrayList(collConstBounds.size());
+		protected List<Rectangle2D> getConstBounds() {
+			final List<Rectangle2D> result = new ArrayList<>(collConstBounds.size());
 
 			Rectangle2D rect;
 
 			for (int i = 0; i < collConstBounds.size(); i++) {
-				rect = (Rectangle2D) collConstBounds.get(i);
+				rect = collConstBounds.get(i);
 				result.add(new Rectangle2D.Double(rect.getX() + bounds.getX(), rect.getY() + bounds.getY(),
 						rect.getWidth(), rect.getHeight()));
 			}
@@ -810,10 +775,10 @@ public class SynthDefDiagram extends JFrame {
 
 		protected Rectangle2D getBoundingBox() {
 			final Rectangle2D result = getContainer();
-			final List constBounds = getConstBounds();
+			final List<Rectangle2D> constBounds = getConstBounds();
 
 			for (int i = 0; i < constBounds.size(); i++) {
-				Rectangle2D.union(result, (Rectangle2D) constBounds.get(i), result);
+				Rectangle2D.union(result, constBounds.get(i), result);
 			}
 
 			return result;
@@ -841,6 +806,7 @@ public class SynthDefDiagram extends JFrame {
 					outletLocations[index].getY() + bounds.getY());
 		}
 
+		@SuppressWarnings("unused")
 		protected void paint(Graphics2D g2, FontMetrics fm, boolean dragging) {
 			final Stroke strkOrig = g2.getStroke();
 			final AffineTransform atOrig = g2.getTransform();
@@ -857,7 +823,7 @@ public class SynthDefDiagram extends JFrame {
 
 			g2.setPaint(dragging ? pntConstD : pntConst);
 			for (int i = 0; i < collConsts.size(); i++) {
-				pStr = (PositionedString) collConsts.get(i);
+				pStr = collConsts.get(i);
 				g2.drawString(pStr.str, (float) pStr.x, (float) pStr.y);
 			}
 			g2.draw(shpConsts);
@@ -869,6 +835,7 @@ public class SynthDefDiagram extends JFrame {
 			g2.setTransform(atOrig);
 		}
 
+		@SuppressWarnings("unused")
 		protected void paintToolTips(Graphics2D g2, FontMetrics fm) {
 			final Stroke strkOrig = g2.getStroke();
 			final AffineTransform atOrig = g2.getTransform();
@@ -882,7 +849,7 @@ public class SynthDefDiagram extends JFrame {
 			g2.fill(shpToolTips);
 			g2.setPaint(pntToolTipTxt);
 			for (int i = 0; i < collToolTips.size(); i++) {
-				pStr = (PositionedString) collToolTips.get(i);
+				pStr = collToolTips.get(i);
 				g2.translate(pStr.x, pStr.y);
 				g2.rotate(minus90);
 				g2.drawString(pStr.str, 0, 0);

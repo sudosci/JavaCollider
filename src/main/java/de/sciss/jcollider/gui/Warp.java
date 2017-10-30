@@ -23,8 +23,6 @@ public abstract class Warp {
 	public static Warp exp = new ExponentialWarp();
 	public static Warp sin = new SineWarp();
 	public static Warp cos = new CosineWarp();
-	// public static Warp amp = new FaderWarp();
-	// public static Warp db = new DbFaderWarp();
 
 	public static Warp curve(double curve) {
 		if (curve == 0.0) {
@@ -42,10 +40,12 @@ public abstract class Warp {
 		protected LinearWarp() {
 			/* empty */ }
 
+		@Override
 		public double map(double value, ControlSpec spec) {
 			return (value * spec.getRange() + spec.getMinVal());
 		}
 
+		@Override
 		public double unmap(double value, ControlSpec spec) {
 			final double range = spec.getRange();
 
@@ -62,10 +62,12 @@ public abstract class Warp {
 		protected ExponentialWarp() {
 			/* empty */ }
 
+		@Override
 		public double map(double value, ControlSpec spec) {
 			return (Math.pow(spec.getRatio(), value) * spec.getMinVal());
 		}
 
+		@Override
 		public double unmap(double value, ControlSpec spec) {
 			return (Math.log(value / spec.getMinVal()) / Math.log(spec.getRatio()));
 		}
@@ -77,10 +79,12 @@ public abstract class Warp {
 		protected SineWarp() {
 			/* empty */ }
 
+		@Override
 		public double map(double value, ControlSpec spec) {
 			return (Math.sin(PIH * value) * spec.getRange() + spec.getMinVal());
 		}
 
+		@Override
 		public double unmap(double value, ControlSpec spec) {
 			final double range = spec.getRange();
 
@@ -98,10 +102,12 @@ public abstract class Warp {
 		protected CosineWarp() {
 			/* empty */ }
 
+		@Override
 		public double map(double value, ControlSpec spec) {
 			return ((0.5 - Math.cos(Math.PI * value) * 0.5) * spec.getRange() + spec.getMinVal());
 		}
 
+		@Override
 		public double unmap(double value, ControlSpec spec) {
 			final double range = spec.getRange();
 
@@ -124,6 +130,7 @@ public abstract class Warp {
 			oneByOneMGrow = 1.0 / (1.0 - grow);
 		}
 
+		@Override
 		public double map(double value, ControlSpec spec) {
 			final double a = spec.getRange() * oneByOneMGrow;
 			final double b = spec.getMinVal() + a;
@@ -131,6 +138,7 @@ public abstract class Warp {
 			return (b - a * Math.pow(grow, value));
 		}
 
+		@Override
 		public double unmap(double value, ControlSpec spec) {
 			final double a = spec.getRange() * oneByOneMGrow;
 			final double b = spec.getMinVal() + a;

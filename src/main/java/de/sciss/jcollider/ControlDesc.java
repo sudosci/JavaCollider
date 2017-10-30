@@ -24,8 +24,6 @@ public class ControlDesc {
 	private final float defaultValue;
 	private final float lag;
 
-	// public ControlDesc( String name, int index, Object rate, float defaultValue,
-	// float lag )
 	public ControlDesc(String name, Object rate, float defaultValue, float lag) {
 		this.name = name;
 		// this.index = index;
@@ -34,9 +32,7 @@ public class ControlDesc {
 		this.lag = lag;
 	}
 
-	// public ControlDesc( String name, int index, Object rate, float defaultValue )
 	public ControlDesc(String name, Object rate, float defaultValue) {
-		// this( name, index, rate, defaultValue, 0.0f );
 		this(name, rate, defaultValue, 0.0f);
 	}
 
@@ -52,18 +48,11 @@ public class ControlDesc {
 		return defaultValue;
 	}
 
-	// public int getIndex()
-	// {
-	// return index;
-	// }
-
 	public float getLag() {
 		return lag;
 	}
 
 	public void printOn(PrintStream out) {
-		// out.print( "ControlDesc P " + index );
-		// out.print( "idx " + index );
 		out.print("\"" + (name == null ? "??? " : name) + "\" @ " + rate);
 		out.println(", default = " + defaultValue);
 	}

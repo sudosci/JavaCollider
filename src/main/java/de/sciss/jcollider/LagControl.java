@@ -43,11 +43,6 @@ public class LagControl extends Control {
 		return ins;
 	}
 
-	// public static GraphElem kr( String name )
-	// {
-	// return kr( name, 0.0f );
-	// }
-
 	public static Control kr(String name, float defaultValue, float lag) {
 		return new LagControl(new String[] { name }, kControlRate, new float[] { defaultValue },
 				new Constant[] { new Constant(lag) });

@@ -59,9 +59,6 @@ public class UGenChannel implements UGenInput {
 		} else {
 			return (ugen.dumpName() + "[ch:" + channel + ']');
 		}
-
-		// return( ugen.getSynthIndex() + "_" + ugen.getName() +
-		// (ugen.getNumOutputs() > 1 ? String.valueOf( channel ) : "") );
 	}
 
 	/**

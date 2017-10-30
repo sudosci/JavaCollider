@@ -40,11 +40,6 @@ public class Buffer implements Constants {
 	private String path = null;
 	private CompletionAction doOnInfo = null;
 
-	// public Buffer( Server server, int numFrames )
-	// {
-	// this( server, numFrames, 1 );
-	// }
-
 	/**
 	 * Creates a new Buffer with given number of frames and channels. This method
 	 * uses the Server's allocators but does not send an <code>allocMsg</code> to
@@ -182,6 +177,7 @@ public class Buffer implements Constants {
 		return getNumFrames() / getSampleRate();
 	}
 
+	@Override
 	public String toString() {
 		return ("Buffer(" + getBufNum() + ", " + getNumFrames() + ", " + getNumChannels() + ", " + getSampleRate()
 				+ ", " + getPath() + ")");
@@ -484,7 +480,7 @@ public class Buffer implements Constants {
 	 * Allocates the buffer created with the basic <code>new</code> constructor, by
 	 * reading in a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 *
 	 * @throws IOException
@@ -492,15 +488,15 @@ public class Buffer implements Constants {
 	 *
 	 * @see #Buffer( Server, int, int )
 	 */
-	public void allocRead(String path) throws IOException {
-		allocRead(path, 0);
+	public void allocRead(String aPath) throws IOException {
+		allocRead(aPath, 0);
 	}
 
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor, by
 	 * reading in a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
@@ -513,19 +509,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void allocRead(String path, long startFrame) throws IOException {
-		allocRead(path, startFrame, -1);
+	public void allocRead(String aPath, long startFrame) throws IOException {
+		allocRead(aPath, startFrame, -1);
 	}
 
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor, by
 	 * reading in a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 *
@@ -537,19 +533,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void allocRead(String path, long startFrame, int numFrames) throws IOException {
-		allocRead(path, startFrame, numFrames, null);
+	public void allocRead(String aPath, long startFrame, int nFrames) throws IOException {
+		allocRead(aPath, startFrame, nFrames, null);
 	}
 
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor, by
 	 * reading in a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @param completionMsg
@@ -564,21 +560,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void allocRead(String path, long startFrame, int numFrames, OSCMessage completionMsg) throws IOException {
-		// setPath() is called by allocReadMsg()
-		// setPath( path );
-		getServer().sendMsg(allocReadMsg(path, startFrame, numFrames, completionMsg));
+	public void allocRead(String aPath, long startFrame, int nFrames, OSCMessage completionMsg) throws IOException {
+		getServer().sendMsg(allocReadMsg(aPath, startFrame, nFrames, completionMsg));
 	}
 
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor, by
 	 * reading in selected channels of a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @param channels
@@ -590,19 +584,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void allocReadChannel(String path, long startFrame, int numFrames, int[] channels) throws IOException {
-		allocReadChannel(path, startFrame, numFrames, channels, null);
+	public void allocReadChannel(String aPath, long startFrame, int nFrames, int[] channels) throws IOException {
+		allocReadChannel(aPath, startFrame, nFrames, channels, null);
 	}
 
 	/**
 	 * Allocates the buffer created with the basic <code>new</code> constructor, by
 	 * reading in selected channels of a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @param channels
@@ -617,11 +611,9 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void allocReadChannel(String path, long startFrame, int numFrames, int[] channels, OSCMessage completionMsg)
+	public void allocReadChannel(String aPath, long startFrame, int nFrames, int[] channels, OSCMessage completionMsg)
 			throws IOException {
-		// setPath() is called by allocReadChannelMsg()
-		// setPath( path );
-		getServer().sendMsg(allocReadChannelMsg(path, startFrame, numFrames, channels, completionMsg));
+		getServer().sendMsg(allocReadChannelMsg(aPath, startFrame, nFrames, channels, completionMsg));
 	}
 
 	/**
@@ -629,14 +621,14 @@ public class Buffer implements Constants {
 	 * created with the basic <code>new</code> constructor, by reading in a sound
 	 * file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @return the message to be sent to the server
 	 *
 	 * @see #Buffer( Server, int, int )
 	 */
-	public OSCMessage allocReadMsg(String path) throws IOException {
-		return allocReadMsg(path, 0);
+	public OSCMessage allocReadMsg(String aPath) throws IOException {
+		return allocReadMsg(aPath, 0);
 	}
 
 	/**
@@ -644,7 +636,7 @@ public class Buffer implements Constants {
 	 * created with the basic <code>new</code> constructor, by reading in a sound
 	 * file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
@@ -655,8 +647,8 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage allocReadMsg(String path, long startFrame) throws IOException {
-		return allocReadMsg(path, startFrame, -1);
+	public OSCMessage allocReadMsg(String aPath, long startFrame) throws IOException {
+		return allocReadMsg(aPath, startFrame, -1);
 	}
 
 	/**
@@ -664,11 +656,11 @@ public class Buffer implements Constants {
 	 * created with the basic <code>new</code> constructor, by reading in a sound
 	 * file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @return the message to be sent to the server
@@ -678,8 +670,8 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage allocReadMsg(String path, long startFrame, int numFrames) throws IOException {
-		return allocReadMsg(path, startFrame, numFrames, null);
+	public OSCMessage allocReadMsg(String aPath, long startFrame, int nFrames) throws IOException {
+		return allocReadMsg(aPath, startFrame, nFrames, null);
 	}
 
 	/**
@@ -687,11 +679,11 @@ public class Buffer implements Constants {
 	 * created with the basic <code>new</code> constructor, by reading in a sound
 	 * file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @param completionMsg
@@ -704,7 +696,7 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage allocReadMsg(String path, long startFrame, int numFrames, OSCMessage completionMsg)
+	public OSCMessage allocReadMsg(String aPath, long startFrame, int nFrames, OSCMessage completionMsg)
 			throws IOException {
 		addToServerArray();
 
@@ -712,11 +704,11 @@ public class Buffer implements Constants {
 			Server.getPrintStream().println("Buffer.allocReadMsg : startFrame (" + startFrame + ") exceeds 32bit int");
 		}
 
-		setPath(path);
+		setPath(aPath);
 
 		final Object[] args = completionMsg == null
-				? new Object[] { new Integer(getBufNum()), path, new Long(startFrame), new Integer(numFrames) }
-				: new Object[] { new Integer(getBufNum()), path, new Long(startFrame), new Integer(numFrames),
+				? new Object[] { new Integer(getBufNum()), aPath, new Long(startFrame), new Integer(nFrames) }
+				: new Object[] { new Integer(getBufNum()), aPath, new Long(startFrame), new Integer(nFrames),
 						completionMsg };
 
 		return (new OSCMessage("/b_allocRead", args));
@@ -727,11 +719,11 @@ public class Buffer implements Constants {
 	 * buffer created with the basic <code>new</code> constructor, by reading in
 	 * selected channels from a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @param channels
@@ -743,9 +735,9 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage allocReadChannelMsg(String path, long startFrame, int numFrames, int[] channels)
+	public OSCMessage allocReadChannelMsg(String aPath, long startFrame, int nFrames, int[] channels)
 			throws IOException {
-		return allocReadChannelMsg(path, startFrame, numFrames, channels, null);
+		return allocReadChannelMsg(aPath, startFrame, nFrames, channels, null);
 	}
 
 	/**
@@ -753,11 +745,11 @@ public class Buffer implements Constants {
 	 * buffer created with the basic <code>new</code> constructor, by reading in
 	 * selected channels from a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param startFrame
 	 *            starting frame in the sound file
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read, which equals the number of frames
 	 *            allocated for the buffer
 	 * @param channels
@@ -772,7 +764,7 @@ public class Buffer implements Constants {
 	 * @warning <code>long startFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage allocReadChannelMsg(String path, long startFrame, int numFrames, int[] channels,
+	public OSCMessage allocReadChannelMsg(String aPath, long startFrame, int nFrames, int[] channels,
 			OSCMessage completionMsg) throws IOException {
 		addToServerArray();
 
@@ -781,13 +773,13 @@ public class Buffer implements Constants {
 					.println("Buffer.allocReadChannelMsg : startFrame (" + startFrame + ") exceeds 32bit int");
 		}
 
-		setPath(path);
+		setPath(aPath);
 
 		final Object[] args = new Object[4 + channels.length + (completionMsg == null ? 0 : 1)];
 		args[0] = new Integer(getBufNum());
-		args[1] = path;
+		args[1] = aPath;
 		args[2] = new Long(startFrame);
-		args[3] = new Integer(numFrames);
+		args[3] = new Integer(nFrames);
 		for (int i = 4, j = 0; j < channels.length;) {
 			args[i++] = new Integer(channels[j++]);
 		}
@@ -1060,21 +1052,21 @@ public class Buffer implements Constants {
 	 * Reads in as many frames from a sound file as fit into the buffer, starting at
 	 * the beginning of the file. Closes the file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 *
 	 * @throws IOException
 	 *             if an error occurs while sending the OSC message
 	 */
-	public void read(String path) throws IOException {
-		read(path, 0);
+	public void read(String aPath) throws IOException {
+		read(aPath, 0);
 	}
 
 	/**
 	 * Reads in as many frames from a sound file as fit into the buffer, starting at
 	 * a given frame in the file. Closes the file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
@@ -1085,19 +1077,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void read(String path, long fileStartFrame) throws IOException {
-		read(path, fileStartFrame, -1);
+	public void read(String aPath, long fileStartFrame) throws IOException {
+		read(aPath, fileStartFrame, -1);
 	}
 
 	/**
 	 * Reads in frames from a sound file into the buffer. Closes the file after
 	 * reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 *
@@ -1107,19 +1099,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void read(String path, long fileStartFrame, int numFrames) throws IOException {
-		read(path, fileStartFrame, numFrames, 0);
+	public void read(String aPath, long fileStartFrame, int nFrames) throws IOException {
+		read(aPath, fileStartFrame, nFrames, 0);
 	}
 
 	/**
 	 * Reads in frames from a sound file into the buffer, beginning a given offset
 	 * in the buffer. Closes the file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1131,19 +1123,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void read(String path, long fileStartFrame, int numFrames, int bufStartFrame) throws IOException {
-		read(path, fileStartFrame, numFrames, bufStartFrame, false);
+	public void read(String aPath, long fileStartFrame, int nFrames, int bufStartFrame) throws IOException {
+		read(aPath, fileStartFrame, nFrames, bufStartFrame, false);
 	}
 
 	/**
 	 * Reads in frames from a sound file into the buffer, beginning a given offset
 	 * in the buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1160,20 +1152,20 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void read(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen)
+	public void read(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen)
 			throws IOException {
-		read(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, null);
+		read(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, null);
 	}
 
 	/**
 	 * Reads in frames from a sound file into the buffer, beginning a given offset
 	 * in the buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1193,23 +1185,23 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void read(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
+	public void read(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen,
 			CompletionAction action) throws IOException {
 		addToServerArray();
 		setDoOnInfo(action);
 		waitForBufInfo();
-		getServer().sendMsg(readMsg(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, queryMsg()));
+		getServer().sendMsg(readMsg(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, queryMsg()));
 	}
 
 	/**
 	 * Reads in frames from selected channels of a sound file into the buffer,
 	 * beginning a given offset in the buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1231,13 +1223,13 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void readChannel(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
+	public void readChannel(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen,
 			int[] channels, CompletionAction action) throws IOException {
 		addToServerArray();
 		setDoOnInfo(action);
 		waitForBufInfo();
 		getServer().sendMsg(
-				readChannelMsg(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, channels, queryMsg()));
+				readChannelMsg(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, channels, queryMsg()));
 	}
 
 	/**
@@ -1245,12 +1237,12 @@ public class Buffer implements Constants {
 	 * sound file as fit into the buffer, starting at the beginning of the file,
 	 * closing the file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @return the message to be sent to the server
 	 */
-	public OSCMessage readMsg(String path) {
-		return readMsg(path, 0);
+	public OSCMessage readMsg(String aPath) {
+		return readMsg(aPath, 0);
 	}
 
 	/**
@@ -1258,26 +1250,26 @@ public class Buffer implements Constants {
 	 * sound file as fit into the buffer, starting at a given frame in the file,
 	 * closing the file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @return the message to be sent to the server
 	 *
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readMsg(String path, long fileStartFrame) {
-		return readMsg(path, fileStartFrame, -1);
+	public OSCMessage readMsg(String aPath, long fileStartFrame) {
+		return readMsg(aPath, fileStartFrame, -1);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
 	 * file into the buffer, closing the file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @return the message to be sent to the server
@@ -1285,8 +1277,8 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames) {
-		return readMsg(path, fileStartFrame, numFrames, 0);
+	public OSCMessage readMsg(String aPath, long fileStartFrame, int nFrames) {
+		return readMsg(aPath, fileStartFrame, nFrames, 0);
 	}
 
 	/**
@@ -1294,11 +1286,11 @@ public class Buffer implements Constants {
 	 * file into the buffer, beginning a given offset in the buffer, closing the
 	 * file after reading.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1308,19 +1300,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame) {
-		return readMsg(path, fileStartFrame, numFrames, bufStartFrame, false);
+	public OSCMessage readMsg(String aPath, long fileStartFrame, int nFrames, int bufStartFrame) {
+		return readMsg(aPath, fileStartFrame, nFrames, bufStartFrame, false);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
 	 * file into the buffer, beginning a given offset in the buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1335,19 +1327,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen) {
-		return readMsg(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, null);
+	public OSCMessage readMsg(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen) {
+		return readMsg(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, null);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_read</code> message to read in frames from a sound
 	 * file into the buffer, beginning a given offset in the buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1365,19 +1357,19 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
+	public OSCMessage readMsg(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen,
 			OSCMessage completionMsg) {
 		if (fileStartFrame > 0x7FFFFFFFL) {
 			Server.getPrintStream()
 					.println("Buffer.readMsg : fileStartFrame (" + fileStartFrame + ") exceeds 32bit int");
 		}
 
-		setPath(path);
+		setPath(aPath);
 
 		final Object[] args = completionMsg == null
-				? new Object[] { new Integer(getBufNum()), path, new Long(fileStartFrame), new Integer(numFrames),
+				? new Object[] { new Integer(getBufNum()), aPath, new Long(fileStartFrame), new Integer(nFrames),
 						new Integer(bufStartFrame), new Integer(leaveOpen ? 1 : 0) }
-				: new Object[] { new Integer(getBufNum()), path, new Long(fileStartFrame), new Integer(numFrames),
+				: new Object[] { new Integer(getBufNum()), aPath, new Long(fileStartFrame), new Integer(nFrames),
 						new Integer(bufStartFrame), new Integer(leaveOpen ? 1 : 0), completionMsg };
 
 		return (new OSCMessage("/b_read", args));
@@ -1389,11 +1381,11 @@ public class Buffer implements Constants {
 	 * channels of a sound file into the buffer, beginning a given offset in the
 	 * buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1410,9 +1402,9 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readChannelMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame,
+	public OSCMessage readChannelMsg(String aPath, long fileStartFrame, int nFrames, int bufStartFrame,
 			boolean leaveOpen, int[] channels) {
-		return readChannelMsg(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, channels, null);
+		return readChannelMsg(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, channels, null);
 	}
 
 	/**
@@ -1420,11 +1412,11 @@ public class Buffer implements Constants {
 	 * channels of a sound file into the buffer, beginning a given offset in the
 	 * buffer.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -1444,20 +1436,20 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public OSCMessage readChannelMsg(String path, long fileStartFrame, int numFrames, int bufStartFrame,
+	public OSCMessage readChannelMsg(String aPath, long fileStartFrame, int nFrames, int bufStartFrame,
 			boolean leaveOpen, int[] channels, OSCMessage completionMsg) {
 		if (fileStartFrame > 0x7FFFFFFFL) {
 			Server.getPrintStream()
 					.println("Buffer.readChannelMsg : fileStartFrame (" + fileStartFrame + ") exceeds 32bit int");
 		}
 
-		setPath(path);
+		setPath(aPath);
 
 		final Object[] args = new Object[6 + channels.length + (completionMsg == null ? 0 : 1)];
 		args[0] = new Integer(getBufNum());
-		args[1] = path;
+		args[1] = aPath;
 		args[2] = new Long(fileStartFrame);
-		args[3] = new Integer(numFrames);
+		args[3] = new Integer(nFrames);
 		args[4] = new Integer(bufStartFrame);
 		args[5] = new Integer(leaveOpen ? 1 : 0);
 		for (int i = 6, j = 0; j < channels.length;) {
@@ -1472,20 +1464,20 @@ public class Buffer implements Constants {
 	/**
 	 * Writes the buffer contents to a sound file, using AIFF integer 24 bit format.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 *
 	 * @throws IOException
 	 *             if an error occurs while sending the OSC message
 	 */
-	public void write(String path) throws IOException {
-		write(path, "aiff", "int24");
+	public void write(String aPath) throws IOException {
+		write(aPath, "aiff", "int24");
 	}
 
 	/**
 	 * Writes the buffer contents to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
@@ -1498,20 +1490,20 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public void write(String path, String headerFormat, String sampleFormat) throws IOException {
-		write(path, headerFormat, sampleFormat, -1);
+	public void write(String aPath, String headerFormat, String sampleFormat) throws IOException {
+		write(aPath, headerFormat, sampleFormat, -1);
 	}
 
 	/**
 	 * Writes the buffer contents to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 *
@@ -1521,20 +1513,20 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public void write(String path, String headerFormat, String sampleFormat, int numFrames) throws IOException {
-		write(path, headerFormat, sampleFormat, numFrames, 0);
+	public void write(String aPath, String headerFormat, String sampleFormat, int nFrames) throws IOException {
+		write(aPath, headerFormat, sampleFormat, nFrames, 0);
 	}
 
 	/**
 	 * Writes a section of the buffer to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @param bufStartFrame
@@ -1546,21 +1538,21 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public void write(String path, String headerFormat, String sampleFormat, int numFrames, int bufStartFrame)
+	public void write(String aPath, String headerFormat, String sampleFormat, int nFrames, int bufStartFrame)
 			throws IOException {
-		write(path, headerFormat, sampleFormat, numFrames, bufStartFrame, false);
+		write(aPath, headerFormat, sampleFormat, nFrames, bufStartFrame, false);
 	}
 
 	/**
 	 * Writes a section of the buffer to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @param bufStartFrame
@@ -1577,21 +1569,21 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public void write(String path, String headerFormat, String sampleFormat, int numFrames, int bufStartFrame,
+	public void write(String aPath, String headerFormat, String sampleFormat, int nFrames, int bufStartFrame,
 			boolean leaveOpen) throws IOException {
-		write(path, headerFormat, sampleFormat, numFrames, bufStartFrame, leaveOpen, null);
+		write(aPath, headerFormat, sampleFormat, nFrames, bufStartFrame, leaveOpen, null);
 	}
 
 	/**
 	 * Writes a section of the buffer to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @param bufStartFrame
@@ -1611,29 +1603,29 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public void write(String path, String headerFormat, String sampleFormat, int numFrames, int bufStartFrame,
+	public void write(String aPath, String headerFormat, String sampleFormat, int nFrames, int bufStartFrame,
 			boolean leaveOpen, OSCMessage completionMsg) throws IOException {
 		getServer().sendMsg(
-				writeMsg(path, headerFormat, sampleFormat, numFrames, bufStartFrame, leaveOpen, completionMsg));
+				writeMsg(aPath, headerFormat, sampleFormat, nFrames, bufStartFrame, leaveOpen, completionMsg));
 	}
 
 	/**
 	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to
 	 * a sound file, using AIFF integer 24 bit format.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @return the message to send to the server
 	 */
-	public OSCMessage writeMsg(String path) {
-		return writeMsg(path, "aiff", "int24");
+	public OSCMessage writeMsg(String aPath) {
+		return writeMsg(aPath, "aiff", "int24");
 	}
 
 	/**
 	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to
 	 * a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
@@ -1644,21 +1636,21 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public OSCMessage writeMsg(String path, String headerFormat, String sampleFormat) {
-		return writeMsg(path, headerFormat, sampleFormat, -1);
+	public OSCMessage writeMsg(String aPath, String headerFormat, String sampleFormat) {
+		return writeMsg(aPath, headerFormat, sampleFormat, -1);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_write</code> message to write the buffer contents to
 	 * a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @return the message to send to the server
@@ -1666,21 +1658,21 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public OSCMessage writeMsg(String path, String headerFormat, String sampleFormat, int numFrames) {
-		return writeMsg(path, headerFormat, sampleFormat, numFrames, 0);
+	public OSCMessage writeMsg(String aPath, String headerFormat, String sampleFormat, int nFrames) {
+		return writeMsg(aPath, headerFormat, sampleFormat, nFrames, 0);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer
 	 * to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @param bufStartFrame
@@ -1690,22 +1682,22 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public OSCMessage writeMsg(String path, String headerFormat, String sampleFormat, int numFrames,
+	public OSCMessage writeMsg(String aPath, String headerFormat, String sampleFormat, int nFrames,
 			int bufStartFrame) {
-		return writeMsg(path, headerFormat, sampleFormat, numFrames, bufStartFrame, false);
+		return writeMsg(aPath, headerFormat, sampleFormat, nFrames, bufStartFrame, false);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer
 	 * to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @param bufStartFrame
@@ -1720,22 +1712,22 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public OSCMessage writeMsg(String path, String headerFormat, String sampleFormat, int numFrames, int bufStartFrame,
+	public OSCMessage writeMsg(String aPath, String headerFormat, String sampleFormat, int nFrames, int bufStartFrame,
 			boolean leaveOpen) {
-		return writeMsg(path, headerFormat, sampleFormat, numFrames, bufStartFrame, leaveOpen, null);
+		return writeMsg(aPath, headerFormat, sampleFormat, nFrames, bufStartFrame, leaveOpen, null);
 	}
 
 	/**
 	 * Creates an OSC <code>/b_write</code> message to write a section of the buffer
 	 * to a sound file.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path name of the file to write to
 	 * @param headerFormat
 	 *            one of <code>kHeaderAIFF</code> etc.
 	 * @param sampleFormat
 	 *            one of <code>kSampleInt24</code> etc.
-	 * @param numFrames
+	 * @param nFrames
 	 *            to number of frames to write, or <code>-1</code> to write the
 	 *            whole buffer
 	 * @param bufStartFrame
@@ -1753,12 +1745,12 @@ public class Buffer implements Constants {
 	 * @see Constants#kHeaderAIFF
 	 * @see Constants#kSampleInt24
 	 */
-	public OSCMessage writeMsg(String path, String headerFormat, String sampleFormat, int numFrames, int bufStartFrame,
+	public OSCMessage writeMsg(String aPath, String headerFormat, String sampleFormat, int nFrames, int bufStartFrame,
 			boolean leaveOpen, OSCMessage completionMsg) {
 		final Object[] args = completionMsg == null
-				? new Object[] { new Integer(getBufNum()), path, headerFormat, sampleFormat, new Integer(numFrames),
+				? new Object[] { new Integer(getBufNum()), aPath, headerFormat, sampleFormat, new Integer(nFrames),
 						new Integer(bufStartFrame), new Integer(leaveOpen ? 1 : 0) }
-				: new Object[] { new Integer(getBufNum()), path, headerFormat, sampleFormat, new Integer(numFrames),
+				: new Object[] { new Integer(getBufNum()), aPath, headerFormat, sampleFormat, new Integer(nFrames),
 						new Integer(bufStartFrame), new Integer(leaveOpen ? 1 : 0), completionMsg };
 
 		return (new OSCMessage("/b_write", args));
@@ -1945,14 +1937,14 @@ public class Buffer implements Constants {
 	 * Hence, the internal fields are not updated unless you explicitly call
 	 * <code>query()</code>.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 *
 	 * @throws IOException
 	 *             if an error occurs while sending the OSC message
 	 */
-	public void readNoUpdate(String path) throws IOException {
-		readNoUpdate(path, 0);
+	public void readNoUpdate(String aPath) throws IOException {
+		readNoUpdate(aPath, 0);
 	}
 
 	/**
@@ -1963,7 +1955,7 @@ public class Buffer implements Constants {
 	 * explicitly call <code>query()</code>.
 	 *
 	 * 
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
@@ -1974,8 +1966,8 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void readNoUpdate(String path, long fileStartFrame) throws IOException {
-		readNoUpdate(path, fileStartFrame, -1);
+	public void readNoUpdate(String aPath, long fileStartFrame) throws IOException {
+		readNoUpdate(aPath, fileStartFrame, -1);
 	}
 
 	/**
@@ -1984,11 +1976,11 @@ public class Buffer implements Constants {
 	 * a <code>/b_query</code>. Hence, the internal fields are not updated unless
 	 * you explicitly call <code>query()</code>.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 *
@@ -1998,8 +1990,8 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void readNoUpdate(String path, long fileStartFrame, int numFrames) throws IOException {
-		readNoUpdate(path, fileStartFrame, numFrames, 0);
+	public void readNoUpdate(String aPath, long fileStartFrame, int nFrames) throws IOException {
+		readNoUpdate(aPath, fileStartFrame, nFrames, 0);
 	}
 
 	/**
@@ -2009,11 +2001,11 @@ public class Buffer implements Constants {
 	 * <code>/b_query</code>. Hence, the internal fields are not updated unless you
 	 * explicitly call <code>query()</code>.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -2025,8 +2017,8 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void readNoUpdate(String path, long fileStartFrame, int numFrames, int bufStartFrame) throws IOException {
-		readNoUpdate(path, fileStartFrame, numFrames, bufStartFrame, false);
+	public void readNoUpdate(String aPath, long fileStartFrame, int nFrames, int bufStartFrame) throws IOException {
+		readNoUpdate(aPath, fileStartFrame, nFrames, bufStartFrame, false);
 	}
 
 	/**
@@ -2035,11 +2027,11 @@ public class Buffer implements Constants {
 	 * but without sending a <code>/b_query</code>. Hence, the internal fields are
 	 * not updated unless you explicitly call <code>query()</code>.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -2056,9 +2048,9 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void readNoUpdate(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen)
+	public void readNoUpdate(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen)
 			throws IOException {
-		readNoUpdate(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, null);
+		readNoUpdate(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, null);
 	}
 
 	/**
@@ -2068,11 +2060,11 @@ public class Buffer implements Constants {
 	 * without sending a <code>/b_query</code>. Hence, the internal fields are not
 	 * updated unless you explicitly call <code>query()</code>.
 	 *
-	 * @param path
+	 * @param aPath
 	 *            the path to the sound file
 	 * @param fileStartFrame
 	 *            the frame index in the sound file to start reading from
-	 * @param numFrames
+	 * @param nFrames
 	 *            the number of frames to read a value of <code>-1</code> indicates
 	 *            that as many frames as fit into the buffer should be read
 	 * @param bufStartFrame
@@ -2092,9 +2084,9 @@ public class Buffer implements Constants {
 	 * @warning <code>long fileStartFrame</code> is truncated to 32bit by
 	 *          <code>OSCMessage</code> for now
 	 */
-	public void readNoUpdate(String path, long fileStartFrame, int numFrames, int bufStartFrame, boolean leaveOpen,
+	public void readNoUpdate(String aPath, long fileStartFrame, int nFrames, int bufStartFrame, boolean leaveOpen,
 			OSCMessage completionMsg) throws IOException {
-		getServer().sendMsg(readMsg(path, fileStartFrame, numFrames, bufStartFrame, leaveOpen, completionMsg));
+		getServer().sendMsg(readMsg(aPath, fileStartFrame, nFrames, bufStartFrame, leaveOpen, completionMsg));
 	}
 
 	/**
@@ -2124,32 +2116,37 @@ public class Buffer implements Constants {
 	public static Buffer cueSoundFile(Server server, final String path, final long startFrame, int numChannels,
 			final int bufferSize, final CompletionFunction completionFunc) throws IOException {
 		final Buffer buf = Buffer.alloc(server, bufferSize, numChannels, new CompletionFunction() {
-			public OSCMessage completion(Buffer buf) {
-				return buf.readMsg(path, startFrame, bufferSize, 0, true,
-						completionFunc == null ? null : completionFunc.completion(buf));
+			@Override
+			public OSCMessage completion(Buffer buffer) {
+				return buffer.readMsg(path, startFrame, bufferSize, 0, true,
+						completionFunc == null ? null : completionFunc.completion(buffer));
 			}
 		});
 		buf.addToServerArray();
 		return buf;
 	}
 
-	public void cueSoundFile(String path) throws IOException {
-		cueSoundFile(path, 0);
+	public void cueSoundFile(String aPath) throws IOException {
+		cueSoundFile(aPath, 0);
 	}
 
-	public void cueSoundFile(String path, long startFrame) throws IOException {
-		cueSoundFile(path, startFrame, null);
+	public void cueSoundFile(String aPath, long startFrame) throws IOException {
+		cueSoundFile(aPath, startFrame, null);
 	}
 
-	public void cueSoundFile(String path, long startFrame, OSCMessage completionMsg) throws IOException {
-		getServer().sendMsg(cueSoundFileMsg(path, startFrame, completionMsg));
+	public void cueSoundFile(String aPath, long startFrame, OSCMessage completionMsg) throws IOException {
+		getServer().sendMsg(cueSoundFileMsg(aPath, startFrame, completionMsg));
 	}
 
-	public OSCMessage cueSoundFileMsg(String path, long startFrame, OSCMessage completionMsg) {
-		return readMsg(path, startFrame, getNumFrames(), 0, true, completionMsg);
+	public OSCMessage cueSoundFileMsg(String aPath, long startFrame, OSCMessage completionMsg) {
+		return readMsg(aPath, startFrame, getNumFrames(), 0, true, completionMsg);
 	}
 
-	// cache Buffers in an Array for easy info updating
+	/**
+	 * cache Buffers in an Array for easy info updating
+	 * 
+	 * @throws IOException
+	 */
 	private void addToServerArray() throws IOException {
 		getServer().addBuf(this);
 	}
@@ -2263,6 +2260,7 @@ public class Buffer implements Constants {
 	 * @throws IOException
 	 *             if an error occurs in OSC bundle sending
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void freeAll(Server server) throws IOException {
 		final BlockAllocator bufferAllocator = server.getBufferAllocator();
 		final java.util.List blocks = bufferAllocator.getAllocatedBlocks();
@@ -2293,6 +2291,7 @@ public class Buffer implements Constants {
 	 */
 	public void query() throws IOException {
 		new OSCResponderNode(getServer(), "/b_info", new OSCResponderNode.Action() {
+			@Override
 			public void respond(OSCResponderNode r, OSCMessage msg, long time) {
 				if (((Number) msg.getArg(0)).intValue() != getBufNum())
 					return;
@@ -2457,7 +2456,7 @@ public class Buffer implements Constants {
 	 */
 	public Synth play(boolean loop, float amp, int outBus, float fadeTime, Node target, int addAction)
 			throws IOException {
-		final GraphElem bufNum, out, ctrl, dt, gate;
+		final GraphElem bNum, out, ctrl, dt, gate;
 		final OSCMessage newMsg;
 		final String name;
 		final Synth synth;
@@ -2465,8 +2464,8 @@ public class Buffer implements Constants {
 		GraphElem player, graph;
 
 		out = Control.ir("i_out", 0f);
-		bufNum = UGen.ir(getBufNum());
-		player = UGen.ar("PlayBuf", getNumChannels(), bufNum, UGen.kr("BufRateScale", bufNum), UGen.ir(1f), UGen.ir(0f),
+		bNum = UGen.ir(getBufNum());
+		player = UGen.ar("PlayBuf", getNumChannels(), bNum, UGen.kr("BufRateScale", bNum), UGen.ir(1f), UGen.ir(0f),
 				UGen.ir(loop ? 1f : 0f));
 
 		if (fadeTime > 0f) {
@@ -2480,9 +2479,8 @@ public class Buffer implements Constants {
 
 		if (!loop) {
 			// XXX should be replaced by a Line and BufDur
-			// graph = UGen.array( graph, UGen.kr( "FreeSelfWhenDone", player ));
 			graph = UGen.array(graph,
-					UGen.kr("Line", UGen.ir(0f), UGen.ir(1f), UGen.kr("BufDur", bufNum), UGen.ir(kDoneFree)));
+					UGen.kr("Line", UGen.ir(0f), UGen.ir(1f), UGen.kr("BufDur", bNum), UGen.ir(kDoneFree)));
 		}
 
 		name = "temp_" + String.valueOf(Math.abs(hashCode()));

@@ -69,6 +69,7 @@ public class NumberEvent extends BasicEvent {
 		return number;
 	}
 
+	@Override
 	public boolean incorporate(BasicEvent oldEvent) {
 		if (oldEvent instanceof NumberEvent && this.getSource() == oldEvent.getSource()
 				&& this.getID() == oldEvent.getID()) {

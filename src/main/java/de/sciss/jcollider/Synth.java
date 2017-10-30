@@ -99,9 +99,11 @@ public class Synth extends Node {
 		allArgs[2] = new Integer(addAction);
 		allArgs[3] = new Integer(target.getNodeID());
 
-		for (int i = 0, j = 4; i < argNum; i++) {
-			allArgs[j++] = argNames[i];
-			allArgs[j++] = new Float(argValues[i]);
+		if (argNames != null) {
+			for (int i = 0, j = 4; i < argNum; i++) {
+				allArgs[j++] = argNames[i];
+				allArgs[j++] = new Float(argValues[i]);
+			}
 		}
 
 		return new OSCMessage("/s_new", allArgs);

@@ -77,11 +77,11 @@ public class NodeTreeManager implements NodeListener {
 		model = new DefaultTreeModel(rootNode, true);
 		nw.addListener(this);
 
-		final List collNodes = nw.getAllNodes();
+		final List<Node> collNodes = nw.getAllNodes();
 		Node node;
 
 		for (int i = 0; i < collNodes.size(); i++) {
-			node = (Node) collNodes.get(i);
+			node = collNodes.get(i);
 			mapNodeBackups.put(new Integer(node.getNodeID()), node);
 		}
 	}
@@ -132,6 +132,7 @@ public class NodeTreeManager implements NodeListener {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static void dumpTree(PrintStream stream, TreeNode node, int nestCount) {
 		for (int i = 0; i < nestCount; i++)
 			stream.print("  ");

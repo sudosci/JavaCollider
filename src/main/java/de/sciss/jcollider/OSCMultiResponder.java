@@ -46,17 +46,11 @@ import de.sciss.net.OSCMessage;
  * @version 0.34, 11-Jan-10
  */
 public class OSCMultiResponder
-		// extends OSCReceiver
 		implements OSCListener {
-	// private static final Map mapServerToMulti = new HashMap();
-	private final List allNodes = new ArrayList();
-	// private final Map mapAddrToCmds = new HashMap();
-	private final Map mapCmdToNodes = new HashMap();
-	// private final SocketAddress addr;
+	private final List<OSCResponderNode> allNodes = new ArrayList<>();
+	private final Map<String, List<OSCResponderNode>> mapCmdToNodes = new HashMap<>();
 
 	private static final boolean debug = false;
-	// private final boolean alwaysListening;
-	// private final Runnable startOrStop;
 
 	private final OSCClient c;
 
@@ -70,106 +64,36 @@ public class OSCMultiResponder
 	 *
 	 * @param c
 	 *            the client to who's receiver we should listen
+	 *            
+	 * @throws IOException
 	 *
 	 * @see OSCResponderNode
 	 */
-	// protected OSCMultiResponder( InetSocketAddress addr, boolean alwaysListening
-	// )
 	protected OSCMultiResponder(final OSCClient c) throws IOException {
-		// super( DatagramChannel.open(), addr );
 
 		this.c = c;
-		// this.addr = addr;
-		// this.alwaysListening = alwaysListening;
-
-		// mapServerToMulti.put( s, this );
-
-		// if( alwaysListening ) {
-		// if( debug ) System.err.println( "OSCMultiResponder( addr = " + this.addr +";
-		// hash = "+hashCode() + " ): startListening" );
-		// c.start();
+		
 		c.addOSCListener(this);
-		// startOrStop = null;
-		// } else {
-		// final OSCMultiResponder enc_this = this;
-		// startOrStop = new Runnable() {
-		// public void run()
-		// {
-		// synchronized( allNodes ) {
-		// if( allNodes.isEmpty() ) {
-		// if( debug ) System.err.println( "OSCMultiResponder( addr = " + enc_this.addr
-		// +"; hash = "+enc_this.hashCode() + " ): startListening" );
-		// c.start();
-		// c.addOSCListener( enc_this );
-		// } else {
-		// c.removeOSCListener( enc_this );
-		// if( debug ) System.err.println( "OSCMultiResponder( addr = " + enc_this.addr
-		// +"; hash = " + enc_this.hashCode() + " ): stopListening" );
-		// try {
-		// c.stop();
-		// }
-		// catch( IOException e1 ) {
-		// e1.printStackTrace( System.err );
-		// }
-		// }
-		// }
-		// }
-		// };
-		// }
+		
 	}
-
-	// private static DatagramChannel createChannel()
-	// throws IOException
-	// {
-	// final DatagramChannel dch = DatagramChannel.open();
-	//// dch.socket().bind( new InetSocketAddress( "127.0.0.1", 0 ));
-	// dch.socket().bind( new InetSocketAddress( InetAddress.getLocalHost(), 0 ));
-	// return dch;
-	// }
-
-	// private static DatagramChannel createChannel( SocketAddress addr )
-	// throws IOException
-	// {
-	// DatagramChannel dch = DatagramChannel.open();
-	//// dch.connect( addr );
-	// dch.socket().bind( null );
-	// return dch;
-	// }
-
-	// protected static OSCMultiResponder addNode( Server s, OSCResponderNode node )
-	// throws IOException
-	// {
-	// OSCMultiResponder resp;
-	//
-	// synchronized( mapServerToMulti ) {
-	// resp = (OSCMultiResponder) mapServerToMulti.get( s );
-	//// if( resp == null ) {
-	//// resp = new OSCMultiResponder( s );
-	//// }
-	// }
-	// resp.addNode( node );
-	// return resp;
-	// }
 
 	protected Object getSync() {
 		return sync;
 	}
 
+	/**
+	 * 
+	 * @param node
+	 * @throws IOException
+	 */
 	protected void addNode(OSCResponderNode node) throws IOException {
-		List specialNodes;
+		List<OSCResponderNode> specialNodes;
 
 		synchronized (sync) {
-			// if( allNodes.isEmpty() && !alwaysListening ) {
-			// if( EventQueue.isDispatchThread() ) {
-			// startOrStop.run();
-			// } else {
-			// EventQueue.invokeLater( startOrStop );
-			// }
-			// }
 			allNodes.add(node);
-			specialNodes = (List) mapCmdToNodes.get(node.getCommandName());
+			specialNodes = mapCmdToNodes.get(node.getCommandName());
 			if (specialNodes == null) {
-				specialNodes = new ArrayList(4);
+				specialNodes = new ArrayList<>(4);
 				mapCmdToNodes.put(node.getCommandName(), specialNodes);
 			}
 			specialNodes.add(node);
@@ -177,27 +101,18 @@ public class OSCMultiResponder
 	}
 
 	protected void removeNode(OSCResponderNode node)
-	// throws IOException
 	{
-		final List specialNodes;
+		final List<OSCResponderNode> specialNodes;
 
 		synchronized (sync) {
-			specialNodes = (List) mapCmdToNodes.get(node.getCommandName());
+			specialNodes = mapCmdToNodes.get(node.getCommandName());
 			if (specialNodes != null) {
 				specialNodes.remove(node);
 				allNodes.remove(node);
-				// for( int i = 0; i < resps.length; i++ ) {
-				// resps[ i ] = null; // clear references
-				// }
+				
 				if (allNodes.isEmpty()) {
 					mapCmdToNodes.clear();
-					// if( !alwaysListening ) {
-					// if( EventQueue.isDispatchThread() ) {
-					// startOrStop.run();
-					// } else {
-					// EventQueue.invokeLater( startOrStop );
-					// }
-					// }
+					
 				}
 			}
 		}
@@ -206,59 +121,29 @@ public class OSCMultiResponder
 	protected void dispose() {
 		synchronized (sync) {
 			c.removeOSCListener(this);
-			// mapAddrsToMultis.remove( this );
 			allNodes.clear();
 			mapCmdToNodes.clear();
-			// if( resps.length > 0 ) resps = new OSCResponderNode[ 0 ];
-			// resps = null;
 			if (debug)
 				System.err.println("OSCMultiResponder( client = " + c + "; hash = " + hashCode() + " ): dispose");
 			c.dispose();
 		}
-
-		// try {
-		// stopListening();
-		// getChannel().close();
-		// }
-		// catch( IOException e1 ) {
-		// e1.printStackTrace( System.err );
-		// }
 	}
-
-	// // true if o is an OSCResponder
-	// // with the same address and command name
-	// public boolean equals( Object o )
-	// {
-	// if( o instanceof OSCResponder ) {
-	// final OSCResponder resp = (OSCResponder) o;
-	// return( this.cmdName.equals( o.cmdName ) && this.addr.equals( o.addr ));
-	// } else {
-	// return false;
-	// }
-	// }
-	//
-	// // [...] so as to maintain the general contract for the hashCode method,
-	// // which states that equal objects must have equal hash codes.
-	// public int hashCode()
-	// {
-	// return( addr.hashCode() ^ cmdName.hashCode() );
-	// }
 
 	// ------------ OSCListener interface ------------
 
 	@Override
 	public void messageReceived(OSCMessage msg, SocketAddress sender, long time) {
-		final List specialNodes;
+		final List<OSCResponderNode> specialNodes;
 		final int numResps;
 		final String cmdNameTmp = msg.getName();
 		final String cmdName = (cmdNameTmp.charAt(0) == '/') ? cmdNameTmp : "/" + cmdNameTmp;
 
 		synchronized (sync) {
-			specialNodes = (List) mapCmdToNodes.get(cmdName);
+			specialNodes = mapCmdToNodes.get(cmdName);
 			if (specialNodes == null)
 				return;
 			numResps = specialNodes.size();
-			resps = (OSCResponderNode[]) specialNodes.toArray(resps);
+			resps = specialNodes.toArray(resps);
 		}
 
 		for (int i = 0; i < numResps; i++) {

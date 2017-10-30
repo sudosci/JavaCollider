@@ -84,10 +84,6 @@ public class Group extends Node {
 		if (target == null)
 			target = getServer().getDefaultGroup();
 
-		// removed 02-oct-05
-		// this.setGroup( addAction == kAddToHead || addAction == kAddToTail ?
-		// (Group) target : target.getGroup() );
-
 		return (new OSCMessage("/g_new", new Object[] { new Integer(this.getNodeID()), new Integer(addAction),
 				new Integer(target.getNodeID()) }));
 	}
@@ -157,15 +153,11 @@ public class Group extends Node {
 	}
 
 	public OSCMessage moveNodeToHeadMsg(Node aNode) {
-		// removed 02-oct-05
-		// aNode.setGroup( this );
 		return (new OSCMessage("/g_head",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}
 
 	public OSCMessage moveNodeToTailMsg(Node aNode) {
-		// removed 02-oct-05
-		// aNode.setGroup( this );
 		return (new OSCMessage("/g_tail",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}

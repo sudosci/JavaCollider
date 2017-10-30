@@ -71,7 +71,6 @@ public class ServerOptions {
 	private String outputStreamsEnabled = DEFAULT_OUTPUTSTREAMSENABLED;
 	private String device = DEFAULT_DEVICE;
 	private BlockAllocator.Factory blockAlloc = new PowerOfTwoAllocator.Factory();
-	// private Map envVars = new HashMap();
 	private int verbosity = DEFAULT_VERBOSITY;
 	private boolean rendezvous = DEFAULT_RENDEZVOUS;
 
@@ -374,21 +373,6 @@ public class ServerOptions {
 	public void setRendezvous(boolean rendezvous) {
 		this.rendezvous = rendezvous;
 	}
-
-	// public void setEnv( String key, String value )
-	// {
-	// envVars.put( key, value );
-	// }
-	//
-	// public String getEnv( String key )
-	// {
-	// return envVars.get( key ).toString();
-	// }
-	//
-	// public Map getEnvMap()
-	// {
-	// return Collections.unmodifiableMap( envVars );
-	// }
 
 	/**
 	 * Utility method to return the audio bus offset for the first bus which is not

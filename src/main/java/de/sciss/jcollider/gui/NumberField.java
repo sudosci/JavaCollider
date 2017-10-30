@@ -65,25 +65,15 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	 */
 	public static final int HHMMSS = 0x20000; // display as HH:MM:SS.xxx
 
-	// /**
-	// * Constructor flag : Pressing enter
-	// * unfocusses the gadget
-	// */
-	// public static final int ENTER_UNFOCUS = 0x00001;
-
 	private NumberSpace space;
 	protected Number value;
 	private NumberFormat numberFormat;
-	// JJJ
-	// private TimeFormat timeFormat;
 	private int flags;
 
 	private EventManager em = null; // lazy creation
 
 	private final DefaultFormatterFactory factory = new DefaultFormatterFactory();
 	private final NumberFormatter numberFormatter = new NumberFormatter();
-	// JJJ
-	// private final TimeFormatter timeFormatter = new TimeFormatter();
 
 	protected final NumberField enc_this = this;
 	private final AbstractAction actionLooseFocus;
@@ -114,6 +104,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		setHorizontalAlignment(RIGHT);
 
 		this.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				final Number newVal = (Number) getValue();
 				if (newVal.equals(value)) {
@@ -124,6 +115,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		});
 
 		this.addPropertyChangeListener("value", new PropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent e) {
 				final Number newVal = (Number) getValue();
 				if (!newVal.equals(value)) {
@@ -137,13 +129,6 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		key = "lost";
 		imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), key);
 		amap.put(key, actionLooseFocus);
-
-		// we don't need cut
-		// action = TransferHandler.getCutAction();
-		// key = action.getValue( Action.NAME );
-		// // action.getValue( Action.ACCELERATOR_KEY ) returns null unfortunately
-		// imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_X, msh ), key );
-		// amap.put( key, action );
 
 		action = TransferHandler.getCopyAction();
 		key = action.getValue(Action.NAME);
@@ -171,8 +156,6 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 	}
 
 	public void setFlags(int newFlags) {
-		// System.err.println(" old : "+this.flags+"; new : "+newFlags+" ; XOR
-		// "+(this.flags ^ newFlags) );
 		final int change = this.flags ^ newFlags;
 
 		this.flags = newFlags;
@@ -180,12 +163,6 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		if ((change & HHMMSS) != 0) {
 			updateFormatter();
 		}
-		// if( (change & ENTER_UNFOCUS) != 0 ) {
-		// final InputMap imap = getInputMap();
-		//
-		// imap.put( KeyStroke.getKeyStroke( KeyEvent.VK_ENTER, 0 ),
-		// (newFlags & ENTER_UNFOCUS) == 0 ? null : "lost" );
-		// }
 	}
 
 	public int getFlags() {
@@ -204,17 +181,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			numberFormat.setMinimumFractionDigits(space.minFracDigits);
 			numberFormat.setMaximumFractionDigits(i);
 		}
-		// JJJ
-		// if( (flags & HHMMSS) != 0 ) {
-		// timeFormat = new TimeFormat( 0, null, null,
-		// numberFormat.getMaximumFractionDigits(), Locale.US );
-		// numberFormat.setMinimumIntegerDigits( 2 );
-		// numberFormat.setMaximumIntegerDigits( 2 );
-		// numberFormat.setMinimumFractionDigits(
-		// numberFormat.getMaximumFractionDigits() );
-		// i = 5;
-		// } else {
-		// timeFormat = null;
+
 		if (Double.isInfinite(space.min) || Double.isInfinite(space.max)) {
 			numberFormat.setMaximumIntegerDigits(8);
 		} else {
@@ -225,8 +192,6 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			numberFormat.setMaximumIntegerDigits(i);
 		}
 		i = 1;
-		// JJJ
-		// }
 		i += Math.min(4, numberFormat.getMaximumFractionDigits()) + numberFormat.getMaximumIntegerDigits();
 
 		setColumns(i);
@@ -237,8 +202,6 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		}
 		numberFormat.setGroupingUsed(false);
 
-		// JJJ
-		// if( (flags & HHMMSS) == 0 ) {
 		numberFormatter.setFormat(numberFormat);
 		if (space.isInteger()) {
 			numberFormatter.setValueClass(Long.class);
@@ -259,13 +222,6 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		}
 
 		factory.setDefaultFormatter(numberFormatter);
-
-		// JJJ
-		// } else {
-		// // XXX fehlt setMin/Max
-		// timeFormatter.setFormat( timeFormat );
-		// factory.setDefaultFormatter( timeFormatter );
-		// }
 
 		setValue(value);
 	}
@@ -341,6 +297,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			em.removeListener(listener);
 	}
 
+	@Override
 	public void processEvent(BasicEvent e) {
 		NumberListener listener;
 
@@ -353,7 +310,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			default:
 				assert false : e.getID();
 			}
-		} // for( i = 0; i < em.countListeners(); i++ )
+		}
 	}
 
 	protected void fireNumberChanged() {
@@ -368,6 +325,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		protected ActionLooseFocus() {
 			/* empty */ }
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			final JRootPane rp = SwingUtilities.getRootPane(enc_this);
 			if (rp != null)
@@ -384,6 +342,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 		/**
 		 * Overridden to import a Number or String if it is available.
 		 */
+		@Override
 		public boolean importData(JComponent c, Transferable t) {
 			Number n = null;
 
@@ -408,18 +367,17 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			return false;
 		}
 
+		@Override
 		public int getSourceActions(JComponent c) {
 			return COPY;
 		}
 
+		@Override
 		protected Transferable createTransferable(JComponent c) {
 			return new NumberTransferable(getNumber(), getFormatter());
 		}
 
-		// protected void exportDone( JComponent source, Transferable data, int action )
-		// {
-		// }
-
+		@Override
 		public boolean canImport(JComponent c, DataFlavor[] flavors) {
 			for (int i = 0; i < flavors.length; i++) {
 				for (int j = 0; j < supportedFlavors.length; j++) {
@@ -429,7 +387,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			}
 			return false;
 		}
-	} // class NumberTransferHandler
+	}
 
 	private static class NumberTransferable implements Transferable {
 		private final Number n;
@@ -440,10 +398,12 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			this.f = f;
 		}
 
+		@Override
 		public DataFlavor[] getTransferDataFlavors() {
 			return supportedFlavors;
 		}
 
+		@Override
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			for (int i = 0; i < supportedFlavors.length; i++) {
 				if (supportedFlavors[i].equals(flavor))
@@ -452,6 +412,7 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 			return false;
 		}
 
+		@Override
 		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 			if (n == null)
 				throw new IOException();
@@ -467,5 +428,5 @@ public class NumberField extends JFormattedTextField implements EventManager.Pro
 				throw new UnsupportedFlavorException(flavor);
 			}
 		}
-	} // class NumberTransferable
-} // class NumberField
+	}
+}

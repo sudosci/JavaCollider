@@ -97,43 +97,6 @@ public class NodeEvent extends BasicEvent {
 		collValidCmds = Collections.unmodifiableList(coll);
 	}
 
-	// /**
-	// * Constructs a <code>NodeEvent</code> from a valid node.
-	// * All list fields of the node must be valid, i.e. parent group,
-	// * predecessor, successor etc.
-	// *
-	// * @param source who fired the event
-	// * @param ID the type of status change, e.g. <code>GO</code>
-	// * @param when timestamp of the event (e.g.
-	// <code>System.currentTimeMillis()</code>)
-	// * @param node the representation of the node whose status changed
-	// */
-	// protected NodeEvent( Object source, int ID, long when, Node node )
-	// {
-	// super( source, ID, when );
-	//
-	// this.node = node;
-	// nodeID = node.getNodeID();
-	// parentID = node.getGroup().getNodeID();
-	// predID = node.getPredNode() == null ? -1 : node.getPredNode().getNodeID();
-	// succID = node.getSuccNode() == null ? -1 : node.getSuccNode().getNodeID();
-	// if( node instanceof Synth ) {
-	// nodeType = SYNTH;
-	// } else if( node instanceof Group ) {
-	// nodeType = GROUP;
-	// } else {
-	// nodeType = UNKNOWN;
-	// }
-	// if( nodeType == GROUP ) {
-	// final Group g = (Group) node;
-	// headID = g.getHeadNode() == null ? -1 : g.getHeadNode().getNodeID();
-	// tailID = g.getTailNode() == null ? -1 : g.getTailNode().getNodeID();
-	// } else {
-	// headID = -1;
-	// tailID = -1;
-	// }
-	// }
-
 	/**
 	 * Constructs a <code>NodeEvent</code> from a detailed description. Note that
 	 * the provided node (which may be <code>null</code>) is considered not to be
@@ -183,20 +146,10 @@ public class NodeEvent extends BasicEvent {
 			this.oldParentID = -1;
 			this.oldPredID = -1;
 			this.oldSuccID = -1;
-			// this.oldHeadID = -1;
-			// this.oldTailID = -1;
 		} else {
 			this.oldParentID = node.getGroup() == null ? -1 : node.getGroup().getNodeID();
 			this.oldPredID = node.getPredNode() == null ? -1 : node.getPredNode().getNodeID();
 			this.oldSuccID = node.getSuccNode() == null ? -1 : node.getSuccNode().getNodeID();
-			// if( nodeType == GROUP ) {
-			// final Group g = (Group) node;
-			// this.oldHeadID = g.getHeadNode() == null ? -1 : g.getHeadNode().getNodeID();
-			// this.oldTailID = g.getTailNode() == null ? -1 : g.getTailNode().getNodeID();
-			// } else {
-			// this.oldHeadID = -1;
-			// this.oldTailID = -1;
-			// }
 		}
 	}
 
@@ -236,18 +189,6 @@ public class NodeEvent extends BasicEvent {
 		final int headID = nodeType == GROUP ? ((Number) msg.getArg(5)).intValue() : -1;
 		final int tailID = nodeType == GROUP ? ((Number) msg.getArg(6)).intValue() : -1;
 
-		// let's trust the programmer for the sake of speed
-		// if( node != null ) {
-		// if( node.getNodeID() != nodeID ) throw new IllegalArgumentException( "Message
-		// and Node have different nodeIDs" );
-		// if( nodeType == SYNTH ) {
-		// if( !(node instanceof Synth) ) throw new IllegalArgumentException( "Message
-		// and Node have different nodeTypes" );
-		// } else if( nodeType == GROUP ) {
-		// if( !(node instanceof Group) ) throw new IllegalArgumentException( "Message
-		// and Node have different nodeTypes" );
-		// }
-		// }
 
 		return new NodeEvent(source, eventID, when, node, nodeID, parentID, predID, succID, nodeType, headID, tailID);
 	}
@@ -392,13 +333,6 @@ public class NodeEvent extends BasicEvent {
 	 */
 	@Override
 	public boolean incorporate(BasicEvent oldEvent) {
-		// if( (oldEvent instanceof NodeEvent) &&
-		// (this.getSource() == oldEvent.getSource()) &&
-		// (this.getID() == oldEvent.getID()) ) {
-		//
-		// return ((NodeEvent) oldEvent).nodeID == this.nodeID;
-		//
-		// } else
 		return false;
 	}
 }

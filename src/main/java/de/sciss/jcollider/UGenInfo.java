@@ -341,15 +341,7 @@ public class UGenInfo implements Constants, Comparable<UGenInfo> {
 		}
 
 		UGenInfo.infos = map;
-		// final long t2 = System.currentTimeMillis();
-		// System.out.println( "readDefinitions took " + (t2-t1) + " ms" );
 	}
-
-	// private static void writeP16String( RandomAccessFile raf, String s )
-	// {
-	// raf.writeShort( s.getLength() );
-	// raf.writeChars( str );
-	// }
 
 	/**
 	 * Writes the infos out as a binary file that can be read in again using the

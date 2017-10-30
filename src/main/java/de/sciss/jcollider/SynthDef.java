@@ -225,17 +225,6 @@ public class SynthDef implements Constants {
 	}
 
 	private void build(GraphElemArray graphArray) {
-		// save/restore controls in case of *wrap
-		// var saveControlNames = controlNames;
-
-		// prependArgs = prependArgs.asArray;
-		// this.addControlsFromArgsOfFunc( func, rates, prependArgs.size );
-		// result = func.valueArray( prependArgs ++ this.buildControls );
-
-		// controlNames = saveControlNames
-
-		// collectUGens)
-
 		collectUGens(graphArray);
 
 		// collects only those in used UGens,
@@ -247,8 +236,6 @@ public class SynthDef implements Constants {
 	}
 
 	private void addControlDesc(ControlDesc desc) {
-		// System.err.print( "me add dem desc " );
-		// desc.printOn( System.err );
 		controlDescs.add(desc);
 	}
 
@@ -374,7 +361,6 @@ public class SynthDef implements Constants {
 		}
 		for (int i = numUGens - 1; i >= 0; i--) {
 			env = envs[i];
-			// ugen.descendants = ugen.descendants.asArray.sort(
 			Collections.sort(env.collDe, synthIdxComp);
 			if (env.collAnte.isEmpty()) {
 				available.add(env);

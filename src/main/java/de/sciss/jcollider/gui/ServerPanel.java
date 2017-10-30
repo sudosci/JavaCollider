@@ -79,13 +79,10 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 	 * Constructor flag: create a boot/quit button
 	 */
 	public static final int BOOTQUIT = 0x02;
-	// public static final int KILL = 0x04;
 	/**
 	 * Constructor flag: create a server name box
 	 */
 	public static final int BIGNAME = 0x08;
-	// public static final int MAKEDEFAULT = 0x10;
-	// public static final int RECORD = 0x20;
 	/**
 	 * Constructor flag: create a status panel for server CPU usage and number of
 	 * nodes.
@@ -113,7 +110,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 	private JFrame ourFrame;
 	private JScrollPane ggScroll;
 	private boolean showHide;
-	// private javax.swing.Timer showHideTimer;
 
 	private JLabel lbCntAvgCPU, lbCntPeakCPU, lbCntUGens, lbCntSynths, lbCntGroups, lbCntSynthDefs;
 
@@ -157,8 +153,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			add(createCountsPanel());
 		}
 
-		// JavaCollider.setDeepFont( this, fntGUI );
-
 		server.addListener(this);
 	}
 
@@ -183,36 +177,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 		Server.setPrintStream(lta.getLogStream());
 
 		ggScroll = lta.placeMeInAPane();
-
-		// showHideTimer = new javax.swing.Timer( 100, new ActionListener() {
-		// public void actionPerformed( ActionEvent e )
-		// {
-		// final boolean isVisible = ggScroll.isVisible();
-		// final int currentHeight = isVisible ? ggScroll.getHeight() : 0;
-		// final int frameWidth = ourFrame.getWidth();
-		// final int frameHeight = ourFrame.getHeight();
-		//
-		// if( showHide ) {
-		// if( !isVisible ) {
-		// ourFrame.setSize( frameWidth, frameHeight + 32 );
-		// ggScroll.setVisible( true );
-		// } else {
-		// if( currentHeight < 256 ) {
-		// ourFrame.setSize( frameWidth, frameHeight + 32 );
-		// } else {
-		// showHideTimer.stop();
-		// }
-		// }
-		// } else {
-		// if( currentHeight > 32 ) {
-		// ourFrame.setSize( frameWidth, frameHeight - 32 );
-		// } else {
-		// ggScroll.setVisible( false );
-		// showHideTimer.stop();
-		// }
-		// }
-		// }
-		// });
 
 		return ggScroll;
 	}
@@ -249,7 +213,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 	}
 
 	private JComponent createButtons(int flags) {
-		// final Box b = Box.createHorizontalBox();
 		final JToolBar tb = new JToolBar();
 		AbstractButton but;
 		Insets insets;
@@ -261,7 +224,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			actionBoot = new ActionBoot();
 			but = new JButton(actionBoot);
 			but.setFont(fntGUI);
-			// b.add( but );
 			insets = but.getMargin();
 			but.setMargin(new Insets(insets.top + 2, insets.left + 4, insets.bottom + 2, insets.right + 4));
 			tb.add(but);
@@ -276,24 +238,16 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			lbBigName.setBackground(Color.black);
 			lbBigName.setHorizontalAlignment(SwingConstants.CENTER);
 			updateBigName();
-			// b.add( lbBigName );
 			tb.add(lbBigName);
 		}
-		// if( (flags & MAKEDEFAULT) != 0 ) {
-		// b.add( new JButton( new actionMakeDefaultClass() ));
-		// }
+		
 		if ((flags & DUMP) != 0) {
 			but = new JToggleButton(new ActionDump());
 			but.setFont(fntGUI);
 			insets = but.getMargin();
 			but.setMargin(new Insets(insets.top + 2, insets.left + 4, insets.bottom + 2, insets.right + 4));
-			// b.add( but );
 			tb.add(but);
 		}
-		// b.add( Box.createHorizontalGlue() );
-		// tb.add( Box.createHorizontalGlue() );
-
-		// return b;
 		return tb;
 	}
 
@@ -336,8 +290,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 	}
 
 	protected void showHideConsole(boolean show) {
-		// if( (ourFrame == null) || (showHideTimer == null) || (this.showHide == show)
-		// ) return;
 		if ((ourFrame == null) || (this.showHide == show))
 			return;
 
@@ -345,7 +297,6 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 		ggScroll.setVisible(show);
 		ourFrame.pack();
 
-		// showHideTimer.start();
 	}
 
 	/**
@@ -400,6 +351,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 	 * This class implements the <code>ServerListener</code> interface to be
 	 * notified about the server booting and quitting, and for tracking the status.
 	 */
+	@Override
 	public void serverAction(ServerEvent e) {
 		switch (e.getID()) {
 		case ServerEvent.RUNNING:
@@ -437,6 +389,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			booted = server.isRunning() || server.isBooting();
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
 				if (booted) {
@@ -472,6 +425,7 @@ public class ServerPanel extends JPanel implements ServerListener, Constants {
 			dumping = server.getDumpMode() != kDumpOff;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			final AbstractButton b = (AbstractButton) e.getSource();
 

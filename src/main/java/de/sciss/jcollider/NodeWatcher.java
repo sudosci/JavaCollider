@@ -71,23 +71,23 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	private boolean fireAllNodes = false;
 	private boolean autoRegister = false;
 
-	private final Map mapNodes = new HashMap(); // maps Integer( nodeID ) to Node ; synchronized through 'sync'
+	private final Map<Integer, Node> mapNodes = new HashMap<>(); // maps Integer( nodeID ) to Node ; synchronized through 'sync'
 
 	private final OSCResponderNode[] resps;
 
 	private final Object sync = new Object();
-	private final List collQueue = new ArrayList(); // element = (OSCMessage) ; synchronized through 'sync'
+	private final List<OSCMessage> collQueue = new ArrayList<>(); // element = (OSCMessage) ; synchronized through 'sync'
 
-	private static final Map allInstances = new HashMap(); // (String) Server.name to (NodeWatcher) instance
+	private static final Map<String, NodeWatcher> allInstances = new HashMap<>(); // (String) Server.name to (NodeWatcher) instance
 
 	private NodeWatcher(Server s) {
 		this.server = s;
 
 		// create responders for all known node notification messages.
-		final List collValidCmds = NodeEvent.getValidOSCCommands();
+		final List<String> collValidCmds = NodeEvent.getValidOSCCommands();
 		resps = new OSCResponderNode[collValidCmds.size()];
 		for (int i = 0; i < collValidCmds.size(); i++) {
-			resps[i] = new OSCResponderNode(server, (String) collValidCmds.get(i), this);
+			resps[i] = new OSCResponderNode(server, collValidCmds.get(i), this);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		synchronized (allInstances) {
 			NodeWatcher nw;
 
-			nw = (NodeWatcher) allInstances.get(s.getName());
+			nw = allInstances.get(s.getName());
 			if (nw == null) {
 				nw = new NodeWatcher(s);
 				nw.start();
@@ -166,12 +166,6 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		}
 	}
 
-	// *unregister { arg node;
-	// var watcher;
-	// watcher = this.newFrom(node.server);
-	// watcher.unregister(node);
-	// }
-
 	/**
 	 * Adds a node to the list of known nodes. The node will be automatically
 	 * removed, when a corresponding <code>&quot;/n_end&quot;</code> message
@@ -199,7 +193,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	public void register(Node node, boolean assumePlaying) {
 		synchronized (sync) {
 			if (watching) {
-				final Object key = new Integer(node.getNodeID());
+				final Integer key = new Integer(node.getNodeID());
 				if (assumePlaying && mapNodes.containsKey(key)) {
 					node.setPlaying(true);
 				}
@@ -233,9 +227,9 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	 *         is a copy and maybe modified. It will not be affected by successive
 	 *         calls to <code>register</code> or <code>unregister</code>
 	 */
-	public List getAllNodes() {
+	public List<Node> getAllNodes() {
 		synchronized (sync) {
-			return new ArrayList(mapNodes.values());
+			return new ArrayList<Node>(mapNodes.values());
 		}
 	}
 
@@ -279,7 +273,7 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		setFireAllNodes(true);
 		setAutoRegister(true);
 
-		final Set setNodes = new HashSet();
+		final Set<Node> setNodes = new HashSet<>();
 		final NodeListener nl;
 		final Timer stopQueryTimer;
 
@@ -292,11 +286,11 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 					return;
 
 				final Node n = e.getNode();
-				final List nextNodes;
+				final List<Integer> nextNodes;
 
 				if (setNodes.add(n)) {
 					register(n);
-					nextNodes = new ArrayList(2);
+					nextNodes = new ArrayList<>(2);
 					if (e.getHeadNodeID() != -1)
 						nextNodes.add(new Integer(e.getHeadNodeID()));
 					if (e.getSuccNodeID() != -1)
@@ -370,14 +364,14 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	 * incoming messages are not dumped. The server's print stream is used to do the
 	 * dumping
 	 *
-	 * @param dumpMode
+	 * @param dm
 	 *            only <code>kDumpNone</code> and <code>kDumpText</code> are
 	 *            supported at the moment.
 	 *
 	 * @see Server#dumpOSC( int )
 	 */
-	public void dumpIncomingOSC(int dumpMode) {
-		this.dumpMode = dumpMode;
+	public void dumpIncomingOSC(int dm) {
+		this.dumpMode = dm;
 	}
 
 	/**
@@ -428,8 +422,8 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	// @synchronization has to be called with sync on sync
 	private void nodeGo(Node node, NodeEvent e) {
 		final Group group = (Group) mapNodes.get(new Integer(e.getParentGroupID()));
-		final Node pred = (Node) mapNodes.get(new Integer(e.getPredNodeID()));
-		final Node succ = (Node) mapNodes.get(new Integer(e.getSuccNodeID()));
+		final Node pred = mapNodes.get(new Integer(e.getPredNodeID()));
+		final Node succ = mapNodes.get(new Integer(e.getSuccNodeID()));
 
 		node.setGroup(group);
 		node.setPredNode(pred);
@@ -456,13 +450,11 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	}
 
 	// @synchronization has to be called with sync on mapNodes
+	@SuppressWarnings("unused")
 	private void nodeEnd(Node node, NodeEvent e) {
 		final Group group = node.getGroup();
 		final Node pred = node.getPredNode();
 		final Node succ = node.getSuccNode();
-		// System.err.println( "Removing "+node );
-		// System.err.println( " ... pred "+pred );
-		// System.err.println( " ... succ "+succ );
 
 		node.setGroup(null);
 		node.setPredNode(null);
@@ -496,8 +488,8 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 		final Node oldSucc = node.getSuccNode();
 
 		final Group newGroup = (Group) mapNodes.get(new Integer(e.getParentGroupID()));
-		final Node newPred = (Node) mapNodes.get(new Integer(e.getPredNodeID()));
-		final Node newSucc = (Node) mapNodes.get(new Integer(e.getSuccNodeID()));
+		final Node newPred = mapNodes.get(new Integer(e.getPredNodeID()));
+		final Node newSucc = mapNodes.get(new Integer(e.getSuccNodeID()));
 
 		node.setGroup(newGroup);
 		node.setPredNode(newPred);
@@ -589,10 +581,10 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 
 			when = System.currentTimeMillis();
 
-			for (Iterator iter = collQueue.iterator(); iter.hasNext();) {
-				msg = (OSCMessage) iter.next();
+			for (Iterator<OSCMessage> iter = collQueue.iterator(); iter.hasNext();) {
+				msg = iter.next();
 				nodeIDObj = (Integer) msg.getArg(0);
-				node = (Node) mapNodes.get(nodeIDObj);
+				node = mapNodes.get(nodeIDObj);
 				if (node == null) {
 					if (autoRegister) {
 						node = ((Number) msg.getArg(4)).intValue() == NodeEvent.GROUP
@@ -660,49 +652,6 @@ public class NodeWatcher implements EventManager.Processor, OSCResponderNode.Act
 	 */
 	@Override
 	public void processEvent(BasicEvent e) {
-		// NodeListener listener;
-		// final NodeEvent nde = (NodeEvent) e;
-		// final Node node = nde.getNode();
-		//
-		// synchronized( sync ) {
-		// if( !watching ) return;
-		//
-		// if( node != null ) { // update the node's fields
-		// switch( e.getID() ) {
-		// case NodeEvent.GO:
-		// nodeGo( node, nde );
-		// break;
-		//
-		// case NodeEvent.END:
-		// nodeEnd( node, nde );
-		// break;
-		//
-		// case NodeEvent.ON:
-		// node.setPlaying( true );
-		// break;
-		//
-		// case NodeEvent.OFF:
-		// node.setPlaying( false );
-		// break;
-		//
-		// case NodeEvent.MOVE:
-		// nodeMove( node, nde );
-		// break;
-		//
-		// case NodeEvent.INFO:
-		// nodeMove( node, nde );
-		// break;
-		//
-		// default:
-		// break;
-		// }
-		// }
-		//
-		// for( int i = 0; i < em.countListeners(); i++ ) {
-		// listener = (NodeListener) em.getListener( i );
-		// System.err.println(" --> "+listener );
-		// listener.nodeAction( nde );
-		// }
-		// } // synchronized( sync )
+		return;
 	}
 }

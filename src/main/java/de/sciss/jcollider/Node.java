@@ -152,26 +152,7 @@ public abstract class Node implements Constants, TreeNode {
 	 *            node is invalidated)
 	 */
 	protected void setGroup(Group group) {
-		// if( group == null ) {
-		// if( this.group != null ) {
-		//
-		// }
-		// } else {
-		// if( this.group == null ) {
-		// this.group = group;
-		// if( group.getHeadNode() == null )
-		// } else if( this.group.getNodeID() != group.getNodeID() ) {
-		// if( (group.getHeadNode() != null) && (group.getHeadNode().getNodeID() ==
-		// this.getNodeID()) ) {
-		// group.setHeadNode( this.getSuccNode() );
-		// }
-		// if( (group.getTailNode() != null) && (group.getTailNode().getNodeID() ==
-		// this.getNodeID()) ) {
-		// group.setTailNode( this.getPredNode() );
-		// }
 		this.group = group;
-		// }
-		// }
 	}
 
 	/**
@@ -185,9 +166,6 @@ public abstract class Node implements Constants, TreeNode {
 	 */
 	protected void setPredNode(Node predNode) {
 		this.predNode = predNode;
-		// if( predNode != null ) {
-		// predNode.succNode = this;
-		// }
 	}
 
 	/**
@@ -201,9 +179,6 @@ public abstract class Node implements Constants, TreeNode {
 	 */
 	protected void setSuccNode(Node succNode) {
 		this.succNode = succNode;
-		// if( succNode != null ) {
-		// succNode.predNode = this;
-		// }
 	}
 
 	/**
@@ -295,21 +270,8 @@ public abstract class Node implements Constants, TreeNode {
 	 *             if an error occurs while sending the OSC message
 	 */
 	public void free() throws IOException {
-		// free( true );
 		getServer().sendMsg(freeMsg());
 	}
-
-	// public void free( boolean sendFlag )
-	// throws IOException
-	// {
-	// if( sendFlag ) {
-	// getServer().sendMsg( freeMsg() );
-	// }
-	//// removed 02-oct-05
-	//// setGroup( null );
-	//// setPlaying( false );
-	//// setRunning( false );
-	// }
 
 	/**
 	 * Creates an OSC <code>/n_free</code> message for the node.
@@ -1441,10 +1403,6 @@ public abstract class Node implements Constants, TreeNode {
 			tail = reply.getArg(6);
 			out.println("  head  : " + head + "\n  tail  : " + tail);
 		}
-		// }
-		// catch( IOException e1 ) {
-		// out.println( e1.toString() );
-		// }
 	}
 
 	public OSCMessage queryMsg() {
@@ -1477,7 +1435,6 @@ public abstract class Node implements Constants, TreeNode {
 	public void moveBefore(Node aNode) throws IOException {
 		// NO
 		// setGroup() is called by moveBeforeMsg()
-		// this.setGroup( aNode.getGroup() );
 		getServer().sendMsg(moveBeforeMsg(aNode));
 	}
 
@@ -1494,8 +1451,7 @@ public abstract class Node implements Constants, TreeNode {
 	 * @see #moveBefore( Node )
 	 */
 	public OSCMessage moveBeforeMsg(Node aNode) {
-		// removed 02-oct-05
-		// this.setGroup( aNode.getGroup() );
+		
 		return (new OSCMessage("/n_before",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}
@@ -1517,7 +1473,6 @@ public abstract class Node implements Constants, TreeNode {
 	public void moveAfter(Node aNode) throws IOException {
 		// NO
 		// setGroup() is called by moveAfterMsg()
-		// this.setGroup( aNode.getGroup() );
 		getServer().sendMsg(moveAfterMsg(aNode));
 	}
 
@@ -1534,8 +1489,6 @@ public abstract class Node implements Constants, TreeNode {
 	 * @see #moveAfter( Node )
 	 */
 	public OSCMessage moveAfterMsg(Node aNode) {
-		// removed 02-oct-05
-		// this.setGroup( aNode.getGroup() );
 		return (new OSCMessage("/n_after",
 				new Object[] { new Integer(this.getNodeID()), new Integer(aNode.getNodeID()) }));
 	}

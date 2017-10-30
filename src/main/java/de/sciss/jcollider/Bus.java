@@ -445,15 +445,6 @@ public class Bus implements Constants {
 		alloc();
 	}
 
-	// // alternate syntaxes
-	// setAll { arg value;
-	// this.fill(value,numChannels);
-	// }
-	//
-	// value_ { arg value;
-	// this.fill(value,numChannels);
-	// }
-
 	public void printOn(PrintStream stream) {
 		stream.print(this.getClass().getName() + "(" + getServer().getName() + "," + getRate() + "," + getIndex() + ","
 				+ getNumChannels() + ")");
@@ -485,29 +476,6 @@ public class Bus implements Constants {
 	public boolean isAudioOut() {
 		return ((rate == kAudioRate) && (getIndex() < getServer().getOptions().getFirstPrivateBus()));
 	}
-
-	// ar {
-	// if(rate == \audio,{
-	// ^In.ar(index,numChannels)
-	// },{
-	// //"Bus converting control to audio rate".inform;
-	// ^K2A.ar( In.kr(index,numChannels) )
-	// })
-	// }
-	//
-	// kr {
-	// if(rate == \audio,{
-	// ^A2K.kr(index,numChannels)
-	// },{
-	// ^In.kr(index,numChannels)
-	// })
-	// }
-
-	// play { arg target=0, outbus, fadeTime, addAction=\addToTail;
-	// if(this.isAudioOut.not,{ // returns a Synth
-	// ^{ this.ar }.play(target, outbus, fadeTime, addAction);
-	// });
-	// }
 
 	// ---------- internal classes and interfaces ----------
 

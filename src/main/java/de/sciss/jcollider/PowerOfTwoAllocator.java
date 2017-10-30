@@ -47,9 +47,10 @@ public class PowerOfTwoAllocator implements BlockAllocator {
 		int np2, sizeClass;
 		Block node;
 
-		for (np2 = 1, sizeClass = 0; np2 < n; np2 <<= 1, sizeClass++)
-			; // next power of two
-
+		for (np2 = 1, sizeClass = 0; np2 < n; np2 <<= 1, sizeClass++) {
+			// next power of two
+		}
+		
 		node = freeBlocks[sizeClass];
 		if (node != null) {
 			freeBlocks[sizeClass] = node.next;

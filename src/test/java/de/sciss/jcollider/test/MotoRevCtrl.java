@@ -25,6 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import de.sciss.jcollider.Control;
@@ -71,6 +73,7 @@ public class MotoRevCtrl implements ServerListener {
 
 	public static void main(String args[]) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@SuppressWarnings("unused")
 			@Override
 			public void run() {
 				new MotoRevCtrl();
@@ -81,6 +84,13 @@ public class MotoRevCtrl implements ServerListener {
 	public MotoRevCtrl() {
 		final String fs = File.separator;
 
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		createControlWindow();
 		try {
 			// UGenInfo.readDefinitions(); // necessary if we build our own synth defs
@@ -123,6 +133,7 @@ public class MotoRevCtrl implements ServerListener {
 		spf.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 	}
 
+	@SuppressWarnings("unused")
 	private void createControlWindow() {
 		final JFrame win;
 		final Container cp;
@@ -274,8 +285,8 @@ public class MotoRevCtrl implements ServerListener {
 	// ------------- ServerListener interface -------------
 
 	@Override
-	public void serverAction(ServerEvent e) {
-		switch (e.getID()) {
+	public void serverAction(ServerEvent se) {
+		switch (se.getID()) {
 		case ServerEvent.RUNNING:
 			try {
 				initServer();
@@ -290,7 +301,7 @@ public class MotoRevCtrl implements ServerListener {
 			// have to call startAliveThread to keep watching for server starts
 			final javax.swing.Timer t = new javax.swing.Timer(1000, new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void actionPerformed(ActionEvent ae) {
 					try {
 						if (server != null)
 							server.startAliveThread();

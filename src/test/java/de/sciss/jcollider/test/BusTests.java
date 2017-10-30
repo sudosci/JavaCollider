@@ -59,6 +59,7 @@ public class BusTests {
 			System.exit(0);
 		}
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					iter(iter);
@@ -78,6 +79,7 @@ public class BusTests {
 			final float val1 = rnd.nextFloat();
 			b.set(val1);
 			b.get(new Bus.GetCompletionAction() {
+				@Override
 				public void completion(Bus bus, float[] values) {
 					test(values.length, 1, "numChannels");
 					for (int i = 0; i < values.length; i++) {
@@ -94,16 +96,17 @@ public class BusTests {
 			for (int i = 0; i < numVals; i++) {
 				vals[i] = rnd.nextFloat();
 			}
-			final List collOff = new ArrayList(b.getNumChannels());
+			final List<Integer> collOff = new ArrayList<>(b.getNumChannels());
 			for (int i = 0; i < b.getNumChannels(); i++) {
 				collOff.add(new Integer(i));
 			}
 			final int offsets[] = new int[numVals];
 			for (int i = 0; i < numVals; i++) {
-				offsets[i] = ((Integer) collOff.remove(rnd.nextInt(collOff.size()))).intValue();
+				offsets[i] = collOff.remove(rnd.nextInt(collOff.size())).intValue();
 			}
 			b.set(offsets, vals);
 			b.get(offsets, new Bus.GetCompletionAction() {
+				@Override
 				public void completion(Bus bus, float[] values) {
 					test(values.length, numVals, "numChannels");
 					for (int i = 0; i < values.length; i++) {
@@ -133,6 +136,7 @@ public class BusTests {
 			}
 			b.setn(offsets, vals);
 			b.getn(offsets, numChans, new Bus.GetCompletionAction() {
+				@Override
 				public void completion(Bus bus, float[] values) {
 					for (int i = 0, j = 0; i < numIntervals; i++) {
 						for (int k = 0; k < numChans[i]; k++, j++) {
